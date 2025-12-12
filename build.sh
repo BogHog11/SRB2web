@@ -1,57 +1,65 @@
 #!/bin/bash
 
-# Configuration Variables
-EMSDK_ROOT="emsdk"  # <-- **EDIT THIS PATH**
-BUILD_DIR="build"
-BIN_DIR="build/bin"
+# Exit immediately if a command exits with a non-zero status
+set -e
 
-# -----------------------------------------------------------------------------
-# 1. Setup Emscripten Environment
-# -----------------------------------------------------------------------------
-if [ -d "$EMSDK_ROOT" ]; then
-    source "$EMSDK_ROOT/emsdk_env.sh"
-else
-    echo "ERROR: EMSDK_ROOT not found at $EMSDK_ROOT"
+# Define paths
+BUILD_DIR="build"
+
+# Check if Emscripten environment is active
+if ! command -v emcmake &> /dev/null; then
+    echo "Error: Emscripten tools (emcmake) not found."
+    echo "Please run: source /path/to/emsdk/emsdk_env.sh"
     exit 1
 fi
 
-# -----------------------------------------------------------------------------
-# 2. Cleanup Old Builds
-# -----------------------------------------------------------------------------
-rm -rf "$BUILD_DIR"
+echo "--- Preparing Build Directory ---"
 mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR"
 
-# -----------------------------------------------------------------------------
-# 3. CMake Configuration
-# -----------------------------------------------------------------------------
-# We use standard Emscripten compiler/linker options and disable features
-# that are problematic in a browser environment (like HTTP/CURL and TCP).
+echo "--- Configuring with Emscripten (CMake) ---"
 
 emcmake cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_C_FLAGS="-s USE_SDL=2 -s ASYNCIFY=1 -s ALLOW_MEMORY_GROWTH=1 -s FORCE_FILESYSTEM=1" \
-    -DCMAKE_EXE_LINKER_FLAGS="-s USE_SDL=2 -s ASYNCIFY=1 -s ALLOW_MEMORY_GROWTH=1 -s FORCE_FILESYSTEM=1 -lidbfs.js" \
-    -DCURL=OFF \
-    -DBUILD_SERVER=OFF \
-    -DSRB2_SYSTEM_TYPE=WEB
+    -DUSE_GME=0 \
+    -DUSE_OPENMPT=0 \
+    -DUSE_UPNP=0 \
+    -DUSE_SDL2_NET=0 \
+    -DUSE_PHYSFS=0 \
+    -DUSE_ZLIB=1 \
+    -DUSE_LIBPNG=1 \
+    -DUSE_CURL=0 \
+    \
+    -DCMAKE_C_FLAGS="-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_MIXER=2 -s USE_SDL_TTF=2 -s USE_ZLIB=1 -s USE_LIBPNG=1 -s ASYNCIFY=1" \
+    -DCMAKE_EXE_LINKER_FLAGS="-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_MIXER=2 -s USE_SDL_TTF=2 -s USE_ZLIB=1 -s USE_LIBPNG=1 -s ASYNCIFY=1 -s ALLOW_MEMORY_GROWTH=1" \
+    \
+    -DZLIB_FOUND=TRUE \
+    -DZLIB_INCLUDE_DIR="$EMSDK/upstream/emscripten/cache/sysroot/include" \
+    -DZLIB_LIBRARY=zlib \
+    \
+    -DPNG_FOUND=TRUE \
+    -DPNG_PNG_INCLUDE_DIR="$EMSDK/upstream/emscripten/cache/sysroot/include" \
+    -DPNG_LIBRARY=png \
+    \
+    -DCURL_FOUND=TRUE \
+    -DCURL_INCLUDE_DIR="/workspaces/SRB2/libs/curl/include" \
+    -DCURL_LIBRARY=curl \
+    \
+    -DSDL2_FOUND=TRUE \
+    -DSDL2_LIBRARIES=SDL2 \
+    -DSDL2_DIR="$EMSDK/upstream/emscripten/cache/sysroot/lib/cmake/SDL2" \
+    -DSDL2_CONFIG_INCLUDE_DIR="$EMSDK/upstream/emscripten/cache/sysroot/include"
 
-# -----------------------------------------------------------------------------
-# 4. Compile the Game
-# -----------------------------------------------------------------------------
-emmake make -j$(nproc)
+echo "--- Configuration Successful ---"
 
-# -----------------------------------------------------------------------------
-# 5. Final Output
-# -----------------------------------------------------------------------------
-cd ..
-if [ -f "$BIN_DIR/srb2" ]; then
-    # Emscripten names the output 'srb2.js' and 'srb2.wasm' by default, 
-    # but the executable name remains 'srb2' for the build system.
-    echo ""
-    echo "✅ Build Successful!"
-    echo "Output files: $BIN_DIR/srb2.js and $BIN_DIR/srb2.wasm"
-else
-    echo ""
-    echo "❌ Build FAILED."
-fi
+echo "--- Generating Valid Mock Library ---"
+echo "int dummy_symbol = 0;" > dummy.c
+emcc -c dummy.c -o dummy.o
+rm -f libSDL2_mock.a
+emar rcs libSDL2_mock.a dummy.o
+rm dummy.c dummy.o
+echo "Mock library fixed."
+
+echo "--- Starting Compilation ---"
+emmake make -j $(nproc)
+echo "--- Build Complete! ---"
