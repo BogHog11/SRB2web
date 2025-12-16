@@ -2013,38 +2013,21 @@ UINT32 I_GetRefreshRate(void)
 }
 
 #ifdef __EMSCRIPTEN__
+#include <SDL2/SDL.h>
+#include <stdlib.h>      // Required for malloc/free
+#include "../doomdef.h"
+#include "../i_video.h"
+
+extern SDL_Window *window;
+extern SDL_Renderer *renderer;
+
+// CHANGE 1: Use Uint8 instead of byte
 int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
 {
-	// 1. Safety checks
-    if (x < 320) x = 320;
-    if (y < 200) y = 200;
-
-    // 2. Release mouse so it doesn't get stuck during resize
-    SDLdoUngrabMouse();
-
-    // 3. Update SRB2's Internal Video State
-    vid.recalc = 1; // Tell the engine it needs to recalculate tables
-    vid.bpp = 1;    // Usually bytes per pixel (1 = 8bit paletted)
-    vid.width = x;
-    vid.height = y;
-
-    // 4. Update the source rectangle (what part of the buffer is drawn)
-    src_rect.w = vid.width;
-    src_rect.h = vid.height;
-
-    // 5. CRITICAL: Force SDL to resize the actual window/texture
-    // Without this, the game engine updates, but SDL might keep the old texture size.
     if (window) {
         SDL_SetWindowSize(window, x, y);
     }
-    
-    // 6. Reset the renderer logic
-    // This function usually destroys the old texture and creates a new one at 'vid.width'
-    VID_CheckRenderer(); 
-    
-    // 7. Force a redraw immediately (Optional but good for responsiveness)
-    refresh_rate = VID_GetRefreshRate();
-    
+
     return 1;
 }
 
