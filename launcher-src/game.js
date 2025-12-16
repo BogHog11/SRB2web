@@ -67,6 +67,8 @@ async function downloadAndSaveAssets() {
 async function initGame() {
     IDBFS = FS.filesystems.IDBFS;
 
+    await downloadAndSaveAssets();
+
     FS.mkdirTree('/addons');
     FS.symlink('/home/web_user/.srb2', '/addons/.srb2');
     FS.symlink('/home/web_user/.srb2', '/addons/userdata');
@@ -75,6 +77,7 @@ async function initGame() {
         console.log("SyncFS done");
         console.log(err);
         Module.callMain(["-home", "/home/web_user"]);
+        window.ChangeResolution();
     });
 }
 
@@ -94,22 +97,10 @@ window.UnlockMouse = (force = false) => {
 };
 
 var GetViewportWidth = () => {
-        // if (UserAgentIsAndroid()) {
-        //   if (document.fullscreenElement) // chrome android weirdness
-        //     return screen.width;
-        //   else
-        //     return window.innerWidth;
-        // } else
           return document.documentElement.clientWidth;
       };
 
       var GetViewportHeight = () => {
-        // if (UserAgentIsAndroid()) {
-        //   if (document.fullscreenElement) // chrome android weirdness
-        //     return screen.height;
-        //   else
-        //     return window.innerHeight;
-        // } else
           return document.documentElement.clientHeight;
       };
 
@@ -142,3 +133,5 @@ async function startGame() {
         return;
     }
 }
+
+module.exports = {startGame};
