@@ -96,7 +96,10 @@ async function initGame() {
         console.log("SyncFS done");
         console.log(err);
         Module.callMain(["-home", "/home/web_user"]);
-        window.ChangeResolution();
+
+        setTimeout(() => {
+            window.ChangeResolution();
+        },100);
     });
 }
 
@@ -161,5 +164,9 @@ window.StartedMainLoopCallback = function () {
     didStart = true;
     gameCanvas.hidden = false;
 };
+
+window.addEventListener("resize", () => {
+    window.ChangeResolution();
+});
 
 module.exports = {startGame};
