@@ -103,8 +103,3 @@ if("${CMAKE_SYSTEM_NAME}" MATCHES Darwin)
 else()
     install(TARGETS SRB2SDL2 RUNTIME DESTINATION .)
 endif()
-
-target_link_options(SRB2SDL2 PRIVATE
-    "-sUSE_SDL_MIXER=2"
-	"-sSDL2_MIXER_FORMATS=['ogg','wav']"
-)
