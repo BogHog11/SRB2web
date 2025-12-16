@@ -8,4 +8,4 @@ cd emsdk
 
 cd ..
 
-source ./emsdk_env.sh
+source ./emsdk/emsdk_env.sh

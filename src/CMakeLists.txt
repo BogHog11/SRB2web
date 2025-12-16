@@ -133,6 +133,10 @@ if("${CMAKE_COMPILER_IS_GNUCC}" AND "${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
 	endif()
 endif()
 
+target_link_options(SRB2SDL2 PRIVATE
+    "-lidbfs.js" 
+)
+
 target_compile_features(SRB2SDL2 PRIVATE c_std_23 cxx_std_17)
 
 ### Configuration
