@@ -28,10 +28,7 @@
 #include <emscripten.h>
 #include <stdlib.h>
 #include <string.h>
-
-// DECLARE THE JS FUNCTION SO C CAN CALL IT
 extern void JS_RequestServerList(void);
-
 #endif
 
 #ifdef MASTERSERVER
@@ -85,15 +82,8 @@ I_mutex       ms_ServerList_mutex;
 
 UINT16 current_port = 0;
 
-// Room list is an external variable now.
-// Avoiding having to get info ten thousand times...
-msg_rooms_t room_list[NUM_LIST_ROOMS+1]; // +1 for easy test
+msg_rooms_t room_list[NUM_LIST_ROOMS+1];
 
-/** Adds variables and commands relating to the master server.
-  *
-  * \sa cv_masterserver, cv_servername,
-  * Command_Listserv_f
-  */
 void AddMServCommands(void)
 {
     CV_RegisterVar(&cv_masterserver);
@@ -105,7 +95,7 @@ void AddMServCommands(void)
     CV_RegisterVar(&cv_servername);
 #ifdef MASTERSERVER
     COM_AddCommand("listserv", Command_Listserv_f, 0);
-    COM_AddCommand("masterserver_update", Update_parameters, COM_LUA); // allows people to updates manually in case you were delisted by accident
+    COM_AddCommand("masterserver_update", Update_parameters, COM_LUA);
 #endif
 }
 
@@ -119,33 +109,29 @@ static void WarnGUI (void)
 }
 
 #define NUM_LIST_SERVER MAXSERVERLIST
+
+// ==========================================================
+//  GET SERVER LIST (Called when you enter a room)
+// ==========================================================
 msg_server_t *GetShortServersList(INT32 room, int id)
 {
     msg_server_t *server_list;
-
-    // +1 for easy test
     server_list = malloc(( NUM_LIST_SERVER + 1 ) * sizeof *server_list);
     memset(server_list, 0, (NUM_LIST_SERVER + 1) * sizeof *server_list);
 
 #ifdef __EMSCRIPTEN__
-    // 1. Tell JS to start fetching servers
+    // 1. Ask JS to fetch fresh data
     JS_RequestServerList();
 
-    // 2. If JS has already populated the global list (from a previous frame/callback), use it.
+    // 2. Return whatever we currently have in memory.
+    // Note: We ignore the 'room' argument and return ALL servers, 
+    // so the user sees everything regardless of which room they clicked.
     if (ms_ServerList)
     {
-        // Copy the global list into the local list the menu expects
-        // We use memcpy safely based on the fixed size
         memcpy(server_list, ms_ServerList, NUM_LIST_SERVER * sizeof(msg_server_t));
-        return server_list;
     }
-
-    // 3. If no data yet (first load), return the empty list (non-NULL) so the menu doesn't crash,
-    // or return NULL to show the "Problem connecting" warning.
-    // Returning an empty list allows the user to click Refresh again.
-    return server_list; 
+    return server_list;
 #else
-    // Standard Desktop Behavior
     if (HMS_fetch_servers(server_list, room, id))
         return server_list;
     else
@@ -157,8 +143,41 @@ msg_server_t *GetShortServersList(INT32 room, int id)
 #endif
 }
 
+// ==========================================================
+//  GET ROOMS LIST (Called when you click "Join Game")
+// ==========================================================
 INT32 GetRoomsList(boolean hosting, int id)
 {
+#ifdef __EMSCRIPTEN__
+    // Clear list
+    memset(room_list, 0, sizeof(room_list));
+
+    // Define Standard Categories so the user has something to click.
+    int i = 0;
+
+    // Room 1: All Servers
+    room_list[i].id = 0; 
+    strncpy(room_list[i].name, "All Servers", sizeof(room_list[i].name) - 1);
+    strncpy(room_list[i].motd, "All active games found.", sizeof(room_list[i].motd) - 1);
+    i++;
+
+    // Room 2: Standard
+    room_list[i].id = 1;
+    strncpy(room_list[i].name, "Standard", sizeof(room_list[i].name) - 1);
+    strncpy(room_list[i].motd, "Normal gameplay.", sizeof(room_list[i].motd) - 1);
+    i++;
+
+    // Room 3: Casual
+    room_list[i].id = 2;
+    strncpy(room_list[i].name, "Casual", sizeof(room_list[i].name) - 1);
+    strncpy(room_list[i].motd, "Cheats enabled, relaxed rules.", sizeof(room_list[i].motd) - 1);
+    i++;
+
+    // Terminate list
+    room_list[i].id = -1;
+
+    return 1; // Success
+#else
     if (HMS_fetch_rooms( ! hosting, id))
         return 1;
     else
@@ -166,6 +185,7 @@ INT32 GetRoomsList(boolean hosting, int id)
         WarnGUI();
         return -1;
     }
+#endif
 }
 
 #ifdef UPDATE_ALERT
@@ -173,417 +193,182 @@ char *GetMODVersion(int id)
 {
     char *buffer;
     int c;
-
     (void)id;
-
     buffer = malloc(16);
-
     c = HMS_compare_mod_version(buffer, 16);
-
     I_lock_mutex(&ms_QueryId_mutex);
     {
-        if (id != ms_QueryId)
-            c = -1;
+        if (id != ms_QueryId) c = -1;
     }
     I_unlock_mutex(ms_QueryId_mutex);
-
-    if (c > 0)
-        return buffer;
-    else
-    {
-        free(buffer);
-
-        if (! c)
-            WarnGUI();
-
-        return NULL;
-    }
+    if (c > 0) return buffer;
+    else { free(buffer); if (! c) WarnGUI(); return NULL; }
 }
-
-// Console only version of the above (used before game init)
 void GetMODVersion_Console(void)
 {
     char buffer[16];
-
     if (HMS_compare_mod_version(buffer, sizeof buffer) > 0)
         I_Error(UPDATE_ALERT_STRING_CONSOLE, VERSIONSTRING, buffer);
 }
 #endif
 
-/** Gets a list of game servers. Called from console.
-  */
 static void Command_Listserv_f(void)
 {
     CONS_Printf(M_GetText("Retrieving server list...\n"));
-
 #ifdef __EMSCRIPTEN__
     JS_RequestServerList();
 #endif
-
-    {
-        HMS_list_servers();
-    }
+    HMS_list_servers();
 }
 
-static void
-Finish_registration (void)
-{
+static void Finish_registration (void) {
     int registered;
-
     CONS_Printf("Registering this server on the master server...\n");
-
     registered = HMS_register();
-
     Lock_state();
     {
         MSRegistered = registered;
         MSRegisteredId = MSId;
-
         time(&MSLastPing);
     }
     Unlock_state();
-
-    if (registered)
-        CONS_Printf("Master server registration successful.\n");
+    if (registered) CONS_Printf("Master server registration successful.\n");
 }
 
-static void
-Finish_update (void)
-{
+static void Finish_update (void) {
     int registered;
     int done;
-
     Lock_state();
     {
         registered = MSRegistered;
-        MSUpdateAgain = false;/* this will happen anyway */
+        MSUpdateAgain = false;
     }
     Unlock_state();
-
-    if (registered)
-    {
-        if (HMS_update())
-        {
-            Lock_state();
-            {
-                time(&MSLastPing);
-                MSRegistered = true;
-            }
-            Unlock_state();
-
+    if (registered) {
+        if (HMS_update()) {
+            Lock_state(); { time(&MSLastPing); MSRegistered = true; } Unlock_state();
             CONS_Printf("Updated master server listing.\n");
-        }
-        else
-            Finish_registration();
-    }
-    else
-        Finish_registration();
-
-    Lock_state();
-    {
-        done = ! MSUpdateAgain;
-
-        if (done)
-            MSInProgress = false;
-    }
-    Unlock_state();
-
-    if (! done)
-        Finish_update();
+        } else Finish_registration();
+    } else Finish_registration();
+    Lock_state(); { done = ! MSUpdateAgain; if (done) MSInProgress = false; } Unlock_state();
+    if (! done) Finish_update();
 }
 
-static void
-Finish_unlist (void)
-{
+static void Finish_unlist (void) {
     int registered;
-
-    Lock_state();
-    {
-        registered = MSRegistered;
-    }
-    Unlock_state();
-
-    if (registered)
-    {
+    Lock_state(); { registered = MSRegistered; } Unlock_state();
+    if (registered) {
         CONS_Printf("Removing this server from the master server...\n");
-
-        if (HMS_unlist())
-            CONS_Printf("Server deregistration request successfully sent.\n");
-
-        Lock_state();
-        {
-            MSRegistered = false;
-        }
-        Unlock_state();
-
+        if (HMS_unlist()) CONS_Printf("Server deregistration request successfully sent.\n");
+        Lock_state(); { MSRegistered = false; } Unlock_state();
         I_wake_all_cond(&MSCond);
     }
-
-    Lock_state();
-    {
-        if (MSId == MSRegisteredId)
-            MSId++;
-    }
-    Unlock_state();
+    Lock_state(); { if (MSId == MSRegisteredId) MSId++; } Unlock_state();
 }
 
-static int *
-Server_id (void)
-{
-    int *id;
-    id = malloc(sizeof *id);
-    Lock_state();
-    {
-        *id = MSId;
-    }
-    Unlock_state();
+static int * Server_id (void) {
+    int *id; id = malloc(sizeof *id);
+    Lock_state(); { *id = MSId; } Unlock_state();
     return id;
 }
 
-static int *
-New_server_id (void)
-{
-    int *id;
-    id = malloc(sizeof *id);
-    Lock_state();
-    {
-        *id = ++MSId;
-        I_wake_all_cond(&MSCond);
-    }
-    Unlock_state();
+static int * New_server_id (void) {
+    int *id; id = malloc(sizeof *id);
+    Lock_state(); { *id = ++MSId; I_wake_all_cond(&MSCond); } Unlock_state();
     return id;
 }
 
-static void
-Register_server_thread (int *id)
-{
+static void Register_server_thread (int *id) {
     int same;
-
-    Lock_state();
-    {
-        /* wait for previous unlist to finish */
-        while (*id == MSId && MSRegistered)
-            I_hold_cond(&MSCond, MSMutex);
-
-        same = ( *id == MSId );/* it could have been a while */
-    }
-    Unlock_state();
-
-    if (same)/* it could have been a while */
-        Finish_registration();
-
+    Lock_state(); { while (*id == MSId && MSRegistered) I_hold_cond(&MSCond, MSMutex); same = ( *id == MSId ); } Unlock_state();
+    if (same) Finish_registration();
     free(id);
 }
 
-static void
-Update_server_thread (int *id)
-{
+static void Update_server_thread (int *id) {
     int same;
-
-    Lock_state();
-    {
-        same = ( *id == MSRegisteredId );
-    }
-    Unlock_state();
-
-    if (same)
-        Finish_update();
-
+    Lock_state(); { same = ( *id == MSRegisteredId ); } Unlock_state();
+    if (same) Finish_update();
     free(id);
 }
 
-static void
-Unlist_server_thread (int *id)
-{
+static void Unlist_server_thread (int *id) {
     int same;
-
-    Lock_state();
-    {
-        same = ( *id == MSRegisteredId );
-    }
-    Unlock_state();
-
-    if (same)
-        Finish_unlist();
-
+    Lock_state(); { same = ( *id == MSRegisteredId ); } Unlock_state();
+    if (same) Finish_unlist();
     free(id);
 }
 
-static void
-Change_masterserver_thread (char *api)
-{
-    Lock_state();
-    {
-        while (MSRegistered)
-            I_hold_cond(&MSCond, MSMutex);
-    }
-    Unlock_state();
-
+static void Change_masterserver_thread (char *api) {
+    Lock_state(); { while (MSRegistered) I_hold_cond(&MSCond, MSMutex); } Unlock_state();
     HMS_set_api(api);
 }
 
-void RegisterServer(void)
-{
-    if (I_can_thread())
-    {
+void RegisterServer(void) {
+    if (I_can_thread()) {
         void *nsid = New_server_id();
-        if (!I_spawn_thread(
-                "register-server",
-                (I_thread_fn)Register_server_thread,
-                nsid
-        ))
-        {
-            free(nsid);
-        }
-    }
-    else
-    {
-        Finish_registration();
-    }
+        if (!I_spawn_thread("register-server", (I_thread_fn)Register_server_thread, nsid)) free(nsid);
+    } else Finish_registration();
 }
 
-static void UpdateServer(void)
-{
-    if (I_can_thread())
-    {
+static void UpdateServer(void) {
+    if (I_can_thread()) {
         void *sid = Server_id();
-        if (!I_spawn_thread(
-                "update-server",
-                (I_thread_fn)Update_server_thread,
-                sid
-        ))
-        {
-            free(sid);
-        }
-    }
-    else
-    {
-        Finish_update();
-    }
+        if (!I_spawn_thread("update-server", (I_thread_fn)Update_server_thread, sid)) free(sid);
+    } else Finish_update();
 }
 
-void UnregisterServer(void)
-{
-    if (I_can_thread())
-    {
-        if (!I_spawn_thread(
-                "unlist-server",
-                (I_thread_fn)Unlist_server_thread,
-                Server_id()
-        ))
-        {
-            ;
-        }
-    }
-    else
-    {
-        Finish_unlist();
-    }
+void UnregisterServer(void) {
+    if (I_can_thread()) {
+        if (!I_spawn_thread("unlist-server", (I_thread_fn)Unlist_server_thread, Server_id())) ;
+    } else Finish_unlist();
 }
 
-static boolean Online(void)
-{
-    return ( serverrunning && cv_masterserver_room_id.value > 0 );
-}
+static boolean Online(void) { return ( serverrunning && cv_masterserver_room_id.value > 0 ); }
 
-static inline void SendPingToMasterServer(void)
-{
-    int ready;
-    time_t now;
-
-    if (Online())
-    {
+static inline void SendPingToMasterServer(void) {
+    int ready; time_t now;
+    if (Online()) {
         time(&now);
-
-        Lock_state();
-        {
-            ready = (
-                    MSRegisteredId == MSId &&
-                    ! MSInProgress &&
-                    now >= ( MSLastPing + 60 * cv_masterserver_update_rate.value )
-            );
-
-            if (ready)
-                MSInProgress = true;
-        }
-        Unlock_state();
-
-        if (ready)
-            UpdateServer();
+        Lock_state(); {
+            ready = ( MSRegisteredId == MSId && ! MSInProgress && now >= ( MSLastPing + 60 * cv_masterserver_update_rate.value ) );
+            if (ready) MSInProgress = true;
+        } Unlock_state();
+        if (ready) UpdateServer();
     }
 }
 
-void MasterClient_Ticker(void)
-{
-    SendPingToMasterServer();
-}
+void MasterClient_Ticker(void) { SendPingToMasterServer(); }
 
-static void
-Set_api (const char *api)
-{
+static void Set_api (const char *api) {
     char *dapi = strdup(api);
-    if (I_can_thread())
-    {
-        if (!I_spawn_thread(
-                "change-masterserver",
-                (I_thread_fn)Change_masterserver_thread,
-                dapi
-        ))
-        {
-            free(dapi);
-        }
-    }
-    else
-    {
-        HMS_set_api(dapi);
-    }
+    if (I_can_thread()) {
+        if (!I_spawn_thread("change-masterserver", (I_thread_fn)Change_masterserver_thread, dapi)) free(dapi);
+    } else HMS_set_api(dapi);
 }
-#else /*MASTERSERVER*/
-
+#else
 void RegisterServer(void) {}
 void UnregisterServer(void) {}
-
 #endif
 
-static boolean ServerName_CanChange(const char* newvalue)
-{
-    if (strlen(newvalue) < MAXSERVERNAME)
-        return true;
-
+static boolean ServerName_CanChange(const char* newvalue) {
+    if (strlen(newvalue) < MAXSERVERNAME) return true;
     CONS_Alert(CONS_NOTICE, "The server name must be shorter than %d characters\n", MAXSERVERNAME);
     return false;
 }
 
-static void
-Update_parameters (void)
-{
+static void Update_parameters (void) {
 #ifdef MASTERSERVER
-    int registered = 0;
-    int delayed;
-
-    if (Online())
-    {
-        Lock_state();
-        {
-            delayed = MSInProgress;
-
-            if (delayed)/* do another update after the current one */
-                MSUpdateAgain = true;
-            else
-                registered = MSRegistered;
-        }
-        Unlock_state();
-
-        if (! delayed && registered)
-            UpdateServer();
+    int registered = 0; int delayed;
+    if (Online()) {
+        Lock_state(); { delayed = MSInProgress; if (delayed) MSUpdateAgain = true; else registered = MSRegistered; } Unlock_state();
+        if (! delayed && registered) UpdateServer();
     }
-#endif/*MASTERSERVER*/
+#endif
 }
 
-static void RoomId_OnChange(void)
-{
-    if (ms_RoomId != cv_masterserver_room_id.value)
-    {
+static void RoomId_OnChange(void) {
+    if (ms_RoomId != cv_masterserver_room_id.value) {
         UnregisterServer();
         ms_RoomId = cv_masterserver_room_id.value;
 #ifdef MASTERSERVER
@@ -593,109 +378,53 @@ static void RoomId_OnChange(void)
     }
 }
 
-static void MasterServer_OnChange(void)
-{
+static void MasterServer_OnChange(void) {
 #ifdef MASTERSERVER
     UnregisterServer();
-
-    /*
-    TODO: remove this for v2, it's just a hack
-    for those coming in with an old config.
-    */
-    if (
-            ! cv_masterserver.changed &&
-            strcmp(cv_masterserver.string, "ms.srb2.org:28900") == 0
-    ){
-        CV_StealthSet(&cv_masterserver, cv_masterserver.defaultvalue);
-    }
-
-    if (
-            ! cv_masterserver.changed &&
-            strcmp(cv_masterserver.string, "https://mb.srb2.org/MS/0") == 0
-    ){
-        CV_StealthSet(&cv_masterserver, cv_masterserver.defaultvalue);
-    }
-
+    if ( ! cv_masterserver.changed && strcmp(cv_masterserver.string, "ms.srb2.org:28900") == 0 ) CV_StealthSet(&cv_masterserver, cv_masterserver.defaultvalue);
+    if ( ! cv_masterserver.changed && strcmp(cv_masterserver.string, "https://mb.srb2.org/MS/0") == 0 ) CV_StealthSet(&cv_masterserver, cv_masterserver.defaultvalue);
     Set_api(cv_masterserver.string);
-
-    if (Online())
-        RegisterServer();
-#endif/*MASTERSERVER*/
+    if (Online()) RegisterServer();
+#endif
 }
 
 // --------------------------------------------------------------------------
-// WEB BROWSER INTEGRATION (For Emscripten)
+// WEB BROWSER INTEGRATION
 // --------------------------------------------------------------------------
-
 #ifdef __EMSCRIPTEN__
-
-// Temporary storage for servers arriving from JS before we commit them to the game
 #define MAX_WEB_SERVERS 64
 static msg_server_t web_server_buffer[MAX_WEB_SERVERS];
 static INT32 web_server_count = 0;
 
-EMSCRIPTEN_KEEPALIVE void SRB2_ClearServerList(void)
-{
+EMSCRIPTEN_KEEPALIVE void SRB2_ClearServerList(void) {
     web_server_count = 0;
     memset(web_server_buffer, 0, sizeof(web_server_buffer));
 }
 
-EMSCRIPTEN_KEEPALIVE void SRB2_AddServerToList(const char *address, const char *name, const char *version, int players, int maxplayers, int ping, int gametype)
-{
+EMSCRIPTEN_KEEPALIVE void SRB2_AddServerToList(const char *address, const char *name, const char *version, int players, int maxplayers, int ping, int gametype) {
     if (web_server_count >= MAX_WEB_SERVERS) return;
-
     msg_server_t *entry = &web_server_buffer[web_server_count];
     memset(entry, 0, sizeof(msg_server_t));
-
-    // 1. Copy Name
     strncpy(entry->name, name, sizeof(entry->name) - 1);
-
-    // 2. Copy Version
     strncpy(entry->version, version, sizeof(entry->version) - 1);
-
-    // 3. Room (using gametype as room ID)
-    entry->room = (INT32)gametype;
-
-    // 4. IP and Port split
-    // "address" comes in as "127.0.0.1:5029"
+    entry->room = (INT32)gametype; 
     char tempAddr[64];
     strncpy(tempAddr, address, sizeof(tempAddr) - 1);
-    
     char *portSep = strchr(tempAddr, ':');
-    if (portSep) {
-        *portSep = '\0'; // Split string
-        strncpy(entry->ip, tempAddr, sizeof(entry->ip) - 1);
-        strncpy(entry->port, portSep + 1, sizeof(entry->port) - 1);
-    } else {
-        strncpy(entry->ip, tempAddr, sizeof(entry->ip) - 1);
-        strncpy(entry->port, "5029", sizeof(entry->port) - 1);
-    }
-
+    if (portSep) { *portSep = '\0'; strncpy(entry->ip, tempAddr, sizeof(entry->ip) - 1); strncpy(entry->port, portSep + 1, sizeof(entry->port) - 1); }
+    else { strncpy(entry->ip, tempAddr, sizeof(entry->ip) - 1); strncpy(entry->port, "5029", sizeof(entry->port) - 1); }
     web_server_count++;
 }
 
-EMSCRIPTEN_KEEPALIVE void SRB2_FinishServerList(void)
-{
-    // Clean up old list if it exists
-    if (ms_ServerList) {
-        free(ms_ServerList);
-        ms_ServerList = NULL;
-    }
-
-    // Allocate memory for the global list (+1 for null terminator)
+EMSCRIPTEN_KEEPALIVE void SRB2_FinishServerList(void) {
+    if (ms_ServerList) { free(ms_ServerList); ms_ServerList = NULL; }
     size_t allocSize = (web_server_count + 1) * sizeof(msg_server_t);
     ms_ServerList = (msg_server_t *)malloc(allocSize);
-
     if (ms_ServerList) {
-        // Copy our buffer into the allocated global pointer
         memset(ms_ServerList, 0, allocSize);
         memcpy(ms_ServerList, web_server_buffer, web_server_count * sizeof(msg_server_t));
-        
-        // Ensure the last entry is zeroed (terminator)
         memset(&ms_ServerList[web_server_count], 0, sizeof(msg_server_t));
-        
-        CONS_Printf("Web: Loaded %d servers into Master Server list.\n", web_server_count);
+        CONS_Printf("Web: Loaded %d servers.\n", web_server_count);
     }
 }
-
 #endif
