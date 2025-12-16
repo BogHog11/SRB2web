@@ -2024,17 +2024,17 @@ extern Uint8 *screens[5];
 int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
 {
     // Safety Limits
-    /*if (x < 320) x = 320;
+    if (x < 320) x = 320;
     if (y < 200) y = 200;
 
-    SDLdoUngrabMouse();*/
+    SDLdoUngrabMouse();
 
     // 1. Update SRB2 Global Video State
-    /*vid.width = x;
+    vid.width = x;
     vid.height = y;
     vid.rowbytes = x; 
     vid.bpp = 1;
-    vid.recalc = 1; */
+    vid.recalc = 1; 
 
     // 2. Resize the SDL Window
     // This triggers SDL to resize its internal buffers safely
@@ -2044,18 +2044,18 @@ int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
 
     // 3. Get the new Surface pointer from SDL
     // Instead of malloc/free, we let SDL give us the valid pointer
-    /*SDL_Surface *surface = SDL_GetWindowSurface(window);
+    SDL_Surface *surface = SDL_GetWindowSurface(window);
     if (surface) {
         screens[0] = (Uint8 *)surface->pixels;
-    }*/
+    }
 
     // 4. Update the Rects
-    /*src_rect.w = vid.width;
+    src_rect.w = vid.width;
     src_rect.h = vid.height;
 
     // 5. Restart Rendering logic
     VID_CheckRenderer();
-    refresh_rate = VID_GetRefreshRate();*/
+    refresh_rate = VID_GetRefreshRate();
     
     // Recalculate lookups (V_Init is safe now that we capped resolution to 1920)
     V_Init(); 
