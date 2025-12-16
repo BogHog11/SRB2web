@@ -1,5 +1,4 @@
 # Declare SDL2 interface sources
-
 target_sources(SRB2SDL2 PRIVATE
     ogl_sdl.c
     i_threads.c
@@ -12,6 +11,7 @@ target_sources(SRB2SDL2 PRIVATE
     hwsym_sdl.c
 )
 
+# Compiler Flags
 if (NOT SRB2_CONFIG_FORCE_NO_MS_BITFIELDS)
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         check_cxx_compiler_flag("-mno-ms-bitfields" HAS_NO_MS_BITFIELDS)
@@ -39,6 +39,7 @@ target_compile_options(SRB2SDL2 PRIVATE
     >
 )
 
+# Platform specific sources
 if("${CMAKE_SYSTEM_NAME}" MATCHES Windows)
     target_sources(SRB2SDL2 PRIVATE ../win32/win_dbg.c ../win32/Srb2win.rc)
 endif()
@@ -47,7 +48,7 @@ if("${CMAKE_SYSTEM_NAME}" MATCHES Darwin)
     target_sources(SRB2SDL2 PRIVATE macosx/mac_alert.c macosx/mac_alert.h macosx/mac_resources.c macosx/mac_resources.h macosx/Srb2mac.icns)
 endif()
 
-# FIX: Emscripten SDL2 targets
+# SDL2 Setup
 if(EMSCRIPTEN)
     if(NOT TARGET SDL2::SDL2)
         add_library(SDL2::SDL2 INTERFACE IMPORTED)
@@ -63,48 +64,47 @@ endif()
 if(TARGET SDL2main)
     target_link_libraries(SRB2SDL2 PRIVATE SDL2main)
 endif()
+
 target_compile_definitions(SRB2SDL2 PRIVATE -DDIRECTFULLSCREEN -DHAVE_SDL)
 target_include_directories(SRB2SDL2 PRIVATE ${SDL2_INCLUDE_DIR})
 
-# --- START SOUND DRIVER FIX ---
+# --- SOUND DRIVER LOGIC START ---
 
-# 1. Skip standard package search for Emscripten (we use built-in ports)
+# 1. Desktop: Find Mixer
 if(NOT EMSCRIPTEN)
     find_package(SDL2_mixer_ext CONFIG QUIET)
     find_package(SDL2_mixer QUIET)
 endif()
 
-# 2. Logic to choose the driver
-if(EMSCRIPTEN OR (TARGET SDL2_mixer_ext::SDL2_mixer_ext OR TARGET SDL2_mixer::SDL2_mixer))
-    message(STATUS "Web/Mixer: Enabling mixer_sound.c")
+# 2. Web (EMSCRIPTEN): FORCE Mixer
+if(EMSCRIPTEN)
+    message(STATUS "Web Build: Forcing mixer_sound.c with HAVE_MIXER flag")
     
-    # Add the file that uses SDL_mixer
+    # Use the mixer file
     target_sources(SRB2SDL2 PRIVATE mixer_sound.c)
     target_link_libraries(SRB2SDL2 PRIVATE SDL2::SDL2)
-
-    # FORCE these definitions so mixer_sound.c is not empty
+    
+    # CRITICAL: Force the definitions so the C file is not empty!
     target_compile_definitions(SRB2SDL2 PUBLIC 
         -DHAVE_MIXER=1 
-        -DHAVE_SDL=1
+        -DHAVE_SDL=1 
         -D_LARGEFILE64_SOURCE
     )
-    
-    # Optional: Logic for looping music extension if needed
-    if(EMSCRIPTEN)
-        target_compile_definitions(SRB2SDL2 PUBLIC -DMUSIC_LOOP)
-    endif()
 
+# 3. Desktop: Logic based on found packages
+elseif(TARGET SDL2_mixer_ext::SDL2_mixer_ext OR TARGET SDL2_mixer::SDL2_mixer)
+    target_sources(SRB2SDL2 PRIVATE mixer_sound.c)
+    target_link_libraries(SRB2SDL2 PRIVATE SDL2::SDL2)
 else()
-    message(STATUS "Web/Mixer: Falling back to sdl_sound.c (No Music Support)")
     target_sources(SRB2SDL2 PRIVATE sdl_sound.c)
     target_link_libraries(SRB2SDL2 PRIVATE SDL2::SDL2)
 endif()
 
-# --- END SOUND DRIVER FIX ---
+# --- SOUND DRIVER LOGIC END ---
 
+# Image Libraries (PNG/ZLIB)
 if(EMSCRIPTEN)
     target_compile_definitions(SRB2SDL2 PRIVATE -DHAVE_PNG -DHAVE_ZLIB)
-    # target_sources(SRB2SDL2 PRIVATE apng.c)
 else()
     if(TARGET ZLIB::ZLIB)
         target_compile_definitions(SRB2SDL2 PRIVATE -DHAVE_ZLIB)
