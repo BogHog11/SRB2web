@@ -100,6 +100,10 @@ async function initGame() {
     console.log(err);
     Module.callMain(["-home", "/home/web_user"]);
   });
+
+  setInterval(() => {
+    FS.syncfs(true, (err) => {});
+  },2000);
 }
 
 window.LockMouse = () => {
