@@ -169,6 +169,15 @@ if (UNIX)
 	target_compile_definitions(SRB2SDL2 PRIVATE -DUNIXCOMMON)
 endif()
 
+if(EMSCRIPTEN)
+    target_compile_definitions(SRB2SDL2 PRIVATE 
+        -DHAVE_SDL=1
+        -DHAVE_MIXER=1 
+        -DHAVE_SDL_MIXER=1
+        -DSOUND=1
+    )
+endif()
+
 if (BSD MATCHES "FreeBSD")
 	target_compile_definitions(SRB2SDL2 PRIVATE -DFREEBSD)
 endif()
