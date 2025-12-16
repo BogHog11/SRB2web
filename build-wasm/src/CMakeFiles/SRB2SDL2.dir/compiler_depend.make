@@ -3627,6 +3627,146 @@ src/CMakeFiles/SRB2SDL2.dir/hardware/hw_bsp.c.o: /workspaces/SRB2web/src/hardwar
   /workspaces/SRB2web/src/hardware/hw_glob.h \
   /workspaces/SRB2web/src/hardware/hw_main.h
 
+src/CMakeFiles/SRB2SDL2.dir/hardware/hw_draw.c.o: /workspaces/SRB2web/src/hardware/hw_draw.c \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/alloca.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/assert.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/bits/alltypes.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/bits/fcntl.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/bits/limits.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/bits/posix.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/bits/setjmp.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/bits/stat.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/bits/stdint.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/compat/math.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/compat/stdarg.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/compat/stdlib.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/compat/string.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/compat/sys/stat.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/compat/time.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/ctype.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/endian.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/fcntl.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/features.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/limits.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/locale.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/math.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/png.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/pngconf.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/pnglibconf.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/setjmp.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/stdarg.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/stdbool.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/stddef.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/stdint.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/stdio.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/stdlib.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/string.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/strings.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/sys/select.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/sys/stat.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/sys/types.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/time.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/unistd.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/wasi/api.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stdarg___gnuc_va_list.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stdarg___va_copy.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stdarg_header_macro.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stdarg_va_arg.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stdarg_va_copy.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stdarg_va_list.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_header_macro.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_max_align_t.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_null.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_nullptr_t.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_offsetof.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_ptrdiff_t.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_size_t.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_unreachable.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_wchar_t.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/limits.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/stdarg.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/stdbool.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/stddef.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/stdint.h \
+  /workspaces/SRB2web/src/am_map.h \
+  /workspaces/SRB2web/src/blua/lauxlib.h \
+  /workspaces/SRB2web/src/blua/lua.h \
+  /workspaces/SRB2web/src/blua/luaconf.h \
+  /workspaces/SRB2web/src/blua/lualib.h \
+  /workspaces/SRB2web/src/command.h \
+  /workspaces/SRB2web/src/d_event.h \
+  /workspaces/SRB2web/src/d_player.h \
+  /workspaces/SRB2web/src/d_think.h \
+  /workspaces/SRB2web/src/d_ticcmd.h \
+  /workspaces/SRB2web/src/dehacked.h \
+  /workspaces/SRB2web/src/doomdata.h \
+  /workspaces/SRB2web/src/doomdef.h \
+  /workspaces/SRB2web/src/doomstat.h \
+  /workspaces/SRB2web/src/doomtype.h \
+  /workspaces/SRB2web/src/endian.h \
+  /workspaces/SRB2web/src/f_finale.h \
+  /workspaces/SRB2web/src/g_demo.h \
+  /workspaces/SRB2web/src/g_game.h \
+  /workspaces/SRB2web/src/g_state.h \
+  /workspaces/SRB2web/src/hardware/hw_data.h \
+  /workspaces/SRB2web/src/hu_stuff.h \
+  /workspaces/SRB2web/src/i_video.h \
+  /workspaces/SRB2web/src/info.h \
+  /workspaces/SRB2web/src/lua_script.h \
+  /workspaces/SRB2web/src/m_aatree.h \
+  /workspaces/SRB2web/src/m_bbox.h \
+  /workspaces/SRB2web/src/m_cheat.h \
+  /workspaces/SRB2web/src/m_cond.h \
+  /workspaces/SRB2web/src/m_dllist.h \
+  /workspaces/SRB2web/src/m_fixed.h \
+  /workspaces/SRB2web/src/m_misc.h \
+  /workspaces/SRB2web/src/m_perfstats.h \
+  /workspaces/SRB2web/src/m_swap.h \
+  /workspaces/SRB2web/src/m_vector.h \
+  /workspaces/SRB2web/src/command.h \
+  /workspaces/SRB2web/src/d_player.h \
+  /workspaces/SRB2web/src/d_ticcmd.h \
+  /workspaces/SRB2web/src/doomdef.h \
+  /workspaces/SRB2web/src/doomtype.h \
+  /workspaces/SRB2web/src/i_threads.h \
+  /workspaces/SRB2web/src/tables.h \
+  /workspaces/SRB2web/src/netcode/d_clisrv.h \
+  /workspaces/SRB2web/src/netcode/d_net.h \
+  /workspaces/SRB2web/src/netcode/d_netcmd.h \
+  /workspaces/SRB2web/src/netcode/mserv.h \
+  /workspaces/SRB2web/src/netcode/protocol.h \
+  /workspaces/SRB2web/src/p_local.h \
+  /workspaces/SRB2web/src/p_maputl.h \
+  /workspaces/SRB2web/src/p_mobj.h \
+  /workspaces/SRB2web/src/p_polyobj.h \
+  /workspaces/SRB2web/src/p_pspr.h \
+  /workspaces/SRB2web/src/p_saveg.h \
+  /workspaces/SRB2web/src/p_setup.h \
+  /workspaces/SRB2web/src/p_spec.h \
+  /workspaces/SRB2web/src/p_tick.h \
+  /workspaces/SRB2web/src/r_data.h \
+  /workspaces/SRB2web/src/r_defs.h \
+  /workspaces/SRB2web/src/r_main.h \
+  /workspaces/SRB2web/src/r_state.h \
+  /workspaces/SRB2web/src/r_textures.h \
+  /workspaces/SRB2web/src/screen.h \
+  /workspaces/SRB2web/src/sounds.h \
+  /workspaces/SRB2web/src/st_stuff.h \
+  /workspaces/SRB2web/src/tables.h \
+  /workspaces/SRB2web/src/taglist.h \
+  /workspaces/SRB2web/src/v_video.h \
+  /workspaces/SRB2web/src/version.h \
+  /workspaces/SRB2web/src/w_wad.h \
+  /workspaces/SRB2web/src/z_zone.h \
+  /workspaces/SRB2web/src/hardware/hw_data.h \
+  /workspaces/SRB2web/src/hardware/hw_defs.h \
+  /workspaces/SRB2web/src/hardware/hw_dll.h \
+  /workspaces/SRB2web/src/hardware/hw_drv.h \
+  /workspaces/SRB2web/src/hardware/hw_glob.h \
+  /workspaces/SRB2web/src/hardware/hw_main.h \
+  /workspaces/SRB2web/src/hardware/hw_md2.h \
+  /workspaces/SRB2web/src/hardware/hw_model.h
+
 src/CMakeFiles/SRB2SDL2.dir/hu_stuff.c.o: /workspaces/SRB2web/src/hu_stuff.c \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/alloca.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/assert.h \
@@ -15233,12 +15373,6 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 
 /workspaces/SRB2web/src/p_sight.c:
 
-/workspaces/SRB2web/src/hardware/hw_model.h:
-
-/workspaces/SRB2web/src/hardware/hw_md2.h:
-
-/workspaces/SRB2web/src/p_setup.c:
-
 /workspaces/SRB2web/src/p_mobj.c:
 
 /workspaces/SRB2web/src/p_maputl.c:
@@ -15310,10 +15444,6 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 /workspaces/SRB2web/src/taglist.c:
 
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/zconf.h:
-
-/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/pnglibconf.h:
-
-/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/png.h:
 
 /workspaces/SRB2web/src/r_translation.c:
 
@@ -15411,10 +15541,6 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_audio.h:
 
-/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/pngconf.h:
-
-/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_atomic.h:
-
 /workspaces/SRB2web/src/p_map.c:
 
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL.h:
@@ -15455,6 +15581,16 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 
 /workspaces/SRB2web/src/lua_mobjlib.c:
 
+/workspaces/SRB2web/src/lua_mathlib.c:
+
+/workspaces/SRB2web/src/lua_maplib.c:
+
+/workspaces/SRB2web/src/lua_infolib.c:
+
+/workspaces/SRB2web/src/lua_hudlib_drawlist.c:
+
+/workspaces/SRB2web/src/lua_hooklib.c:
+
 /workspaces/SRB2web/src/blua/lapi.c:
 
 /workspaces/SRB2web/src/dehacked.h:
@@ -15468,8 +15604,6 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 /workspaces/SRB2web/src/p_pspr.h:
 
 /workspaces/SRB2web/src/p_maputl.h:
-
-/workspaces/SRB2web/src/lua_mathlib.c:
 
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_clipboard.h:
 
@@ -15519,6 +15653,8 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 
 /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_null.h:
 
+/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/pnglibconf.h:
+
 /workspaces/SRB2web/src/blua/luaconf.h:
 
 /workspaces/SRB2web/src/p_slopes.h:
@@ -15537,6 +15673,10 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 
 /workspaces/SRB2web/src/blua/llex.c:
 
+/workspaces/SRB2web/src/lua_consolelib.c:
+
+/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/stdlib.h:
+
 /workspaces/SRB2web/src/g_input.h:
 
 /workspaces/SRB2web/src/m_perfstats.c:
@@ -15554,8 +15694,6 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 /workspaces/SRB2web/src/endian.h:
 
 /workspaces/SRB2web/src/blua/ldebug.c:
-
-/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/sys/types.h:
 
 /workspaces/SRB2web/src/netcode/d_clisrv.h:
 
@@ -15593,6 +15731,10 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/string.h:
 
+/workspaces/SRB2web/src/lua_colorlib.c:
+
+/workspaces/SRB2web/src/doomtype.h:
+
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/errno.h:
 
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_assert.h:
@@ -15604,10 +15746,6 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/bits/alltypes.h:
 
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/limits.h:
-
-/workspaces/SRB2web/src/hardware/hw_drv.h:
-
-/workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/stdint.h:
 
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/emscripten/promise.h:
 
@@ -15653,10 +15791,6 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 
 /workspaces/SRB2web/src/filesrch.h:
 
-/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/stdlib.h:
-
-/workspaces/SRB2web/src/lua_consolelib.c:
-
 /workspaces/SRB2web/src/sdl/sdlmain.h:
 
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/compat/stdarg.h:
@@ -15699,6 +15833,10 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/locale.h:
 
+/workspaces/SRB2web/src/lua_blockmaplib.c:
+
+/workspaces/SRB2web/src/r_things.h:
+
 /workspaces/SRB2web/src/lua_inputlib.c:
 
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/wasi/api.h:
@@ -15706,6 +15844,8 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_wchar_t.h:
 
 /workspaces/SRB2web/src/i_video.h:
+
+/workspaces/SRB2web/src/hardware/hw_model.h:
 
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_render.h:
 
@@ -15718,6 +15858,12 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 /workspaces/SRB2web/src/blua/lstrlib.c:
 
 /workspaces/SRB2web/src/blua/ldo.h:
+
+/workspaces/SRB2web/src/lua_hudlib.c:
+
+/workspaces/SRB2web/src/blua/loslib.c:
+
+/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/time.h:
 
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/ctype.h:
 
@@ -15776,8 +15922,6 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 /workspaces/SRB2web/src/doomdata.h:
 
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/sys/select.h:
-
-/workspaces/SRB2web/src/lua_infolib.c:
 
 /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/limits.h:
 
@@ -15841,8 +15985,6 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 
 /workspaces/SRB2web/src/blua/lvm.c:
 
-/workspaces/SRB2web/src/lua_hooklib.c:
-
 /workspaces/SRB2web/src/blua/lstring.c:
 
 /workspaces/SRB2web/src/blua/lmem.h:
@@ -15864,6 +16006,10 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 /workspaces/SRB2web/src/hu_stuff.h:
 
 /workspaces/SRB2web/src/f_wipe.c:
+
+/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_atomic.h:
+
+/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/pngconf.h:
 
 /workspaces/SRB2web/src/blua/ltm.h:
 
@@ -15905,11 +16051,11 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 
 /workspaces/SRB2web/src/d_main.c:
 
-/workspaces/SRB2web/src/hardware/hw_dll.h:
-
 /workspaces/SRB2web/src/m_perfstats.h:
 
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/bits/stat.h:
+
+/workspaces/SRB2web/src/hardware/hw_dll.h:
 
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/bits/setjmp.h:
 
@@ -15985,8 +16131,6 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/bits/posix.h:
 
-/workspaces/SRB2web/src/lua_maplib.c:
-
 /workspaces/SRB2web/src/netcode/mserv.c:
 
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/unistd.h:
@@ -16003,11 +16147,13 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 
 /workspaces/SRB2web/src/y_inter.h:
 
+/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/sys/types.h:
+
+/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/fcntl.h:
+
 /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_timer.h:
 
 /workspaces/SRB2web/src/deh_lua.c:
-
-/workspaces/SRB2web/src/lua_hudlib_drawlist.c:
 
 /workspaces/SRB2web/src/lua_script.c:
 
@@ -16047,6 +16193,18 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 
 /workspaces/SRB2web/src/hardware/hw_bsp.c:
 
+/workspaces/SRB2web/src/hardware/hw_draw.c:
+
+/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/png.h:
+
+/workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/stdint.h:
+
+/workspaces/SRB2web/src/hardware/hw_drv.h:
+
+/workspaces/SRB2web/src/p_setup.c:
+
+/workspaces/SRB2web/src/hardware/hw_md2.h:
+
 /workspaces/SRB2web/src/p_polyobj.c:
 
 /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_size_t.h:
@@ -16063,18 +16221,6 @@ src/config.h:
 
 /workspaces/SRB2web/src/i_time.c:
 
+/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/bits/fcntl.h:
+
 /workspaces/SRB2web/src/lzf.h:
-
-/workspaces/SRB2web/src/r_things.h:
-
-/workspaces/SRB2web/src/lua_blockmaplib.c:
-
-/workspaces/SRB2web/src/doomtype.h:
-
-/workspaces/SRB2web/src/lua_colorlib.c:
-
-/workspaces/SRB2web/src/blua/loslib.c:
-
-/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/time.h:
-
-/workspaces/SRB2web/src/lua_hudlib.c:

@@ -29,8 +29,6 @@
 #include <emscripten.h>
 
 // Global buffer to store servers received from WebSocket
-// We need this because the Menu expects a synchronous return, but WebSockets are async.
-// We will return this buffer immediately, and update it in the background.
 static msg_server_t emscripten_server_buffer[MAXSERVERLIST];
 static int emscripten_server_count = 0;
 
@@ -53,7 +51,6 @@ EMSCRIPTEN_KEEPALIVE
 void SRB2_ClearServerList(void) {
     emscripten_server_count = 0;
     memset(emscripten_server_buffer, 0, sizeof(emscripten_server_buffer));
-    // console.log equivalent for C
     CONS_Printf("Web: Cleared server list buffer.\n");
 }
 
@@ -66,12 +63,25 @@ void SRB2_AddServerToList(char* address, char* name, char* version, int players,
 
     // IMPORTANT: 'address' is the Room ID from the Relay
     strncpy(info->ip, address, sizeof(info->ip) - 1);
-    strncpy(info->servername, name, sizeof(info->servername) - 1);
+    
+    // Default port string (Required by struct)
+    strncpy(info->port, "5029", sizeof(info->port) - 1);
+
+    // Corrected: Use 'name' instead of 'servername'
+    strncpy(info->name, name, sizeof(info->name) - 1);
+    
+    // Version string
     strncpy(info->version, version, sizeof(info->version) - 1);
     
-    info->actnum = players; // Use actnum to store player count for display
-    info->maxplayer = maxplayers;
-    info->ping = ping;
+    // Set default room (Required by struct)
+    info->room = 1;
+
+    // NOTE: We cannot store players/ping here because msg_server_t 
+    // does not have those fields. The game will query them later 
+    // via PT_SERVERINFO packets if needed.
+    (void)players;
+    (void)maxplayers;
+    (void)ping;
 
     emscripten_server_count++;
 }
@@ -80,7 +90,6 @@ void SRB2_AddServerToList(char* address, char* name, char* version, int players,
 EMSCRIPTEN_KEEPALIVE
 void SRB2_FinishServerList(void) {
     CONS_Printf("Web: Received %d servers from Relay.\n", emscripten_server_count);
-    // Note: The menu might need a refresh signal here, usually user just refreshes manually
 }
 #endif
 // ----------------------------------------------
@@ -136,15 +145,8 @@ I_mutex       ms_ServerList_mutex;
 
 UINT16 current_port = 0;
 
-// Room list is an external variable now.
-// Avoiding having to get info ten thousand times...
 msg_rooms_t room_list[NUM_LIST_ROOMS+1]; // +1 for easy test
 
-/** Adds variables and commands relating to the master server.
-  *
-  * \sa cv_masterserver, cv_servername,
-  * Command_Listserv_f
-  */
 void AddMServCommands(void)
 {
     CV_RegisterVar(&cv_masterserver);
@@ -156,7 +158,7 @@ void AddMServCommands(void)
     CV_RegisterVar(&cv_servername);
 #ifdef MASTERSERVER
     COM_AddCommand("listserv", Command_Listserv_f, 0);
-    COM_AddCommand("masterserver_update", Update_parameters, COM_LUA); // allows people to updates manually in case you were delisted by accident
+    COM_AddCommand("masterserver_update", Update_parameters, COM_LUA); 
 #endif
 }
 
@@ -179,30 +181,24 @@ msg_server_t *GetShortServersList(INT32 room, int id)
 
 #ifdef EMSCRIPTEN
     // --- WEB ASSEMBLY PATH ---
-    // 1. Trigger the async request to update the list for NEXT time
     JS_RequestServerList_Bridge();
 
-    // 2. Immediately copy whatever is in our cache to the game
-    // (This prevents blocking. First time might be empty, second time has data)
     if (emscripten_server_count > 0)
     {
         memcpy(server_list, emscripten_server_buffer, emscripten_server_count * sizeof(msg_server_t));
-        // Mark the end of the list with an empty entry if fewer than max
+        
         if (emscripten_server_count < NUM_LIST_SERVER)
             memset(&server_list[emscripten_server_count], 0, sizeof(msg_server_t));
             
-        // Emulate success return
         return server_list;
     }
     else
     {
-        // Return a valid but empty list so we don't crash
         memset(server_list, 0, (NUM_LIST_SERVER + 1) * sizeof *server_list);
         CONS_Printf("Web: Request sent... refresh menu to see results.\n");
         return server_list;
     }
 #else
-    // --- STANDARD PC PATH ---
     if (HMS_fetch_servers(server_list, room, id))
         return server_list;
     else
@@ -217,7 +213,6 @@ msg_server_t *GetShortServersList(INT32 room, int id)
 INT32 GetRoomsList(boolean hosting, int id)
 {
 #ifdef EMSCRIPTEN
-    // Web doesn't use rooms currently, just return success
     return 1;
 #else
     if (HMS_fetch_rooms( ! hosting, id))
@@ -234,7 +229,6 @@ INT32 GetRoomsList(boolean hosting, int id)
 char *GetMODVersion(int id)
 {
 #ifdef EMSCRIPTEN
-    // Skip version check for web
     return NULL; 
 #else
     char *buffer;
@@ -267,7 +261,6 @@ char *GetMODVersion(int id)
 #endif
 }
 
-// Console only version of the above (used before game init)
 void GetMODVersion_Console(void)
 {
 #ifndef EMSCRIPTEN
@@ -279,8 +272,6 @@ void GetMODVersion_Console(void)
 }
 #endif
 
-/** Gets a list of game servers. Called from console.
-  */
 static void Command_Listserv_f(void)
 {
     CONS_Printf(M_GetText("Retrieving server list...\n"));
@@ -295,12 +286,11 @@ static void Command_Listserv_f(void)
     } else {
         int i;
         for (i = 0; i < emscripten_server_count; i++) {
-             CONS_Printf("#%d: %s (%s) [Players: %d/%d]\n", 
+             // Corrected: Removed references to fields that don't exist
+             CONS_Printf("#%d: %s (%s)\n", 
                 i+1, 
-                emscripten_server_buffer[i].servername,
-                emscripten_server_buffer[i].ip, // RoomID
-                emscripten_server_buffer[i].actnum,
-                emscripten_server_buffer[i].maxplayer
+                emscripten_server_buffer[i].name,
+                emscripten_server_buffer[i].ip
              );
         }
     }
@@ -315,7 +305,6 @@ static void
 Finish_registration (void)
 {
 #ifdef EMSCRIPTEN
-    // Registration happens automatically via WebSocket connection
     MSRegistered = true;
     MSRegisteredId = MSId;
     time(&MSLastPing);
@@ -345,7 +334,6 @@ static void
 Finish_update (void)
 {
 #ifdef EMSCRIPTEN
-    // No update logic needed for Web Relay (it knows we are here)
     MSRegistered = true;
 #else
     int registered;
@@ -354,7 +342,7 @@ Finish_update (void)
     Lock_state();
     {
         registered = MSRegistered;
-        MSUpdateAgain = false;/* this will happen anyway */
+        MSUpdateAgain = false;
     }
     Unlock_state();
 
@@ -395,7 +383,6 @@ static void
 Finish_unlist (void)
 {
 #ifdef EMSCRIPTEN
-    // Disconnecting the WebSocket implicitly unlists
     MSRegistered = false;
 #else
     int registered;
@@ -465,15 +452,14 @@ Register_server_thread (int *id)
 
     Lock_state();
     {
-        /* wait for previous unlist to finish */
         while (*id == MSId && MSRegistered)
             I_hold_cond(&MSCond, MSMutex);
 
-        same = ( *id == MSId );/* it could have been a while */
+        same = ( *id == MSId );
     }
     Unlock_state();
 
-    if (same)/* it could have been a while */
+    if (same)
         Finish_registration();
 
     free(id);
@@ -531,7 +517,6 @@ Change_masterserver_thread (char *api)
 void RegisterServer(void)
 {
 #ifdef EMSCRIPTEN
-    // Web threads are tricky, just call direct
     Finish_registration();
 #else
     if (I_can_thread())
@@ -641,7 +626,7 @@ static void
 Set_api (const char *api)
 {
 #ifdef EMSCRIPTEN
-    (void)api; // Unused in web
+    (void)api;
 #else
     char *dapi = strdup(api);
     if (I_can_thread())
@@ -690,7 +675,7 @@ Update_parameters (void)
         {
             delayed = MSInProgress;
 
-            if (delayed)/* do another update after the current one */
+            if (delayed)
                 MSUpdateAgain = true;
             else
                 registered = MSRegistered;
@@ -721,10 +706,6 @@ static void MasterServer_OnChange(void)
 #ifdef MASTERSERVER
     UnregisterServer();
 
-    /*
-    TODO: remove this for v2, it's just a hack
-    for those coming in with an old config.
-    */
     if (
             ! cv_masterserver.changed &&
             strcmp(cv_masterserver.string, "ms.srb2.org:28900") == 0
