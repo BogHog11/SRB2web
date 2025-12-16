@@ -25,6 +25,7 @@
 #include "../z_zone.h"
 
 // --- EMSCRIPTEN SPECIFIC INCLUDES & GLOBALS ---
+static boolean web_list_pending = false;
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
 
@@ -148,8 +149,6 @@ UINT16 current_port = 0;
 
 msg_rooms_t room_list[NUM_LIST_ROOMS+1]; // +1 for easy test
 
-static boolean web_list_pending = false;
-
 void AddMServCommands(void)
 {
     CV_RegisterVar(&cv_masterserver);
@@ -173,7 +172,6 @@ static void WarnGUI (void)
     M_StartMessage(M_GetText("There was a problem connecting to\nthe Master Server\n\nCheck the console for details.\n"), NULL, MM_NOTHING);
     I_unlock_mutex(m_menu_mutex);
 }
-
 #define NUM_LIST_SERVER MAXSERVERLIST
 msg_server_t *GetShortServersList(INT32 room, int id)
 {
