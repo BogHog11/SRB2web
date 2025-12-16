@@ -10224,15 +10224,6 @@ src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: /workspaces/SRB2web/src/netcode/m
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/compat/sys/stat.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/compat/time.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/ctype.h \
-  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/emscripten.h \
-  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/emscripten/em_asm.h \
-  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/emscripten/em_js.h \
-  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/emscripten/em_macros.h \
-  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/emscripten/em_types.h \
-  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/emscripten/emscripten.h \
-  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/emscripten/promise.h \
-  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/emscripten/version.h \
-  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/emscripten/wget.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/endian.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/features.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/limits.h \
