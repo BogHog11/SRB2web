@@ -53,7 +53,6 @@
 #include "gamestate.h"
 #include "commands.h"
 #include "protocol.h"
-#include <emscripten.h>
 
 //
 // NETWORKING
@@ -1914,52 +1913,4 @@ void D_MD5PasswordPass(const UINT8 *buffer, size_t len, const char *salt, void *
 	// Yes, we intentionally md5 the ENTIRE buffer regardless of size...
 	md5_buffer(tmpbuf, 256, dest);
 #endif
-}
-
-// =========================================================================
-//  CUSTOM BROWSER FUNCTIONS
-// =========================================================================
-
-void SRB2_ClearServerList(void)
-{
-    serverlistcount = 0;
-    memset(serverlist, 0, sizeof(serverlist));
-}
-
-void SRB2_FinishServerList(void)
-{
-    // Optional: Trigger a sort if needed
-}
-
-// EMSCRIPTEN_KEEPALIVE ensures the compiler doesn't delete this function
-EMSCRIPTEN_KEEPALIVE void SRB2_AddServerToList(const char *address, const char *name, const char *version, int players, int maxplayers, int ping, int gametype)
-{
-    if (serverlistcount >= MAXSERVERLIST) return;
-
-    serverelem_t *entry = &serverlist[serverlistcount];
-
-    // 1. Clear the entry
-    memset(entry, 0, sizeof(serverelem_t));
-
-    // 2. Copy Address to 'node'
-    strncpy(entry->node, address, sizeof(entry->node)-1);
-
-    // 3. Copy Name
-    strncpy(entry->name, name, sizeof(entry->name)-1);
-
-    // 4. Set Integers
-    entry->numplayers = (UINT8)players;
-    entry->maxplayers = (UINT8)maxplayers;
-    entry->gametype = (UINT8)gametype;
-    
-    // 5. Handle Port
-    char *portSeparator = strchr(entry->node, ':');
-    if (portSeparator) {
-        *portSeparator = '\0'; // Split IP and Port
-        strncpy(entry->port, portSeparator + 1, sizeof(entry->port)-1);
-    } else {
-        strncpy(entry->port, "5029", sizeof(entry->port)-1);
-    }
-
-    serverlistcount++;
 }
