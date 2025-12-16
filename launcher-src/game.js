@@ -227,38 +227,20 @@ const GT_MATCH = 3;
 const GT_TAG = 4;
 const GT_CTF = 5;
 
+// Mock Server Fetch
 async function fetchMS() {
-    // Simulating a Master Server response
     return [
-        {
-            ip: "192.168.1.10:5029",
-            name: "Classic Co-op Adventure",
-            version: "2.2.13",
-            players: 2,
-            max_players: 8,
-            gametype: GT_COOP // Will show under "Cooperative"
-        },
-        {
-            ip: "192.168.1.11:5029",
-            name: "Monday Night Race",
-            version: "2.2.13",
-            players: 6,
-            max_players: 12,
-            gametype: GT_RACE // Will show under "Race"
-        },
-        {
-            ip: "192.168.1.12:5029",
-            name: "CTF Chaos",
-            version: "2.2.13",
-            players: 8,
-            max_players: 16,
-            gametype: GT_CTF // Will show under "Capture the Flag"
-        }
+        { ip: "192.168.1.10:5029", name: "Classic Co-op Adventure", version: "2.2.13", players: 2, max_players: 8, gametype: GT_COOP },
+        { ip: "192.168.1.11:5029", name: "Monday Night Race", version: "2.2.13", players: 6, max_players: 12, gametype: GT_RACE },
+        { ip: "192.168.1.12:5029", name: "CTF Chaos", version: "2.2.13", players: 8, max_players: 16, gametype: GT_CTF }
     ];
 }
 
+// ----------------------------------------------------
+// THE CRITICAL FUNCTION CALLED BY C
+// ----------------------------------------------------
 window.JS_RequestServerList = function() {
-    window.alert("JS: C code requested server list...");
+    console.log("JS: C code requested server list...");
 
     // 1. Clear the old list in C
     try {
@@ -270,7 +252,6 @@ window.JS_RequestServerList = function() {
         data.forEach(server => {
             Module.ccall('SRB2_AddServerToList', 
                 'void', 
-                // We added a 7th argument type: 'number' for gametype
                 ['string', 'string', 'string', 'number', 'number', 'number', 'number'], 
                 [
                     server.ip,       
@@ -278,8 +259,8 @@ window.JS_RequestServerList = function() {
                     server.version,  
                     server.players,      
                     server.max_players, 
-                    100,             // Ping
-                    server.gametype  // <--- The Sorting Category
+                    100,             
+                    server.gametype  
                 ]
             );
         });
@@ -291,5 +272,4 @@ window.JS_RequestServerList = function() {
         console.error("JS: Error fetching servers:", err);
     });
 };
-
 module.exports = { startGame };
