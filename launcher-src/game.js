@@ -220,4 +220,51 @@ window.addEventListener("resize", () => {
   window.ChangeResolution();
 });
 
+async function fetchMS() {
+  return [
+    {
+      ip: "192.168.1.1",
+      name: "Cool server",
+      version: "2.2.15"
+    }
+  ];
+}
+
+window.JS_RequestServerList = function() {
+        console.log("JS: C code requested server list...");
+
+        // A. Clear the old list in C memory
+        // Syntax: ccall(function_name, return_type, [arg_types], [args])
+        try {
+            Module.ccall('SRB2_ClearServerList', 'void', [], []);
+        } catch(e) { console.error("Could not clear list:", e); }
+
+        
+        fetchMS().then(data => {
+            console.log("JS: Received " + data.length + " servers.");
+
+            // C. Loop through servers and send them to C
+            data.forEach(server => {
+                Module.ccall('SRB2_AddServerToList', 
+                    'void', 
+                    ['string', 'string', 'string', 'number', 'number', 'number'], 
+                    [
+                        server.ip,       // Address (or Room ID)
+                        server.name,     // Server Name
+                        server.version,  // Version (e.g. "2.2.13")
+                        0,               // Players (placeholder)
+                        0,              // Max Players (placeholder)
+                        100              // Ping (placeholder)
+                    ]
+                );
+            });
+
+            // D. Tell C we are done
+            Module.ccall('SRB2_FinishServerList', 'void', [], []);
+        })
+        .catch(err => {
+            console.error("JS: Error fetching servers:", err);
+        });
+    };
+
 module.exports = { startGame };
