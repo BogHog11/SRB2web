@@ -220,7 +220,7 @@ window.addEventListener("resize", () => {
   window.ChangeResolution();
 });
 
-async function fetchMS() {
+async function fetchMS() { //Don't have one for now, just doing this to see if it works.
   return [
     {
       ip: "192.168.1.1",
