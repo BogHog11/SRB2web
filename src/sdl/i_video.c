@@ -2013,28 +2013,29 @@ UINT32 I_GetRefreshRate(void)
 }
 
 #ifdef __EMSCRIPTEN__
-#include "../doomdef.h"
-#include "../command.h"
-#include <emscripten.h>
-#include <stdio.h>
-
-EMSCRIPTEN_KEEPALIVE
-int change_resolution(int w, int h)
+int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
 {
-    // 1. Safety Check: prevent crashing if size is too small
-    if (w < 320) w = 320;
-    if (h < 200) h = 200;
+	SDLdoUngrabMouse();
 
-    // 2. Construct the command string
-    // "vid_mode" is the internal console command to switch resolution
-    char cmd[64];
-    snprintf(cmd, sizeof(cmd), "vid_mode %d %d\n", w, h);
+	vid.recalc = 1;
+	vid.bpp = 1;
 
-    // 3. Send it to the engine
-    // This queues the command to run safely at the start of the next frame
-    COM_BufAddText(cmd);
+	if (modeNum < 0)
+		modeNum = 0;
+	if (modeNum >= MAXWINMODES)
+		modeNum = MAXWINMODES-1;
 
-    return 1;
+	vid.width = x;
+	vid.height = y;
+	vid.modenum = modeNum;
+
+	//Impl_SetWindowName("SRB2 "VERSIONSTRING);
+	src_rect.w = vid.width;
+	src_rect.h = vid.height;
+
+	refresh_rate = VID_GetRefreshRate();
+
+	VID_CheckRenderer();
 }
 
 void EMSCRIPTEN_KEEPALIVE inject_text(const char *text)
