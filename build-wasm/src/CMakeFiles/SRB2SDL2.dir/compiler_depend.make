@@ -16686,6 +16686,7 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.o: /workspaces/SRB2web/src/sdl/sdl_s
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_messagebox.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_metal.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_misc.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_mixer.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_mouse.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_mutex.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_pixels.h \
@@ -18019,6 +18020,8 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 /workspaces/SRB2web/src/string.c:
 
 /workspaces/SRB2web/src/sounds.c:
+
+/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_mixer.h:
 
 /workspaces/SRB2web/src/sdl/ogl_sdl.c:
 
