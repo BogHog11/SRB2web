@@ -145,6 +145,28 @@ async function startGame() {
     Module.printErrr = console.error;
     Module.canvas = gameCanvas;
     Module.onRuntimeInitialized = initGame;
+    Module.WebNet = {
+        Init: function() {
+            window.alert("Network initialized from Main JS!");
+            return 1;
+        },
+        OpenSocket: function() {
+            window.alert("Socket Open requested.");
+            return 1;
+        },
+        Connect: function(address) {
+            window.alert("Game trying to connect to: " + address);
+            // You can put real WebSocket logic here later!
+            return 1;
+        },
+        SendPacket: function(ptr, length) {
+            // console.log("Sending " + length + " bytes...");
+            return 1;
+        },
+        GetPacket: function(ptr, maxlen) {
+            return 0; // No data received
+        }
+    };
     try{
         await loadScript();
     }catch(e){
