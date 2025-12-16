@@ -16,13 +16,13 @@ function loadScript () {
 
 const CACHE_NAME = 'srb2-assets-v1';
 
-async function downloadAndSaveAssets(assetList) {
-    const assets = [
-            { url: "assets/characters.pk3", filename: "characters.pk3" },
-            { url: "assets/music.pk3", filename: "music.pk3" },
-            { url: "assets/srb2.dta", filename: "srb2.pk3" },
-            { url: "assets/zones.dta", filename: "zones.pk3" } // If you have it
-        ];
+async function downloadAndSaveAssets() {
+    const assetList = [
+        { url: "assets/characters.pk3", filename: "characters.pk3" },
+        { url: "assets/music.pk3", filename: "music.pk3" },
+        { url: "assets/srb2.dta", filename: "srb2.pk3" },
+        { url: "assets/zones.dta", filename: "zones.pk3" } // If you have it
+    ];
     const status = document.getElementById('status');
     
     // 1. Open the browser's cache storage
