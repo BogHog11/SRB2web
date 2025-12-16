@@ -3833,6 +3833,30 @@ sdl/i_video.c.s:
 	cd /workspaces/SRB2web/build-wasm && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SRB2SDL2.dir/build.make src/CMakeFiles/SRB2SDL2.dir/sdl/i_video.c.s
 .PHONY : sdl/i_video.c.s
 
+sdl/mixer_sound.o: sdl/mixer_sound.c.o
+.PHONY : sdl/mixer_sound.o
+
+# target to build an object file
+sdl/mixer_sound.c.o:
+	cd /workspaces/SRB2web/build-wasm && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SRB2SDL2.dir/build.make src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o
+.PHONY : sdl/mixer_sound.c.o
+
+sdl/mixer_sound.i: sdl/mixer_sound.c.i
+.PHONY : sdl/mixer_sound.i
+
+# target to preprocess a source file
+sdl/mixer_sound.c.i:
+	cd /workspaces/SRB2web/build-wasm && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SRB2SDL2.dir/build.make src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.i
+.PHONY : sdl/mixer_sound.c.i
+
+sdl/mixer_sound.s: sdl/mixer_sound.c.s
+.PHONY : sdl/mixer_sound.s
+
+# target to generate assembly for a file
+sdl/mixer_sound.c.s:
+	cd /workspaces/SRB2web/build-wasm && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SRB2SDL2.dir/build.make src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.s
+.PHONY : sdl/mixer_sound.c.s
+
 sdl/ogl_sdl.o: sdl/ogl_sdl.c.o
 .PHONY : sdl/ogl_sdl.o
 
@@ -3856,30 +3880,6 @@ sdl/ogl_sdl.s: sdl/ogl_sdl.c.s
 sdl/ogl_sdl.c.s:
 	cd /workspaces/SRB2web/build-wasm && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SRB2SDL2.dir/build.make src/CMakeFiles/SRB2SDL2.dir/sdl/ogl_sdl.c.s
 .PHONY : sdl/ogl_sdl.c.s
-
-sdl/sdl_sound.o: sdl/sdl_sound.c.o
-.PHONY : sdl/sdl_sound.o
-
-# target to build an object file
-sdl/sdl_sound.c.o:
-	cd /workspaces/SRB2web/build-wasm && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SRB2SDL2.dir/build.make src/CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.o
-.PHONY : sdl/sdl_sound.c.o
-
-sdl/sdl_sound.i: sdl/sdl_sound.c.i
-.PHONY : sdl/sdl_sound.i
-
-# target to preprocess a source file
-sdl/sdl_sound.c.i:
-	cd /workspaces/SRB2web/build-wasm && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SRB2SDL2.dir/build.make src/CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.i
-.PHONY : sdl/sdl_sound.c.i
-
-sdl/sdl_sound.s: sdl/sdl_sound.c.s
-.PHONY : sdl/sdl_sound.s
-
-# target to generate assembly for a file
-sdl/sdl_sound.c.s:
-	cd /workspaces/SRB2web/build-wasm && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SRB2SDL2.dir/build.make src/CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.s
-.PHONY : sdl/sdl_sound.c.s
 
 snake.o: snake.c.o
 .PHONY : snake.o
@@ -4614,12 +4614,12 @@ help:
 	@echo "... sdl/i_video.o"
 	@echo "... sdl/i_video.i"
 	@echo "... sdl/i_video.s"
+	@echo "... sdl/mixer_sound.o"
+	@echo "... sdl/mixer_sound.i"
+	@echo "... sdl/mixer_sound.s"
 	@echo "... sdl/ogl_sdl.o"
 	@echo "... sdl/ogl_sdl.i"
 	@echo "... sdl/ogl_sdl.s"
-	@echo "... sdl/sdl_sound.o"
-	@echo "... sdl/sdl_sound.i"
-	@echo "... sdl/sdl_sound.s"
 	@echo "... snake.o"
 	@echo "... snake.i"
 	@echo "... snake.s"

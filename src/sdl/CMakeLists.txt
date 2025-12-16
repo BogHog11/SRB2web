@@ -79,7 +79,7 @@ if(EMSCRIPTEN OR (TARGET SDL2_mixer_ext::SDL2_mixer_ext OR TARGET SDL2_mixer::SD
     message(STATUS "Web/Mixer: Enabling mixer_sound.c")
     
     # Add the file that uses SDL_mixer
-    target_sources(SRB2SDL2 PRIVATE sdl_sound.c)
+    target_sources(SRB2SDL2 PRIVATE mixer_sound.c)
     target_link_libraries(SRB2SDL2 PRIVATE SDL2::SDL2)
 
     # FORCE these definitions so mixer_sound.c is not empty
