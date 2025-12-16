@@ -2514,20 +2514,20 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/hwsym_sdl.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/SRB2SDL2.dir/sdl/hwsym_sdl.c.s"
 	cd /workspaces/SRB2web/build-wasm/src && /workspaces/SRB2web/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /workspaces/SRB2web/src/sdl/hwsym_sdl.c -o CMakeFiles/SRB2SDL2.dir/sdl/hwsym_sdl.c.s
 
-src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
-src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
-src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o: /workspaces/SRB2web/src/sdl/mixer_sound.c
-src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o: src/CMakeFiles/SRB2SDL2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspaces/SRB2web/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_164) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o"
-	cd /workspaces/SRB2web/build-wasm/src && /workspaces/SRB2web/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o -MF CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o.d -o CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o -c /workspaces/SRB2web/src/sdl/mixer_sound.c
+src/CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
+src/CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
+src/CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.o: /workspaces/SRB2web/src/sdl/sdl_sound.c
+src/CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.o: src/CMakeFiles/SRB2SDL2.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspaces/SRB2web/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_164) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.o"
+	cd /workspaces/SRB2web/build-wasm/src && /workspaces/SRB2web/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.o -MF CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.o.d -o CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.o -c /workspaces/SRB2web/src/sdl/sdl_sound.c
 
-src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.i"
-	cd /workspaces/SRB2web/build-wasm/src && /workspaces/SRB2web/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /workspaces/SRB2web/src/sdl/mixer_sound.c > CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.i
+src/CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.i"
+	cd /workspaces/SRB2web/build-wasm/src && /workspaces/SRB2web/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /workspaces/SRB2web/src/sdl/sdl_sound.c > CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.i
 
-src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.s"
-	cd /workspaces/SRB2web/build-wasm/src && /workspaces/SRB2web/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /workspaces/SRB2web/src/sdl/mixer_sound.c -o CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.s
+src/CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.s"
+	cd /workspaces/SRB2web/build-wasm/src && /workspaces/SRB2web/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /workspaces/SRB2web/src/sdl/sdl_sound.c -o CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.s
 
 # Object files for target SRB2SDL2
 SRB2SDL2_OBJECTS = \
@@ -2694,7 +2694,7 @@ SRB2SDL2_OBJECTS = \
 "CMakeFiles/SRB2SDL2.dir/sdl/dosstr.c.o" \
 "CMakeFiles/SRB2SDL2.dir/sdl/endtxt.c.o" \
 "CMakeFiles/SRB2SDL2.dir/sdl/hwsym_sdl.c.o" \
-"CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o"
+"CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.o"
 
 # External object files for target SRB2SDL2
 SRB2SDL2_EXTERNAL_OBJECTS =
@@ -2862,7 +2862,7 @@ bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/sdl/i_video.c.o
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/sdl/dosstr.c.o
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/sdl/endtxt.c.o
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/sdl/hwsym_sdl.c.o
-bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o
+bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.o
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/build.make
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/objects1.rsp
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/link.txt
