@@ -2013,6 +2013,11 @@ UINT32 I_GetRefreshRate(void)
 }
 
 #ifdef __EMSCRIPTEN__
+#include "../doomdef.h"
+#include "../command.h"
+#include <emscripten.h>
+#include <stdio.h>
+
 EMSCRIPTEN_KEEPALIVE
 int change_resolution(int w, int h)
 {

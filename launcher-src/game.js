@@ -123,29 +123,17 @@ var GetViewportWidth = () => {
       };
 
 window.ChangeResolution = (x, y) => {
-    // 1. Check if the game is running AND if ccall exists
-    if (Module['calledRun'] && Module['ccall']) {
-        
-        if (typeof x === 'undefined') {
+    if (Module['calledRun']) {
+          if (typeof x === 'undefined')
             x = GetViewportWidth();
-        }
-        if (typeof y === 'undefined') {
+          if (typeof y === 'undefined')
             y = GetViewportHeight();
-        }
-
-        gameCanvas.width = x;
-        gameCanvas.height = y;
-
-        gameCanvas.style.width = GetViewportWidth() + "px";
-        gameCanvas.style.height = GetViewportHeight() + "px";
-
-        console.log(`Resizing to: ${x}x${y} (DPI: ${dpr})`);
-        Module.ccall('change_resolution',
-            null, 
+          Module.ccall('change_resolution',
+            'number',
             ['number', 'number'],
             [x, y]
-        );
-    }
+          );
+        }
 };
 
 async function startGame() {
