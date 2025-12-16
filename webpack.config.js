@@ -80,8 +80,8 @@ module.exports = {
         },
         //Assets 
         {
-          from: "./static",
-          to: ".",
+          from: "./game-assets",
+          to: "./assets/",
           noErrorOnMissing: true,
         },
       ],
