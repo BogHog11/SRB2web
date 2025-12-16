@@ -14,6 +14,7 @@ module.exports = [
     {
         element: "div",
         className: "launcherMain",
+        gid: "launcherMain",
         children: [
             {
                 element: "img",
@@ -27,8 +28,40 @@ module.exports = [
             {
                 element: "button",
                 className: "button playButton",
-                textContent: "Play"
+                textContent: "Play",
+                gid: "playButton"
+            },
+        ]
+    },
+    {
+        element: "div",
+        className: "loaderMain",
+        gid: "loaderMain",
+        children: [
+            {
+                element: "img",
+                style: {
+                    width: "300px",
+                    height: "160px",
+                    objectFit: "contain"
+                },
+                src: "images/srb2logo.png"
+            },
+            {
+                element: "div",
+                gid: "loaderContent",
+                textContent: "Loading...",
+                style: {
+                    textAlign: "center",
+                    fontWeight: "bold",
+                    color: "#ffffff"
+                }
             }
         ]
+    },
+    {
+        element: "canvas",
+        className: "gameCanvas",
+        gid: "gameCanvas"
     }
 ];

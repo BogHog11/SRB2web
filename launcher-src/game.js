@@ -5,26 +5,26 @@ if (window["Module"]) {
 var IDBFS = null;
 var gameCanvas = elements.getGPId("gameCanvas");
 var didStart = false;
+var loaderContent = elements.getGPId("loaderContent");
 function loadScript () {
     return new Promise((resolve,reject) => {
+        loaderContent.textContent = "Loading game script...";
         var script = document.createElement("script");
         script.src = "srb2.js";
         script.onload = resolve;
         script.onerror = reject;
+        document.body.append(script);
     });
 }
 
-const CACHE_NAME = 'srb2-assets-v1';
-
+var CACHE_NAME = 'srb2-assets-v1';
 async function downloadAndSaveAssets() {
     const assetList = [
         { url: "assets/characters.pk3", filename: "characters.pk3" },
         { url: "assets/music.pk3", filename: "music.pk3" },
-        { url: "assets/srb2.dta", filename: "srb2.pk3" },
-        { url: "assets/zones.dta", filename: "zones.pk3" } // If you have it
-    ];
-    const status = document.getElementById('status');
-    
+        { url: "assets/srb2.pk3", filename: "srb2.pk3" },
+        { url: "assets/zones.pk3", filename: "zones.pk3" } // If you have it
+    ];    
     // 1. Open the browser's cache storage
     const cache = await caches.open(CACHE_NAME);
 
@@ -37,19 +37,38 @@ async function downloadAndSaveAssets() {
         if (response) {
             // HIT: We found it!
             console.log(`[CACHE HIT] Loading ${asset.filename} from disk.`);
-            if(status) status.innerText = `Loading ${asset.filename} from cache...`;
+            loaderContent.textContent = `Loading ${asset.filename} from cache...`;
         } else {
             // MISS: We need to download it
             console.log(`[CACHE MISS] Downloading ${asset.filename} from internet...`);
-            if(status) status.innerText = `Downloading ${asset.filename}...`;
+            loaderContent.textContent = `Downloading ${asset.filename}...`;
 
             try {
-                // Download and add to cache automatically
-                await cache.add(asset.url);
-                // Retrieve the saved response
-                response = await cache.match(asset.url);
+                // --- NEW CODE START ---
+                
+                // 1. Manually fetch the file first to check for errors
+                console.log(`[NETWORK] Fetching ${asset.url}...`);
+                const request = new Request(asset.url);
+                const networkResponse = await fetch(request);
+
+                // 2. Check for 404s or Server Errors
+                if (!networkResponse.ok) {
+                    throw new Error(`Server returned ${networkResponse.status} ${networkResponse.statusText} for file: ${asset.url}`);
+                }
+
+                // 3. Put the successful response into the cache
+                // We must clone() it because the response body can only be read once
+                await cache.put(request, networkResponse.clone());
+
+                // 4. Use the network response immediately so we don't have to look it up again
+                response = networkResponse;
+                
+                // --- NEW CODE END ---
+
             } catch (err) {
-                console.error(`Failed to download ${asset.url}`);
+                console.error(`FATAL ERROR: Could not load ${asset.url}`);
+                // Update the loading screen so you can see it without opening console
+                loaderContent.textContent = `ERROR: ${err.message}`;
                 throw err;
             }
         }
@@ -106,10 +125,14 @@ var GetViewportWidth = () => {
 
 window.ChangeResolution = (x, y) => {
         if (Module['calledRun']) {
-          if (typeof x === 'undefined')
+          if (typeof x === 'undefined') {
             x = GetViewportWidth();
-          if (typeof y === 'undefined')
+        }
+          if (typeof y === 'undefined') {
             y = GetViewportHeight();
+          }
+          gameCanvas.width = x;
+          gameCanvas.height = y;
           Module.ccall('change_resolution',
             'number',
             ['number', 'number'],
@@ -133,5 +156,10 @@ async function startGame() {
         return;
     }
 }
+
+window.StartedMainLoopCallback = function () {
+    didStart = true;
+    gameCanvas.hidden = false;
+};
 
 module.exports = {startGame};
