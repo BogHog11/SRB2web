@@ -179,7 +179,9 @@ async function startGame() {
 window.StartedMainLoopCallback = function () {
     didStart = true;
     gameCanvas.hidden = false;
-    window.ChangeResolution();
+    setTimeout(() => {
+        window.ChangeResolution();
+    },10);
 };
 
 window.addEventListener("resize", () => {
