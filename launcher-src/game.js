@@ -130,6 +130,8 @@ window.ChangeResolution = (x, y) => {
             y = GetViewportHeight();
         gameCanvas.width = x;
         gameCanvas.height = y;
+        gameCanvas.style.width = x + "px";
+        gameCanvas.style.height = y + "px";
           Module.ccall('change_resolution',
             'number',
             ['number', 'number'],
