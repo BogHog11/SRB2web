@@ -2657,30 +2657,6 @@ netcode/i_tcp.c.s:
 	cd /workspaces/SRB2web/build-wasm && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SRB2SDL2.dir/build.make src/CMakeFiles/SRB2SDL2.dir/netcode/i_tcp.c.s
 .PHONY : netcode/i_tcp.c.s
 
-netcode/mserv.o: netcode/mserv.c.o
-.PHONY : netcode/mserv.o
-
-# target to build an object file
-netcode/mserv.c.o:
-	cd /workspaces/SRB2web/build-wasm && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SRB2SDL2.dir/build.make src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o
-.PHONY : netcode/mserv.c.o
-
-netcode/mserv.i: netcode/mserv.c.i
-.PHONY : netcode/mserv.i
-
-# target to preprocess a source file
-netcode/mserv.c.i:
-	cd /workspaces/SRB2web/build-wasm && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SRB2SDL2.dir/build.make src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.i
-.PHONY : netcode/mserv.c.i
-
-netcode/mserv.s: netcode/mserv.c.s
-.PHONY : netcode/mserv.s
-
-# target to generate assembly for a file
-netcode/mserv.c.s:
-	cd /workspaces/SRB2web/build-wasm && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/SRB2SDL2.dir/build.make src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.s
-.PHONY : netcode/mserv.c.s
-
 netcode/net_command.o: netcode/net_command.c.o
 .PHONY : netcode/net_command.o
 
@@ -4467,9 +4443,6 @@ help:
 	@echo "... netcode/i_tcp.o"
 	@echo "... netcode/i_tcp.i"
 	@echo "... netcode/i_tcp.s"
-	@echo "... netcode/mserv.o"
-	@echo "... netcode/mserv.i"
-	@echo "... netcode/mserv.s"
 	@echo "... netcode/net_command.o"
 	@echo "... netcode/net_command.i"
 	@echo "... netcode/net_command.s"

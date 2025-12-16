@@ -102,7 +102,7 @@ async function initGame() {
   });
 
   setInterval(() => {
-    FS.syncfs(true, (err) => {});
+    FS.syncfs(false, (err) => {});
   },2000);
 }
 

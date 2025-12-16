@@ -11,5 +11,4 @@ target_sources(SRB2SDL2 PRIVATE
 	d_netfil.c
 	http-mserv.c
 	i_tcp.c
-	mserv.c
 )

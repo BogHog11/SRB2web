@@ -205,8 +205,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/SRB2SDL2.dir/netcode/http-mserv.c.o.d"
   "CMakeFiles/SRB2SDL2.dir/netcode/i_tcp.c.o"
   "CMakeFiles/SRB2SDL2.dir/netcode/i_tcp.c.o.d"
-  "CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o"
-  "CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o.d"
   "CMakeFiles/SRB2SDL2.dir/netcode/net_command.c.o"
   "CMakeFiles/SRB2SDL2.dir/netcode/net_command.c.o.d"
   "CMakeFiles/SRB2SDL2.dir/netcode/server_connection.c.o"
