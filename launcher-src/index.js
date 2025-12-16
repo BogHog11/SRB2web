@@ -10,10 +10,10 @@ loaderMain.hidden = true;
 launcherMain.hidden = false;
 
 var playButton = elements.getGPId("playButton");
-var {startGame} = require("./game.js");
+var { startGame } = require("./game.js");
 
 playButton.addEventListener("click", function () {
-    loaderMain.hidden = false;
-    launcherMain.hidden = true;
-    startGame();
+  loaderMain.hidden = false;
+  launcherMain.hidden = true;
+  startGame();
 });
