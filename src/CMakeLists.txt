@@ -137,9 +137,21 @@ target_link_options(SRB2SDL2 PRIVATE
     "-sUSE_SDL=2"
     "-sASYNCIFY"
     "-lidbfs.js"
-    "-sEXPORTED_RUNTIME_METHODS=['callMain','FS','ccall','IDBFS']"
-    
+    "-sEXPORTED_RUNTIME_METHODS=['callMain','FS','ccall','cwrap','IDBFS']"
+    "-sEXPORTED_FUNCTIONS=['_main', '_malloc', '_free']"
+
+    # 1. FIX THE CRASH: Increase Stack Size
+    # The default is 64KB. We need at least 5MB for SRB2's level loader.
+    "-sSTACK_SIZE=5242880"
+
+    # 2. FIX THE NETWORK: Link your JS Library
+    # You must point this to the .js file that contains your 'mergeInto(LibraryManager.library, ...)' code.
+    # CHECK THE PATH BELOW: It is likely in 'src/sdl/srb2_web.js' or similar.
+    "--js-library=${CMAKE_SOURCE_DIR}/sdl/i_net_web.js" 
+
+    # 3. MEMORY STABILITY
     "-sINITIAL_MEMORY=268435456"
+    "-sALLOW_MEMORY_GROWTH=0"
 )
 
 target_compile_features(SRB2SDL2 PRIVATE c_std_23 cxx_std_17)
