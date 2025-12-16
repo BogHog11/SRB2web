@@ -28,6 +28,10 @@
 #include <emscripten.h>
 #include <stdlib.h>
 #include <string.h>
+
+// DECLARE THE JS FUNCTION SO C CAN CALL IT
+extern void JS_RequestServerList(void);
+
 #endif
 
 #ifdef MASTERSERVER
@@ -121,7 +125,27 @@ msg_server_t *GetShortServersList(INT32 room, int id)
 
     // +1 for easy test
     server_list = malloc(( NUM_LIST_SERVER + 1 ) * sizeof *server_list);
+    memset(server_list, 0, (NUM_LIST_SERVER + 1) * sizeof *server_list);
 
+#ifdef __EMSCRIPTEN__
+    // 1. Tell JS to start fetching servers
+    JS_RequestServerList();
+
+    // 2. If JS has already populated the global list (from a previous frame/callback), use it.
+    if (ms_ServerList)
+    {
+        // Copy the global list into the local list the menu expects
+        // We use memcpy safely based on the fixed size
+        memcpy(server_list, ms_ServerList, NUM_LIST_SERVER * sizeof(msg_server_t));
+        return server_list;
+    }
+
+    // 3. If no data yet (first load), return the empty list (non-NULL) so the menu doesn't crash,
+    // or return NULL to show the "Problem connecting" warning.
+    // Returning an empty list allows the user to click Refresh again.
+    return server_list; 
+#else
+    // Standard Desktop Behavior
     if (HMS_fetch_servers(server_list, room, id))
         return server_list;
     else
@@ -130,6 +154,7 @@ msg_server_t *GetShortServersList(INT32 room, int id)
         WarnGUI();
         return NULL;
     }
+#endif
 }
 
 INT32 GetRoomsList(boolean hosting, int id)
@@ -190,6 +215,10 @@ void GetMODVersion_Console(void)
 static void Command_Listserv_f(void)
 {
     CONS_Printf(M_GetText("Retrieving server list...\n"));
+
+#ifdef __EMSCRIPTEN__
+    JS_RequestServerList();
+#endif
 
     {
         HMS_list_servers();
@@ -641,26 +670,19 @@ EMSCRIPTEN_KEEPALIVE void SRB2_AddServerToList(const char *address, const char *
         strncpy(entry->ip, tempAddr, sizeof(entry->ip) - 1);
         strncpy(entry->port, "5029", sizeof(entry->port) - 1);
     }
-    
-    // Note: msg_server_t does NOT have fields for 'players', 'maxplayers', or 'ping'.
-    // The game normally fetches these by pinging the IP itself. 
-    // Since we can't easily ping via WebAssembly UDP, we simply store the directory data.
 
     web_server_count++;
 }
 
 EMSCRIPTEN_KEEPALIVE void SRB2_FinishServerList(void)
 {
-    // Clean up old list if it exists (assuming it was malloc'd)
-    // Note: If the engine allocated this elsewhere, this might be risky, 
-    // but typically fetch_servers re-allocates anyway.
+    // Clean up old list if it exists
     if (ms_ServerList) {
         free(ms_ServerList);
         ms_ServerList = NULL;
     }
 
-    // Allocate memory for the global list (+1 for null terminator safety)
-    // The game code in GetShortServersList uses (NUM_LIST_SERVER + 1) size.
+    // Allocate memory for the global list (+1 for null terminator)
     size_t allocSize = (web_server_count + 1) * sizeof(msg_server_t);
     ms_ServerList = (msg_server_t *)malloc(allocSize);
 
@@ -673,8 +695,6 @@ EMSCRIPTEN_KEEPALIVE void SRB2_FinishServerList(void)
         memset(&ms_ServerList[web_server_count], 0, sizeof(msg_server_t));
         
         CONS_Printf("Web: Loaded %d servers into Master Server list.\n", web_server_count);
-    } else {
-        CONS_Printf("Web: Failed to allocate memory for server list.\n");
     }
 }
 
