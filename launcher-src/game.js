@@ -241,7 +241,6 @@ window.JS_RequestServerList = function() {
 
         
         fetchMS().then(data => {
-            console.log("JS: Received " + data.length + " servers.");
 
             // C. Loop through servers and send them to C
             data.forEach(server => {
