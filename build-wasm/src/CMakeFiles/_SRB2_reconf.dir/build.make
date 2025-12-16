@@ -67,7 +67,7 @@ include src/CMakeFiles/_SRB2_reconf.dir/compiler_depend.make
 include src/CMakeFiles/_SRB2_reconf.dir/progress.make
 
 src/CMakeFiles/_SRB2_reconf:
-	cd /workspaces/SRB2web && /usr/bin/cmake -DGIT_EXECUTABLE= -DCMAKE_BUILD_TYPE=Release -DBINARY_DIR=/workspaces/SRB2web/build-wasm/src/.. -P /workspaces/SRB2web/src/../cmake/Comptime.cmake
+	cd /workspaces/SRB2web && /usr/bin/cmake -DGIT_EXECUTABLE=git -DCMAKE_BUILD_TYPE=Release -DBINARY_DIR=/workspaces/SRB2web/build-wasm/src/.. -P /workspaces/SRB2web/src/../cmake/Comptime.cmake
 
 _SRB2_reconf: src/CMakeFiles/_SRB2_reconf
 _SRB2_reconf: src/CMakeFiles/_SRB2_reconf.dir/build.make

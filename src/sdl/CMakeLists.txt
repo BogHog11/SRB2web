@@ -82,7 +82,7 @@ endif()
 
 if(EMSCRIPTEN)
     target_compile_definitions(SRB2SDL2 PRIVATE -DHAVE_PNG -DHAVE_ZLIB)
-    target_sources(SRB2SDL2 PRIVATE apng.c)
+    # target_sources(SRB2SDL2 PRIVATE apng.c)
 else()
     if(TARGET ZLIB::ZLIB)
         target_compile_definitions(SRB2SDL2 PRIVATE -DHAVE_ZLIB)

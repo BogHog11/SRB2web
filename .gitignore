@@ -30,3 +30,12 @@ Win32_LIB_ASM_Release
 lobs/vcpkg/*
 build-wasm/CMakeFiles/
 build-wasm/vcpkg_installed/
+build-wasm/assets/
+build-wasm/src/
+build-wasm/thirdpart/
+build-wasm/cmake_install.cmake
+build-wasm/CMakeCache.txt
+build-wasm/CPackConfig.cmake
+build-wasm/CPackSourceConfig.cmake
+build-wasm/HEAD
+build-wasm/Makefile
