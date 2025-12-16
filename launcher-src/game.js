@@ -115,11 +115,11 @@ window.UnlockMouse = (force = false) => {
 };
 
 var GetViewportWidth = () => {
-          return document.documentElement.clientWidth;
+          return Math.round(document.documentElement.clientWidth);
       };
 
       var GetViewportHeight = () => {
-          return document.documentElement.clientHeight;
+          return Math.round(document.documentElement.clientHeight);
       };
 
 window.ChangeResolution = (x, y) => {
@@ -128,6 +128,8 @@ window.ChangeResolution = (x, y) => {
             x = GetViewportWidth();
           if (typeof y === 'undefined')
             y = GetViewportHeight();
+        gameCanvas.width = x;
+        gameCanvas.height = y;
           Module.ccall('change_resolution',
             'number',
             ['number', 'number'],
