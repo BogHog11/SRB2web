@@ -134,8 +134,6 @@ window.ChangeResolution = (x, y) => {
           if (typeof y === 'undefined') {
             y = GetViewportHeight();
           }
-          gameCanvas.width = x;
-          gameCanvas.height = y;
           Module.ccall('change_resolution',
             'number',
             ['number', 'number'],
