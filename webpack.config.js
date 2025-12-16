@@ -25,7 +25,7 @@ module.exports = {
   },
   devtool: false,
   entry: {
-    interface: "./launcher-src/index.js",
+    launcher: "./launcher-src/index.js",
   },
   optimization: {
     splitChunks: {
@@ -61,8 +61,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       filename: `index.html`,
       title: `Sonic Robo Blast 2 Web`,
-      template: "./src/base_html.html",
-      chunks: ["interface"],
+      template: "./launcher-src/base_html.html",
+      chunks: ["launcher"],
     }),
     new CopyWebpackPlugin({
       patterns: [
