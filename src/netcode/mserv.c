@@ -23,10 +23,11 @@
 #include "client_connection.h"
 #include "../m_menu.h"
 #include "../z_zone.h"
-#include "d_clisrv.h"  // <--- ADDED THIS: Necessary for serverlist/serverelem_t
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
+#include <stdlib.h>
+#include <string.h>
 #endif
 
 #ifdef MASTERSERVER
@@ -594,54 +595,87 @@ static void MasterServer_OnChange(void)
 }
 
 // --------------------------------------------------------------------------
-// WEB BROWSER INTEGRATION
+// WEB BROWSER INTEGRATION (For Emscripten)
 // --------------------------------------------------------------------------
-// These functions are called by JavaScript to populate the in-game server list.
 
 #ifdef __EMSCRIPTEN__
 
-// Make sure we have access to the global server list
-extern serverelem_t serverlist[MAXSERVERLIST];
-extern INT32 serverlistcount;
+// Temporary storage for servers arriving from JS before we commit them to the game
+#define MAX_WEB_SERVERS 64
+static msg_server_t web_server_buffer[MAX_WEB_SERVERS];
+static INT32 web_server_count = 0;
 
 EMSCRIPTEN_KEEPALIVE void SRB2_ClearServerList(void)
 {
-    serverlistcount = 0;
-    memset(serverlist, 0, sizeof(serverlist));
-}
-
-EMSCRIPTEN_KEEPALIVE void SRB2_FinishServerList(void)
-{
-    // Function stub if needed
+    web_server_count = 0;
+    memset(web_server_buffer, 0, sizeof(web_server_buffer));
 }
 
 EMSCRIPTEN_KEEPALIVE void SRB2_AddServerToList(const char *address, const char *name, const char *version, int players, int maxplayers, int ping, int gametype)
 {
-    if (serverlistcount >= MAXSERVERLIST) return;
+    if (web_server_count >= MAX_WEB_SERVERS) return;
 
-    serverelem_t *entry = &serverlist[serverlistcount];
-    memset(entry, 0, sizeof(serverelem_t));
+    msg_server_t *entry = &web_server_buffer[web_server_count];
+    memset(entry, 0, sizeof(msg_server_t));
 
-    // Copy Name
-    strncpy(entry->name, name, sizeof(entry->name)-1);
+    // 1. Copy Name
+    strncpy(entry->name, name, sizeof(entry->name) - 1);
 
-    // Copy Address to 'node'
-    strncpy(entry->node, address, sizeof(entry->node)-1);
+    // 2. Copy Version
+    strncpy(entry->version, version, sizeof(entry->version) - 1);
 
-    // Integers
-    entry->numplayers = (UINT8)players;
-    entry->maxplayers = (UINT8)maxplayers;
-    entry->gametype = (UINT8)gametype;
+    // 3. Room (using gametype as room ID)
+    entry->room = (INT32)gametype;
 
-    // Handle Port from Address string (e.g., "1.2.3.4:5029")
-    char *portSeparator = strchr(entry->node, ':');
-    if (portSeparator) {
-        *portSeparator = '\0'; // Cut string at ':'
-        strncpy(entry->port, portSeparator + 1, sizeof(entry->port)-1);
+    // 4. IP and Port split
+    // "address" comes in as "127.0.0.1:5029"
+    char tempAddr[64];
+    strncpy(tempAddr, address, sizeof(tempAddr) - 1);
+    
+    char *portSep = strchr(tempAddr, ':');
+    if (portSep) {
+        *portSep = '\0'; // Split string
+        strncpy(entry->ip, tempAddr, sizeof(entry->ip) - 1);
+        strncpy(entry->port, portSep + 1, sizeof(entry->port) - 1);
     } else {
-        strncpy(entry->port, "5029", sizeof(entry->port)-1);
+        strncpy(entry->ip, tempAddr, sizeof(entry->ip) - 1);
+        strncpy(entry->port, "5029", sizeof(entry->port) - 1);
+    }
+    
+    // Note: msg_server_t does NOT have fields for 'players', 'maxplayers', or 'ping'.
+    // The game normally fetches these by pinging the IP itself. 
+    // Since we can't easily ping via WebAssembly UDP, we simply store the directory data.
+
+    web_server_count++;
+}
+
+EMSCRIPTEN_KEEPALIVE void SRB2_FinishServerList(void)
+{
+    // Clean up old list if it exists (assuming it was malloc'd)
+    // Note: If the engine allocated this elsewhere, this might be risky, 
+    // but typically fetch_servers re-allocates anyway.
+    if (ms_ServerList) {
+        free(ms_ServerList);
+        ms_ServerList = NULL;
     }
 
-    serverlistcount++;
+    // Allocate memory for the global list (+1 for null terminator safety)
+    // The game code in GetShortServersList uses (NUM_LIST_SERVER + 1) size.
+    size_t allocSize = (web_server_count + 1) * sizeof(msg_server_t);
+    ms_ServerList = (msg_server_t *)malloc(allocSize);
+
+    if (ms_ServerList) {
+        // Copy our buffer into the allocated global pointer
+        memset(ms_ServerList, 0, allocSize);
+        memcpy(ms_ServerList, web_server_buffer, web_server_count * sizeof(msg_server_t));
+        
+        // Ensure the last entry is zeroed (terminator)
+        memset(&ms_ServerList[web_server_count], 0, sizeof(msg_server_t));
+        
+        CONS_Printf("Web: Loaded %d servers into Master Server list.\n", web_server_count);
+    } else {
+        CONS_Printf("Web: Failed to allocate memory for server list.\n");
+    }
 }
+
 #endif
