@@ -2015,27 +2015,35 @@ UINT32 I_GetRefreshRate(void)
 #ifdef __EMSCRIPTEN__
 int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
 {
-	SDLdoUngrabMouse();
+	int newmode = -1;
 
-	vid.recalc = 1;
-	vid.bpp = 1;
+	if ( x < BASEVIDWIDTH*1 && y < BASEVIDHEIGHT*1)
+		newmode = VID_GetModeForSize(BASEVIDWIDTH*1, BASEVIDHEIGHT*1);
+	else if (x < BASEVIDWIDTH*2 && y < BASEVIDHEIGHT*2)
+		newmode = VID_GetModeForSize(BASEVIDWIDTH*1, BASEVIDHEIGHT*1);
+	else if (x < BASEVIDWIDTH*3 && y < BASEVIDHEIGHT*3)
+		newmode = VID_GetModeForSize(BASEVIDWIDTH*2, BASEVIDHEIGHT*2);
+#if 0
+	else if (x < BASEVIDWIDTH*4 && y < BASEVIDHEIGHT*4)
+		newmode = VID_GetModeForSize(BASEVIDWIDTH*3, BASEVIDHEIGHT*3);
+	else if (x < BASEVIDWIDTH*5 && y < BASEVIDHEIGHT*5)
+		newmode = VID_GetModeForSize(BASEVIDWIDTH*4, BASEVIDHEIGHT*4);
+	else if (x < BASEVIDWIDTH*6 && y < BASEVIDHEIGHT*6)
+		newmode = VID_GetModeForSize(BASEVIDWIDTH*5, BASEVIDHEIGHT*5);
+	else
+		newmode = VID_GetModeForSize(BASEVIDWIDTH*6, BASEVIDHEIGHT*6);
+#else
+	else
+		newmode = VID_GetModeForSize(BASEVIDWIDTH*2, BASEVIDHEIGHT*2);
+#endif
 
-	if (modeNum < 0)
-		modeNum = 0;
-	if (modeNum >= MAXWINMODES)
-		modeNum = MAXWINMODES-1;
+	if (newmode != -1)
+		setmodeneeded = newmode;
 
-	vid.width = x;
-	vid.height = y;
-	vid.modenum = modeNum;
+	if (setmodeneeded)
+		return 1;
 
-	//Impl_SetWindowName("SRB2 "VERSIONSTRING);
-	src_rect.w = vid.width;
-	src_rect.h = vid.height;
-
-	refresh_rate = VID_GetRefreshRate();
-
-	VID_CheckRenderer();
+	return 0;
 }
 
 void EMSCRIPTEN_KEEPALIVE inject_text(const char *text)
