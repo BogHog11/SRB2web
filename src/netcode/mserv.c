@@ -89,6 +89,7 @@ void SRB2_AddServerToList(char* address, char* name, char* version, int players,
 // 4. Callback: JS calls this when done
 EMSCRIPTEN_KEEPALIVE
 void SRB2_FinishServerList(void) {
+    web_list_pending = false; // We are done!
     CONS_Printf("Web: Received %d servers from Relay.\n", emscripten_server_count);
 }
 #endif
@@ -146,6 +147,8 @@ I_mutex       ms_ServerList_mutex;
 UINT16 current_port = 0;
 
 msg_rooms_t room_list[NUM_LIST_ROOMS+1]; // +1 for easy test
+
+static boolean web_list_pending = false;
 
 void AddMServCommands(void)
 {
