@@ -139,7 +139,6 @@ target_link_options(SRB2SDL2 PRIVATE
     "-lidbfs.js"
     "-sEXPORTED_RUNTIME_METHODS=['callMain','FS','ccall','cwrap','IDBFS']"
     "-sUSE_SDL_MIXER=2"
-	"-sSDL2_MIXER_FORMATS=['ogg','wav']"
 
     # 1. FIX THE CRASH: Increase Stack Size
     # The default is 64KB. We need at least 5MB for SRB2's level loader.
