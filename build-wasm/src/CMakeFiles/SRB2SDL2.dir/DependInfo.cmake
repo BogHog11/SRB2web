@@ -110,6 +110,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspaces/SRB2web/src/netcode/gamestate.c" "src/CMakeFiles/SRB2SDL2.dir/netcode/gamestate.c.o" "gcc" "src/CMakeFiles/SRB2SDL2.dir/netcode/gamestate.c.o.d"
   "/workspaces/SRB2web/src/netcode/http-mserv.c" "src/CMakeFiles/SRB2SDL2.dir/netcode/http-mserv.c.o" "gcc" "src/CMakeFiles/SRB2SDL2.dir/netcode/http-mserv.c.o.d"
   "/workspaces/SRB2web/src/netcode/i_tcp.c" "src/CMakeFiles/SRB2SDL2.dir/netcode/i_tcp.c.o" "gcc" "src/CMakeFiles/SRB2SDL2.dir/netcode/i_tcp.c.o.d"
+  "/workspaces/SRB2web/src/netcode/mserv.c" "src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o" "gcc" "src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o.d"
   "/workspaces/SRB2web/src/netcode/net_command.c" "src/CMakeFiles/SRB2SDL2.dir/netcode/net_command.c.o" "gcc" "src/CMakeFiles/SRB2SDL2.dir/netcode/net_command.c.o.d"
   "/workspaces/SRB2web/src/netcode/server_connection.c" "src/CMakeFiles/SRB2SDL2.dir/netcode/server_connection.c.o" "gcc" "src/CMakeFiles/SRB2SDL2.dir/netcode/server_connection.c.o.d"
   "/workspaces/SRB2web/src/netcode/tic_command.c" "src/CMakeFiles/SRB2SDL2.dir/netcode/tic_command.c.o" "gcc" "src/CMakeFiles/SRB2SDL2.dir/netcode/tic_command.c.o.d"
