@@ -140,8 +140,7 @@ target_link_options(SRB2SDL2 PRIVATE
     "-lidbfs.js"
     "-sEXPORTED_RUNTIME_METHODS=['callMain','FS','ccall','IDBFS']"
     
-    # CHANGE THIS LINE (64MB is safer):
-    "-sINITIAL_MEMORY=67108864"
+    "-sINITIAL_MEMORY=134217728"
 )
 
 target_compile_features(SRB2SDL2 PRIVATE c_std_23 cxx_std_17)

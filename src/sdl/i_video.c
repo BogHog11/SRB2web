@@ -2022,11 +2022,50 @@ extern SDL_Window *window;
 extern SDL_Renderer *renderer;
 
 // CHANGE 1: Use Uint8 instead of byte
+extern Uint8 *screens[5]; 
+
 int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
 {
+    // Safety
+    if (x < 320) x = 320;
+    if (y < 200) y = 200;
+
+    SDLdoUngrabMouse();
+
+    // Update Internal Video State
+    vid.width = x;
+    vid.height = y;
+    vid.rowbytes = x; 
+    vid.bpp = 1;
+    vid.recalc = 1; 
+
+    // Reallocate the Screen Buffer
+    if (screens[0]) {
+        free(screens[0]); 
+    }
+    
+    // CHANGE 2: Use Uint8 for the allocation
+    int total_size = (vid.width * vid.height * vid.bpp) + 16384; 
+    screens[0] = (Uint8 *)malloc(total_size);
+    
+    // Clear memory to black
+    memset(screens[0], 0, total_size);
+
+    // Update internal rectangle
+    src_rect.w = vid.width;
+    src_rect.h = vid.height;
+
+    // Force SDL Window Update
     if (window) {
         SDL_SetWindowSize(window, x, y);
     }
+    
+    // Reset Renderer
+    VID_CheckRenderer();
+    refresh_rate = VID_GetRefreshRate();
+
+    // Recalculate tables
+    V_Init(); 
 
     return 1;
 }
