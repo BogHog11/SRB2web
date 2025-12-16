@@ -103,7 +103,7 @@ async function initGame() {
 
   setInterval(() => {
     FS.syncfs(false, (err) => {});
-  },2000);
+  },100);
 }
 
 window.LockMouse = () => {
