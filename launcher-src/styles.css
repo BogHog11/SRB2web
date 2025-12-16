@@ -71,6 +71,7 @@ body {
     top: 0;
     left: 0;
     image-rendering: pixelated;
+    object-fit: fill;
 }
 
 .loaderMain {

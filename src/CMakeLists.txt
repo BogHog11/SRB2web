@@ -136,7 +136,7 @@ endif()
 target_link_options(SRB2SDL2 PRIVATE
     "-lidbfs.js"
 	"-sEXPORTED_RUNTIME_METHODS=['callMain','FS', 'ccall', 'IDBFS']"
-	"-sINITIAL_MEMORY=2147483648"
+	"-sINITIAL_MEMORY=4294967296"
 )
 
 target_compile_features(SRB2SDL2 PRIVATE c_std_23 cxx_std_17)
