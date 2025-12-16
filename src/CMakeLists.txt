@@ -147,7 +147,7 @@ target_link_options(SRB2SDL2 PRIVATE
     # 2. FIX THE NETWORK: Link your JS Library
     # You must point this to the .js file that contains your 'mergeInto(LibraryManager.library, ...)' code.
     # CHECK THE PATH BELOW: It is likely in 'src/sdl/srb2_web.js' or similar.
-    "--js-library=${CMAKE_SOURCE_DIR}/sdl/i_net_web.js" 
+    "--js-library=${CMAKE_SOURCE_DIR}/src/sdl/i_net_web.js" 
 
     # 3. MEMORY STABILITY
     "-sINITIAL_MEMORY=268435456"
