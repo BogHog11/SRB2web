@@ -16461,6 +16461,86 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/i_video.c.o: /workspaces/SRB2web/src/sdl/i_video
   /workspaces/SRB2web/src/sdl/ogl_sdl.h \
   /workspaces/SRB2web/src/sdl/sdlmain.h
 
+src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o: /workspaces/SRB2web/src/sdl/mixer_sound.c \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/alloca.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/assert.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/bits/alltypes.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/bits/stat.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/bits/stdint.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/compat/math.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/compat/stdarg.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/compat/stdlib.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/compat/string.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/compat/sys/stat.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/ctype.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/endian.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/features.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/locale.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/math.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/stdarg.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/stdbool.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/stddef.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/stdint.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/stdio.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/stdlib.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/string.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/strings.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/sys/select.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/sys/stat.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/sys/types.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/wasi/api.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stdarg___gnuc_va_list.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stdarg___va_copy.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stdarg_header_macro.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stdarg_va_arg.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stdarg_va_copy.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stdarg_va_list.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_header_macro.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_max_align_t.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_null.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_nullptr_t.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_offsetof.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_ptrdiff_t.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_size_t.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_unreachable.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_wchar_t.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/stdarg.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/stdbool.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/stddef.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/stdint.h \
+  /workspaces/SRB2web/src/d_player.h \
+  /workspaces/SRB2web/src/d_think.h \
+  /workspaces/SRB2web/src/d_ticcmd.h \
+  /workspaces/SRB2web/src/dehacked.h \
+  /workspaces/SRB2web/src/doomdata.h \
+  /workspaces/SRB2web/src/doomdef.h \
+  /workspaces/SRB2web/src/doomstat.h \
+  /workspaces/SRB2web/src/doomtype.h \
+  /workspaces/SRB2web/src/endian.h \
+  /workspaces/SRB2web/src/g_state.h \
+  /workspaces/SRB2web/src/info.h \
+  /workspaces/SRB2web/src/m_fixed.h \
+  /workspaces/SRB2web/src/m_swap.h \
+  /workspaces/SRB2web/src/command.h \
+  /workspaces/SRB2web/src/d_player.h \
+  /workspaces/SRB2web/src/d_ticcmd.h \
+  /workspaces/SRB2web/src/doomdef.h \
+  /workspaces/SRB2web/src/doomtype.h \
+  /workspaces/SRB2web/src/i_threads.h \
+  /workspaces/SRB2web/src/p_saveg.h \
+  /workspaces/SRB2web/src/tables.h \
+  /workspaces/SRB2web/src/netcode/d_clisrv.h \
+  /workspaces/SRB2web/src/netcode/d_net.h \
+  /workspaces/SRB2web/src/netcode/d_netcmd.h \
+  /workspaces/SRB2web/src/netcode/mserv.h \
+  /workspaces/SRB2web/src/netcode/protocol.h \
+  /workspaces/SRB2web/src/p_mobj.h \
+  /workspaces/SRB2web/src/p_pspr.h \
+  /workspaces/SRB2web/src/sounds.h \
+  /workspaces/SRB2web/src/tables.h \
+  /workspaces/SRB2web/src/taglist.h \
+  /workspaces/SRB2web/src/version.h
+
 src/CMakeFiles/SRB2SDL2.dir/sdl/ogl_sdl.c.o: /workspaces/SRB2web/src/sdl/ogl_sdl.c \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_assert.h \
@@ -17896,6 +17976,8 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 /workspaces/SRB2web/src/r_textures.c:
 
 /workspaces/SRB2web/src/r_segs.c:
+
+/workspaces/SRB2web/src/sdl/mixer_sound.c:
 
 /workspaces/SRB2web/src/r_portal.c:
 

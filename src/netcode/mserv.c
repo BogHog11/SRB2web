@@ -180,24 +180,33 @@ msg_server_t *GetShortServersList(INT32 room, int id)
     server_list = malloc(( NUM_LIST_SERVER + 1 ) * sizeof *server_list);
 
 #ifdef EMSCRIPTEN
-    // --- WEB ASSEMBLY PATH ---
-    JS_RequestServerList_Bridge();
-
+    // Case 1: We have data in the buffer! Return it.
     if (emscripten_server_count > 0)
     {
+        CONS_Printf("Web: Returning %d servers to menu.\n", emscripten_server_count);
         memcpy(server_list, emscripten_server_buffer, emscripten_server_count * sizeof(msg_server_t));
         
+        // Terminate the list with an empty entry
         if (emscripten_server_count < NUM_LIST_SERVER)
             memset(&server_list[emscripten_server_count], 0, sizeof(msg_server_t));
             
         return server_list;
     }
-    else
+
+    // Case 2: No data yet.
+    // If we haven't asked recently, ask JS now.
+    if (!web_list_pending) 
     {
-        memset(server_list, 0, (NUM_LIST_SERVER + 1) * sizeof *server_list);
-        CONS_Printf("Web: Request sent... refresh menu to see results.\n");
-        return server_list;
+        CONS_Printf("Web: Requesting server list from JS...\n");
+        web_list_pending = true; // Mark that we are waiting
+        JS_RequestServerList_Bridge(); 
     }
+    
+    // Always return an empty list while waiting. 
+    // The user will see "Searching..." or an empty table.
+    // They must press "Refresh" or wait for the menu's auto-refresh ticker.
+    memset(server_list, 0, (NUM_LIST_SERVER + 1) * sizeof *server_list);
+    return server_list;
 #else
     if (HMS_fetch_servers(server_list, room, id))
         return server_list;

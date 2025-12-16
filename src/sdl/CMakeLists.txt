@@ -66,30 +66,41 @@ endif()
 target_compile_definitions(SRB2SDL2 PRIVATE -DDIRECTFULLSCREEN -DHAVE_SDL)
 target_include_directories(SRB2SDL2 PRIVATE ${SDL2_INCLUDE_DIR})
 
-# FIX: Skip Mixer checks for Emscripten
+# --- START SOUND DRIVER FIX ---
+
+# 1. Skip standard package search for Emscripten (we use built-in ports)
 if(NOT EMSCRIPTEN)
     find_package(SDL2_mixer_ext CONFIG QUIET)
     find_package(SDL2_mixer QUIET)
 endif()
 
-# CHANGED: Explicitly check for EMSCRIPTEN to enable mixer_sound.c
+# 2. Logic to choose the driver
 if(EMSCRIPTEN OR (TARGET SDL2_mixer_ext::SDL2_mixer_ext OR TARGET SDL2_mixer::SDL2_mixer))
-    message(STATUS "Web/Mixer: Enabling mixer_sound.c for better music support")
+    message(STATUS "Web/Mixer: Enabling mixer_sound.c")
+    
+    # Add the file that uses SDL_mixer
     target_sources(SRB2SDL2 PRIVATE mixer_sound.c)
     target_link_libraries(SRB2SDL2 PRIVATE SDL2::SDL2)
+
+    # FORCE these definitions so mixer_sound.c is not empty
+    target_compile_definitions(SRB2SDL2 PUBLIC 
+        -DHAVE_MIXER=1 
+        -DHAVE_SDL=1
+        -D_LARGEFILE64_SOURCE
+    )
     
-    # IMPORTANT: mixer_sound.c needs this flag to know Mixer is active!
-    target_compile_definitions(SRB2SDL2 PRIVATE -DHAVE_MIXER)
-    
-    # Optional: Fix for some versions of mixer_sound.c that expect music_loop extension
+    # Optional: Logic for looping music extension if needed
     if(EMSCRIPTEN)
-        target_compile_definitions(SRB2SDL2 PRIVATE -DMUSIC_LOOP)
+        target_compile_definitions(SRB2SDL2 PUBLIC -DMUSIC_LOOP)
     endif()
+
 else()
-    message(STATUS "Web/Mixer: Falling back to sdl_sound.c (Warning: Limited music support)")
+    message(STATUS "Web/Mixer: Falling back to sdl_sound.c (No Music Support)")
     target_sources(SRB2SDL2 PRIVATE sdl_sound.c)
     target_link_libraries(SRB2SDL2 PRIVATE SDL2::SDL2)
 endif()
+
+# --- END SOUND DRIVER FIX ---
 
 if(EMSCRIPTEN)
     target_compile_definitions(SRB2SDL2 PRIVATE -DHAVE_PNG -DHAVE_ZLIB)
