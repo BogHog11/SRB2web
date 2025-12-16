@@ -96,10 +96,6 @@ async function initGame() {
         console.log("SyncFS done");
         console.log(err);
         Module.callMain(["-home", "/home/web_user"]);
-
-        setTimeout(() => {
-            window.ChangeResolution();
-        },100);
     });
 }
 
@@ -130,30 +126,20 @@ window.ChangeResolution = (x, y) => {
     // 1. Check if the game is running AND if ccall exists
     if (Module['calledRun'] && Module['ccall']) {
         
-        // 2. Get the physical pixel ratio (e.g., 1.5x or 2.0x for high-res screens)
-        const dpr = window.devicePixelRatio || 1;
-
-        // 3. Calculate width/height if not provided
         if (typeof x === 'undefined') {
-            x = Math.floor(GetViewportWidth() * dpr);
+            x = GetViewportWidth();
         }
         if (typeof y === 'undefined') {
-            y = Math.floor(GetViewportHeight() * dpr);
+            y = GetViewportHeight();
         }
 
-        // 4. Update the Canvas Internal Resolution (The Bitmap size)
         gameCanvas.width = x;
         gameCanvas.height = y;
 
-        // 5. Update the Canvas CSS Size (The display size)
-        // We force it to fit the window visually
         gameCanvas.style.width = GetViewportWidth() + "px";
         gameCanvas.style.height = GetViewportHeight() + "px";
 
         console.log(`Resizing to: ${x}x${y} (DPI: ${dpr})`);
-
-        // 6. Tell the C engine to update
-        // We use 'null' as return type because the C function likely returns void
         Module.ccall('change_resolution',
             null, 
             ['number', 'number'],
@@ -181,6 +167,7 @@ async function startGame() {
 window.StartedMainLoopCallback = function () {
     didStart = true;
     gameCanvas.hidden = false;
+    window.ChangeResolution();
 };
 
 window.addEventListener("resize", () => {
