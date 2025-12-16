@@ -39,3 +39,4 @@ build-wasm/CPackConfig.cmake
 build-wasm/CPackSourceConfig.cmake
 build-wasm/HEAD
 build-wasm/Makefile
+node_modules/
