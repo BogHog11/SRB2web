@@ -2013,37 +2013,23 @@ UINT32 I_GetRefreshRate(void)
 }
 
 #ifdef __EMSCRIPTEN__
-int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
+EMSCRIPTEN_KEEPALIVE
+int change_resolution(int w, int h)
 {
-	int newmode = -1;
+    // 1. Safety Check: prevent crashing if size is too small
+    if (w < 320) w = 320;
+    if (h < 200) h = 200;
 
-	if ( x < BASEVIDWIDTH*1 && y < BASEVIDHEIGHT*1)
-		newmode = VID_GetModeForSize(BASEVIDWIDTH*1, BASEVIDHEIGHT*1);
-	else if (x < BASEVIDWIDTH*2 && y < BASEVIDHEIGHT*2)
-		newmode = VID_GetModeForSize(BASEVIDWIDTH*1, BASEVIDHEIGHT*1);
-	else if (x < BASEVIDWIDTH*3 && y < BASEVIDHEIGHT*3)
-		newmode = VID_GetModeForSize(BASEVIDWIDTH*2, BASEVIDHEIGHT*2);
-#if 0
-	else if (x < BASEVIDWIDTH*4 && y < BASEVIDHEIGHT*4)
-		newmode = VID_GetModeForSize(BASEVIDWIDTH*3, BASEVIDHEIGHT*3);
-	else if (x < BASEVIDWIDTH*5 && y < BASEVIDHEIGHT*5)
-		newmode = VID_GetModeForSize(BASEVIDWIDTH*4, BASEVIDHEIGHT*4);
-	else if (x < BASEVIDWIDTH*6 && y < BASEVIDHEIGHT*6)
-		newmode = VID_GetModeForSize(BASEVIDWIDTH*5, BASEVIDHEIGHT*5);
-	else
-		newmode = VID_GetModeForSize(BASEVIDWIDTH*6, BASEVIDHEIGHT*6);
-#else
-	else
-		newmode = VID_GetModeForSize(BASEVIDWIDTH*2, BASEVIDHEIGHT*2);
-#endif
+    // 2. Construct the command string
+    // "vid_mode" is the internal console command to switch resolution
+    char cmd[64];
+    snprintf(cmd, sizeof(cmd), "vid_mode %d %d\n", w, h);
 
-	if (newmode != -1)
-		setmodeneeded = newmode;
+    // 3. Send it to the engine
+    // This queues the command to run safely at the start of the next frame
+    COM_BufAddText(cmd);
 
-	if (setmodeneeded)
-		return 1;
-
-	return 0;
+    return 1;
 }
 
 void EMSCRIPTEN_KEEPALIVE inject_text(const char *text)
