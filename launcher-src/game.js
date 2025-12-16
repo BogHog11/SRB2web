@@ -139,7 +139,7 @@ window.ChangeResolution = (x, y) => {
 };
 
 async function startGame() {
-    Module.arguments = [];
+    Module.arguments = ["-mb", "128", "-width", "1920", "-height", "1080"];
     Module.noInitialRun = true;
     Module.print = console.log;
     Module.printErrr = console.error;

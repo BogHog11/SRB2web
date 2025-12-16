@@ -2014,57 +2014,50 @@ UINT32 I_GetRefreshRate(void)
 
 #ifdef __EMSCRIPTEN__
 #include <SDL2/SDL.h>
-#include <stdlib.h>      // Required for malloc/free
 #include "../doomdef.h"
 #include "../i_video.h"
 
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
-
-// CHANGE 1: Use Uint8 instead of byte
 extern Uint8 *screens[5]; 
 
 int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
 {
-    // Safety
+    // Safety Limits
     if (x < 320) x = 320;
     if (y < 200) y = 200;
 
     SDLdoUngrabMouse();
 
-    // Update Internal Video State
+    // 1. Update SRB2 Global Video State
     vid.width = x;
     vid.height = y;
     vid.rowbytes = x; 
     vid.bpp = 1;
     vid.recalc = 1; 
 
-    // Reallocate the Screen Buffer
-    if (screens[0]) {
-        free(screens[0]); 
-    }
-    
-    // CHANGE 2: Use Uint8 for the allocation
-    int total_size = (vid.width * vid.height * vid.bpp) + 16384; 
-    screens[0] = (Uint8 *)malloc(total_size);
-    
-    // Clear memory to black
-    memset(screens[0], 0, total_size);
-
-    // Update internal rectangle
-    src_rect.w = vid.width;
-    src_rect.h = vid.height;
-
-    // Force SDL Window Update
+    // 2. Resize the SDL Window
+    // This triggers SDL to resize its internal buffers safely
     if (window) {
         SDL_SetWindowSize(window, x, y);
     }
-    
-    // Reset Renderer
+
+    // 3. Get the new Surface pointer from SDL
+    // Instead of malloc/free, we let SDL give us the valid pointer
+    SDL_Surface *surface = SDL_GetWindowSurface(window);
+    if (surface) {
+        screens[0] = (Uint8 *)surface->pixels;
+    }
+
+    // 4. Update the Rects
+    src_rect.w = vid.width;
+    src_rect.h = vid.height;
+
+    // 5. Restart Rendering logic
     VID_CheckRenderer();
     refresh_rate = VID_GetRefreshRate();
-
-    // Recalculate tables
+    
+    // Recalculate lookups (V_Init is safe now that we capped resolution to 1920)
     V_Init(); 
 
     return 1;

@@ -35,8 +35,8 @@
 // we try to re-allocate a minimum of buffers for stability of the memory,
 // so all the small-enough tables based on screen size, are allocated once
 // and for all at the maximum size.
-#define MAXVIDWIDTH 5840 // don't set this too high because actually
-#define MAXVIDHEIGHT 4160 // lots of tables are allocated with the MAX size.
+#define MAXVIDWIDTH 300840 // don't set this too high because actually
+#define MAXVIDHEIGHT 200160 // lots of tables are allocated with the MAX size.
 #define BASEVIDWIDTH 320 // NEVER CHANGE THIS! This is the original
 #define BASEVIDHEIGHT 200 // resolution of the graphics.
 
