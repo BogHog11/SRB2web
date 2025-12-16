@@ -32,7 +32,7 @@
 #include "../doomdef.h"
 #include "../doomstat.h" // menuactive
 
-#if defined(HAVE_SDL) && defined(HAVE_MIXER) && SOUND==SOUND_MIXER
+#if 1
 
 #include "../sounds.h"
 #include "../s_sound.h"
