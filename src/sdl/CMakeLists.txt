@@ -72,10 +72,21 @@ if(NOT EMSCRIPTEN)
     find_package(SDL2_mixer QUIET)
 endif()
 
-if(NOT EMSCRIPTEN AND (TARGET SDL2_mixer_ext::SDL2_mixer_ext OR TARGET SDL2_mixer::SDL2_mixer))
+# CHANGED: Explicitly check for EMSCRIPTEN to enable mixer_sound.c
+if(EMSCRIPTEN OR (TARGET SDL2_mixer_ext::SDL2_mixer_ext OR TARGET SDL2_mixer::SDL2_mixer))
+    message(STATUS "Web/Mixer: Enabling mixer_sound.c for better music support")
     target_sources(SRB2SDL2 PRIVATE mixer_sound.c)
     target_link_libraries(SRB2SDL2 PRIVATE SDL2::SDL2)
+    
+    # IMPORTANT: mixer_sound.c needs this flag to know Mixer is active!
+    target_compile_definitions(SRB2SDL2 PRIVATE -DHAVE_MIXER)
+    
+    # Optional: Fix for some versions of mixer_sound.c that expect music_loop extension
+    if(EMSCRIPTEN)
+        target_compile_definitions(SRB2SDL2 PRIVATE -DMUSIC_LOOP)
+    endif()
 else()
+    message(STATUS "Web/Mixer: Falling back to sdl_sound.c (Warning: Limited music support)")
     target_sources(SRB2SDL2 PRIVATE sdl_sound.c)
     target_link_libraries(SRB2SDL2 PRIVATE SDL2::SDL2)
 endif()
