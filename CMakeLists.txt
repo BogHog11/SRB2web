@@ -13,8 +13,6 @@ include(CheckCXXCompilerFlag)
 file(STRINGS src/version.h SRB2_VERSION)
 string(REGEX MATCH "[0-9]+\\.[0-9.]+" SRB2_VERSION ${SRB2_VERSION})
 
-# DO NOT CHANGE THIS SRB2 STRING! Some variable names depend on this string.
-# Version change is fine.
 project(SRB2
     VERSION ${SRB2_VERSION}
     LANGUAGES C CXX)
@@ -36,7 +34,6 @@ endif()
 set(CPACK_GENERATOR ${SRB2_CPACK_GENERATOR})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Sonic Robo Blast 2" CACHE STRING "Program name for display purposes")
 set(CPACK_PACKAGE_VENDOR "Sonic Team Jr." CACHE STRING "Vendor name for display purposes")
-#set(CPACK_PACKAGE_DESCRIPTION_FILE )
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_PACKAGE_VERSION_MAJOR ${SRB2_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${SRB2_VERSION_MINOR})
@@ -56,11 +53,10 @@ else()
     set(SRB2_CONFIG_SYSTEM_LIBRARIES_DEFAULT ON)
 endif()
 
-# Clang tidy options will be ignored if CMAKE_<LANG>_CLANG_TIDY are set.
 option(SRB2_CONFIG_ENABLE_CLANG_TIDY_C "Enable default clang-tidy check configuration for C" OFF)
 option(SRB2_CONFIG_ENABLE_CLANG_TIDY_CXX "Enable default clang-tidy check configuration for C++" OFF)
 
-# FIX: Force static stdlib OFF for Emscripten to avoid linker errors
+# FIX: Force static stdlib OFF for Emscripten
 if(EMSCRIPTEN)
     option(SRB2_CONFIG_STATIC_STDLIB "Link static version of standard library." OFF)
 else()
@@ -81,9 +77,8 @@ option(SRB2_CONFIG_PACKETDROP "Compile with PACKETDROP defined." OFF)
 option(SRB2_CONFIG_EXECINFO "Enable stack trace dump support." ON)
 option(SRB2_CONFIG_ZDEBUG "Compile with ZDEBUG defined." OFF)
 option(SRB2_CONFIG_FORCE_NO_MS_BITFIELDS "Compile without -mno-ms-bitfields compiler flag" OFF)
-# SRB2_CONFIG_PROFILEMODE is probably superceded by some CMake setting.
 option(SRB2_CONFIG_PROFILEMODE "Compile for profiling (GCC only)." OFF)
-set(SRB2_CONFIG_ASSET_DIRECTORY "" CACHE PATH "Path to directory that contains all asset files for the installer. If set, assets will be part of installation and cpack.")
+set(SRB2_CONFIG_ASSET_DIRECTORY "" CACHE PATH "Path to directory that contains all asset files for the installer.")
 
 # Dependencies
 add_subdirectory(thirdparty)
@@ -96,12 +91,10 @@ else()
     set(NOT_SRB2_CONFIG_SHARED_INTERNAL_LIBRARIES ON)
 endif()
 
-
-find_package(ZLIB REQUIRED)
-find_package(PNG REQUIRED)
-
-# FIX: Do not require CURL for Emscripten builds
+# FIX: Do not find ZLIB/PNG/CURL packages for Emscripten
 if(NOT EMSCRIPTEN)
+    find_package(ZLIB REQUIRED)
+    find_package(PNG REQUIRED)
     find_package(CURL REQUIRED)
 endif()
 
@@ -113,11 +106,7 @@ find_package(miniupnpc QUIET)
 
 
 if(${PROJECT_SOURCE_DIR} MATCHES ${PROJECT_BINARY_DIR})
-    message(FATAL_ERROR "In-source builds will bring you a world of pain. Please make a separate directory to invoke CMake from.")
-endif()
-
-if ((${SRB2_USE_CCACHE}) AND (${CMAKE_C_COMPILER} MATCHES "clang"))
-    message(WARNING "Using clang and CCache: You may want to set environment variable CCACHE_CPP2=yes to prevent include errors during compile.")
+    message(FATAL_ERROR "In-source builds will bring you a world of pain. Please make a separate directory.")
 endif()
 
 # bitness check
@@ -130,16 +119,12 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
     message(STATUS "Target is 32-bit")
     set(SRB2_SYSTEM_BITS 32)
 endif()
-if(${SRB2_SYSTEM_BITS} EQUAL 0)
-    message(STATUS "Target bitness is unknown")
-endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
-# Set EXE names so the assets CMakeLists can refer to its target
 set(SRB2_SDL2_EXE_NAME "" CACHE STRING "Override executable binary output name")
-set(SRB2_SDL2_EXE_SUFFIX "" CACHE STRING "Optional executable suffix, separated by an underscore")
+set(SRB2_SDL2_EXE_SUFFIX "" CACHE STRING "Optional executable suffix")
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
 
@@ -151,14 +136,11 @@ set(GIT_EXECUTABLE "git" CACHE FILEPATH "Path to git binary")
 include(GitUtilities)
 
 if("${SRB2_SDL2_EXE_NAME}" STREQUAL "")
-    # cause a reconfigure if the branch changes
     get_git_dir(SRB2_GIT_DIR)
     configure_file("${SRB2_GIT_DIR}/HEAD" HEAD COPYONLY)
-
     git_current_branch(SRB2_GIT_REVISION)
 
     if("${SRB2_GIT_REVISION}" STREQUAL "")
-        # use abbreviated commit hash if on detached HEAD
         git_latest_commit(SRB2_GIT_REVISION)
     endif()
 
@@ -166,7 +148,7 @@ if("${SRB2_SDL2_EXE_NAME}" STREQUAL "")
         list(APPEND EXE_NAME_PARTS "srb2win")
     elseif("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
         list(APPEND EXE_NAME_PARTS "lsdlsrb2")
-    elseif(EMSCRIPTEN) # FIX: Add explicit case for Emscripten
+    elseif(EMSCRIPTEN) 
         list(APPEND EXE_NAME_PARTS "srb2")
     else()
         list(APPEND EXE_NAME_PARTS "srb2")
@@ -180,6 +162,5 @@ else()
 endif()
 
 list(APPEND EXE_NAME_PARTS ${SRB2_SDL2_EXE_SUFFIX})
-
 list(JOIN EXE_NAME_PARTS "_" EXE_NAME)
 set_target_properties(SRB2SDL2 PROPERTIES OUTPUT_NAME ${EXE_NAME})
