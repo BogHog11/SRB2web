@@ -239,7 +239,7 @@ async function fetchMS() {
 // ----------------------------------------------------
 // THE CRITICAL FUNCTION CALLED BY C
 // ----------------------------------------------------
-window.JS_RequestServerList = function() {
+Module.fetchServerList = function() {
     window.alert("JS: C code requested server list...");
 
     // 1. Clear the old list in C
