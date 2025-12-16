@@ -169,7 +169,7 @@ endif()
 
 # <-- FIX: Add generic WebAssembly support for network stub
 if("${SRB2_SYSTEM_TYPE}" STREQUAL "WEB" OR EMSCRIPTEN)
-	target_link_libraries(SRB2SDL2 PRIVATE network)
+	target_link_libraries(SRB2SDL2 PRIVATE)
 endif()
 
 if("${CMAKE_SYSTEM_NAME}" MATCHES "Darwin")

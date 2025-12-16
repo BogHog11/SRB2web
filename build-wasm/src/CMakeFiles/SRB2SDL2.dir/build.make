@@ -2864,7 +2864,6 @@ bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/sdl/endtxt.c.o
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/sdl/hwsym_sdl.c.o
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/sdl/sdl_sound.c.o
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/build.make
-bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/linkLibs.rsp
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/objects1.rsp
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspaces/SRB2web/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_165) "Linking C executable ../bin/srb2.js"
