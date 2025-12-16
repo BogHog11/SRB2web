@@ -139,7 +139,7 @@ window.ChangeResolution = (x, y) => {
 };
 
 async function startGame() {
-    Module.arguments = ["-mb", "250", "+drawdist", "2048", "+addons_option", "CUSTOM"];
+    Module.arguments = ["-mb", "250", "+drawdist", "2048", "+addons_option", "CUSTOM", "-nomusic", "-nosound"];
     Module.noInitialRun = true;
     Module.print = console.log;
     Module.printErrr = console.error;

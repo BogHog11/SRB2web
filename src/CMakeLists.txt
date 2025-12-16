@@ -135,12 +135,11 @@ endif()
 
 target_link_options(SRB2SDL2 PRIVATE
     "-sUSE_SDL=2"
-    "-sALLOW_MEMORY_GROWTH=1"
     "-sASYNCIFY"
     "-lidbfs.js"
     "-sEXPORTED_RUNTIME_METHODS=['callMain','FS','ccall','IDBFS']"
     
-    "-sINITIAL_MEMORY=134217728"
+    "-sINITIAL_MEMORY=268435456"
 )
 
 target_compile_features(SRB2SDL2 PRIVATE c_std_23 cxx_std_17)
