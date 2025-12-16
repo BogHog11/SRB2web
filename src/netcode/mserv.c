@@ -28,7 +28,6 @@
 #include <emscripten.h>
 #include <stdlib.h>
 #include <string.h>
-extern void JS_RequestServerList(void);
 #endif
 
 #ifdef MASTERSERVER
@@ -121,11 +120,11 @@ msg_server_t *GetShortServersList(INT32 room, int id)
 
 #ifdef __EMSCRIPTEN__
     // 1. Ask JS to fetch fresh data
-    JS_RequestServerList();
+    // We use emscripten_run_script to force the call to the global window function.
+    // This avoids linker errors with extern functions.
+    emscripten_run_script("if(window.JS_RequestServerList) window.JS_RequestServerList(); else console.error('JS_RequestServerList not found!');");
 
     // 2. Return whatever we currently have in memory.
-    // Note: We ignore the 'room' argument and return ALL servers, 
-    // so the user sees everything regardless of which room they clicked.
     if (ms_ServerList)
     {
         memcpy(server_list, ms_ServerList, NUM_LIST_SERVER * sizeof(msg_server_t));
@@ -152,7 +151,6 @@ INT32 GetRoomsList(boolean hosting, int id)
     // Clear list
     memset(room_list, 0, sizeof(room_list));
 
-    // Define Standard Categories so the user has something to click.
     int i = 0;
 
     // Room 1: All Servers
@@ -173,10 +171,9 @@ INT32 GetRoomsList(boolean hosting, int id)
     strncpy(room_list[i].motd, "Cheats enabled, relaxed rules.", sizeof(room_list[i].motd) - 1);
     i++;
 
-    // Terminate list
     room_list[i].id = -1;
 
-    return 1; // Success
+    return 1;
 #else
     if (HMS_fetch_rooms( ! hosting, id))
         return 1;
@@ -216,7 +213,7 @@ static void Command_Listserv_f(void)
 {
     CONS_Printf(M_GetText("Retrieving server list...\n"));
 #ifdef __EMSCRIPTEN__
-    JS_RequestServerList();
+    emscripten_run_script("if(window.JS_RequestServerList) window.JS_RequestServerList();");
 #endif
     HMS_list_servers();
 }

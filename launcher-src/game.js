@@ -155,7 +155,7 @@ async function startGame() {
   Module.printErrr = console.error;
   Module.canvas = gameCanvas;
   Module.onRuntimeInitialized = initGame;
-  Module.WebNet = {
+  window.WebNet = {
     Init: function () {
       window.alert("Network initialized from Main JS!");
       return 1;
