@@ -16462,6 +16462,58 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/i_video.c.o: /workspaces/SRB2web/src/sdl/i_video
   /workspaces/SRB2web/src/sdl/sdlmain.h
 
 src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o: /workspaces/SRB2web/src/sdl/mixer_sound.c \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_assert.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_atomic.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_audio.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_blendmode.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_clipboard.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_config.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_config_emscripten.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_cpuinfo.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_endian.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_error.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_events.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_filesystem.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_gamecontroller.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_gesture.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_guid.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_haptic.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_hidapi.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_hints.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_joystick.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_keyboard.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_keycode.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_loadso.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_locale.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_log.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_main.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_messagebox.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_metal.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_misc.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_mixer.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_mouse.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_mutex.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_pixels.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_platform.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_power.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_quit.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_rect.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_render.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_rwops.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_scancode.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_sensor.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_shape.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_stdinc.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_surface.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_system.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_thread.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_timer.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_touch.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_version.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_video.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/begin_code.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/close_code.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/alloca.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/assert.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/bits/alltypes.h \
@@ -16475,6 +16527,7 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o: /workspaces/SRB2web/src/sdl/mix
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/ctype.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/endian.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/features.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/inttypes.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/locale.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/math.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/stdarg.h \
@@ -16489,6 +16542,7 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o: /workspaces/SRB2web/src/sdl/mix
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/sys/stat.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/sys/types.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/wasi/api.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/wchar.h \
   /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stdarg___gnuc_va_list.h \
   /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stdarg___va_copy.h \
   /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stdarg_header_macro.h \
@@ -16504,10 +16558,13 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o: /workspaces/SRB2web/src/sdl/mix
   /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_size_t.h \
   /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_unreachable.h \
   /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stddef_wchar_t.h \
+  /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/inttypes.h \
   /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/stdarg.h \
   /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/stdbool.h \
   /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/stddef.h \
   /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/stdint.h \
+  /workspaces/SRB2web/src/byteptr.h \
+  /workspaces/SRB2web/src/command.h \
   /workspaces/SRB2web/src/d_player.h \
   /workspaces/SRB2web/src/d_think.h \
   /workspaces/SRB2web/src/d_ticcmd.h \
@@ -16518,6 +16575,11 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o: /workspaces/SRB2web/src/sdl/mix
   /workspaces/SRB2web/src/doomtype.h \
   /workspaces/SRB2web/src/endian.h \
   /workspaces/SRB2web/src/g_state.h \
+  /workspaces/SRB2web/src/command.h \
+  /workspaces/SRB2web/src/doomdef.h \
+  /workspaces/SRB2web/src/screen.h \
+  /workspaces/SRB2web/src/hardware/hw_data.h \
+  /workspaces/SRB2web/src/i_sound.h \
   /workspaces/SRB2web/src/info.h \
   /workspaces/SRB2web/src/m_fixed.h \
   /workspaces/SRB2web/src/m_swap.h \
@@ -16536,10 +16598,13 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o: /workspaces/SRB2web/src/sdl/mix
   /workspaces/SRB2web/src/netcode/protocol.h \
   /workspaces/SRB2web/src/p_mobj.h \
   /workspaces/SRB2web/src/p_pspr.h \
+  /workspaces/SRB2web/src/s_sound.h \
   /workspaces/SRB2web/src/sounds.h \
   /workspaces/SRB2web/src/tables.h \
   /workspaces/SRB2web/src/taglist.h \
-  /workspaces/SRB2web/src/version.h
+  /workspaces/SRB2web/src/version.h \
+  /workspaces/SRB2web/src/w_wad.h \
+  /workspaces/SRB2web/src/z_zone.h
 
 src/CMakeFiles/SRB2SDL2.dir/sdl/ogl_sdl.c.o: /workspaces/SRB2web/src/sdl/ogl_sdl.c \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL.h \
@@ -17950,6 +18015,8 @@ src/CMakeFiles/SRB2SDL2.dir/z_zone.c.o: /workspaces/SRB2web/src/z_zone.c \
 /workspaces/SRB2web/src/sounds.c:
 
 /workspaces/SRB2web/src/sdl/ogl_sdl.c:
+
+/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/SDL2/SDL_mixer.h:
 
 /workspaces/SRB2web/src/sdl/SDL_icon.xpm:
 

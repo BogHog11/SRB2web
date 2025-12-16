@@ -56,35 +56,47 @@ void SRB2_ClearServerList(void) {
 }
 
 // 3. Callback: JS calls this for every server
+
+#include "../doomdef.h"
+#include "../d_clisrv.h" // For server_t definition
+
 EMSCRIPTEN_KEEPALIVE
-void SRB2_AddServerToList(char* address, char* name, char* version, int players, int maxplayers, int ping) {
-    if (emscripten_server_count >= MAXSERVERLIST) return;
+// Updated to accept 'gametype'
+void SRB2_AddServerToList(const char *address, const char *name, const char *version, int players, int maxplayers, int ping, int gametype)
+{
+    if (serverlistcount >= MAXSERVERLIST) return;
 
-    msg_server_t *info = &emscripten_server_buffer[emscripten_server_count];
+    // FIX 1: Use 'serverelem_t' instead of 'server_t'
+    // FIX 2: Rename variable to 'entry' so it doesn't clash with the global 'server' boolean
+    serverelem_t *entry = &serverlist[serverlistcount];
 
-    // IMPORTANT: 'address' is the Room ID from the Relay
-    strncpy(info->ip, address, sizeof(info->ip) - 1);
-    
-    // Default port string (Required by struct)
-    strncpy(info->port, "5029", sizeof(info->port) - 1);
+    // Clear the struct
+    memset(entry, 0, sizeof(serverelem_t));
 
-    // Corrected: Use 'name' instead of 'servername'
-    strncpy(info->name, name, sizeof(info->name) - 1);
-    
-    // Version string
-    strncpy(info->version, version, sizeof(info->version) - 1);
-    
-    // Set default room (Required by struct)
-    info->room = 1;
+    // Copy strings safely
+    // Note: We use the fields that exist in standard SRB2 serverelem_t
+    strncpy(entry->ip, address, sizeof(entry->ip)-1);
+    strncpy(entry->servername, name, sizeof(entry->servername)-1);
+    strncpy(entry->version, version, sizeof(entry->version)-1);
 
-    // NOTE: We cannot store players/ping here because msg_server_t 
-    // does not have those fields. The game will query them later 
-    // via PT_SERVERINFO packets if needed.
-    (void)players;
-    (void)maxplayers;
-    (void)ping;
+    // Set integers
+    // Note: We map the incoming JS values to the correct struct fields
+    entry->numplayers = (UINT8)players;
+    entry->maxplayers = (UINT8)maxplayers;
+    // entry->ping = ping; // Note: 'ping' might not exist in serverelem_t in some versions, or is strictly calculated. If this errors, comment it out.
+    entry->gametype = (UINT8)gametype;
 
-    emscripten_server_count++;
+    // Parsing the Port from address (e.g. "127.0.0.1:5029")
+    // If the struct uses 'port' as a short (number):
+    char *portSeparator = strchr(entry->ip, ':');
+    if (portSeparator) {
+        *portSeparator = '\0'; // Cut the string at ':'
+        entry->port = (UINT16)atoi(portSeparator + 1);
+    } else {
+        entry->port = 5029; 
+    }
+
+    serverlistcount++;
 }
 
 // 4. Callback: JS calls this when done

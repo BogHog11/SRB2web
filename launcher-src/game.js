@@ -219,51 +219,77 @@ window.StartedMainLoopCallback = function () {
 window.addEventListener("resize", () => {
   window.ChangeResolution();
 });
+// SRB2 Gametype Constants
+const GT_COOP = 0;
+const GT_COMPETITION = 1;
+const GT_RACE = 2;
+const GT_MATCH = 3;
+const GT_TAG = 4;
+const GT_CTF = 5;
 
-async function fetchMS() { //Don't have one for now, just doing this to see if it works.
-  return [
-    {
-      ip: "192.168.1.1",
-      name: "Cool server",
-      version: "2.2.15"
-    }
-  ];
+async function fetchMS() {
+    // Simulating a Master Server response
+    return [
+        {
+            ip: "192.168.1.10:5029",
+            name: "Classic Co-op Adventure",
+            version: "2.2.13",
+            players: 2,
+            max_players: 8,
+            gametype: GT_COOP // Will show under "Cooperative"
+        },
+        {
+            ip: "192.168.1.11:5029",
+            name: "Monday Night Race",
+            version: "2.2.13",
+            players: 6,
+            max_players: 12,
+            gametype: GT_RACE // Will show under "Race"
+        },
+        {
+            ip: "192.168.1.12:5029",
+            name: "CTF Chaos",
+            version: "2.2.13",
+            players: 8,
+            max_players: 16,
+            gametype: GT_CTF // Will show under "Capture the Flag"
+        }
+    ];
 }
 
 window.JS_RequestServerList = function() {
-        console.log("JS: C code requested server list...");
+    console.log("JS: C code requested server list...");
 
-        // A. Clear the old list in C memory
-        // Syntax: ccall(function_name, return_type, [arg_types], [args])
-        try {
-            Module.ccall('SRB2_ClearServerList', 'void', [], []);
-        } catch(e) { console.error("Could not clear list:", e); }
+    // 1. Clear the old list in C
+    try {
+        Module.ccall('SRB2_ClearServerList', 'void', [], []);
+    } catch(e) { console.error("Could not clear list:", e); }
 
-        
-        fetchMS().then(data => {
-
-            // C. Loop through servers and send them to C
-            data.forEach(server => {
-                Module.ccall('SRB2_AddServerToList', 
-                    'void', 
-                    ['string', 'string', 'string', 'number', 'number', 'number'], 
-                    [
-                        server.ip,       // Address (or Room ID)
-                        server.name,     // Server Name
-                        server.version,  // Version (e.g. "2.2.13")
-                        0,               // Players (placeholder)
-                        0,              // Max Players (placeholder)
-                        100              // Ping (placeholder)
-                    ]
-                );
-            });
-
-            // D. Tell C we are done
-            Module.ccall('SRB2_FinishServerList', 'void', [], []);
-        })
-        .catch(err => {
-            console.error("JS: Error fetching servers:", err);
+    // 2. Fetch and Populate
+    fetchMS().then(data => {
+        data.forEach(server => {
+            Module.ccall('SRB2_AddServerToList', 
+                'void', 
+                // We added a 7th argument type: 'number' for gametype
+                ['string', 'string', 'string', 'number', 'number', 'number', 'number'], 
+                [
+                    server.ip,       
+                    server.name,     
+                    server.version,  
+                    server.players,      
+                    server.max_players, 
+                    100,             // Ping
+                    server.gametype  // <--- The Sorting Category
+                ]
+            );
         });
-    };
+
+        // 3. Tell C we are done
+        Module.ccall('SRB2_FinishServerList', 'void', [], []);
+    })
+    .catch(err => {
+        console.error("JS: Error fetching servers:", err);
+    });
+};
 
 module.exports = { startGame };
