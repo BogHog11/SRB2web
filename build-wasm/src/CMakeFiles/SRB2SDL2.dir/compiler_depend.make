@@ -10222,6 +10222,7 @@ src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: /workspaces/SRB2web/src/netcode/m
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/compat/stdlib.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/compat/string.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/compat/sys/stat.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/compat/time.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/ctype.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/emscripten.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/emscripten/em_asm.h \
@@ -10248,6 +10249,7 @@ src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: /workspaces/SRB2web/src/netcode/m
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/sys/select.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/sys/stat.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/sys/types.h \
+  /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/time.h \
   /workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include/wasi/api.h \
   /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stdarg___gnuc_va_list.h \
   /workspaces/SRB2web/emsdk/upstream/lib/clang/22/include/__stdarg___va_copy.h \

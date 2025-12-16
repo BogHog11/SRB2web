@@ -134,6 +134,7 @@ msg_server_t *GetShortServersList(INT32 room, int id)
 
 #ifdef __EMSCRIPTEN__
     // 1. Trigger the Webpack JS function via the EM_JS bridge
+    CONS_Printf(M_GetText("Connecting to relayed master server..."));
     JS_RequestServerList();
 
     // 2. Return whatever we currently have in memory.
@@ -225,6 +226,7 @@ static void Command_Listserv_f(void)
 {
     CONS_Printf(M_GetText("Retrieving server list...\n"));
 #ifdef __EMSCRIPTEN__
+    CONS_Printf(M_GetText("Connecting to relayed master server..."));
     JS_RequestServerList();
 #endif
     HMS_list_servers();
