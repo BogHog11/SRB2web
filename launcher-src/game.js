@@ -314,20 +314,24 @@ document.addEventListener("pointerlockchange", (_) => UnlockMouse(), false);
 document.addEventListener('mousedown', (e) => {
   if (document.pointerLockElement === gameCanvas) {
     Module.ccall('mouse_button_down', 'void', ['number'], [e.button]);
+    e.preventDefault();
   }
 });
 document.addEventListener('mouseup', (e) => {
   if (document.pointerLockElement === gameCanvas) {
     Module.ccall('mouse_button_up', 'void', ['number'], [e.button]);
+    e.preventDefault();
   }
 });
 document.addEventListener('wheel', (e) => {
   if (document.pointerLockElement === gameCanvas) {
     Module.ccall('mouse_wheel_xy', 'void', ['number', 'number'], [Math.round(e.deltaX), Math.round(e.deltaY)]);
+    e.preventDefault();
   }
 });gameCanvas.addEventListener('mousemove', (e) => {
   if (document.pointerLockElement === gameCanvas) {
     Module.ccall('SRB2_AddMouseDelta', 'void', ['number', 'number'], [e.movementX, e.movementY]);
+    e.preventDefault();
   }
 });window.addEventListener(
   "load",
