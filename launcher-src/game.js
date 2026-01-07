@@ -320,6 +320,11 @@ document.addEventListener('mouseup', (e) => {
   if (document.pointerLockElement === gameCanvas) {
     Module.ccall('mouse_button_up', 'void', ['number'], [e.button]);
   }
+});
+document.addEventListener('wheel', (e) => {
+  if (document.pointerLockElement === gameCanvas) {
+    Module.ccall('mouse_wheel_xy', 'void', ['number', 'number'], [Math.round(e.deltaX), Math.round(e.deltaY)]);
+  }
 });gameCanvas.addEventListener('mousemove', (e) => {
   if (document.pointerLockElement === gameCanvas) {
     Module.ccall('SRB2_AddMouseDelta', 'void', ['number', 'number'], [e.movementX, e.movementY]);

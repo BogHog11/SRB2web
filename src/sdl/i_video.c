@@ -2102,6 +2102,18 @@ void EMSCRIPTEN_KEEPALIVE SRB2_AddMouseDelta(int dx, int dy)
 	mousemovex += dx;
 	mousemovey += dy;
 	SDL_SetWindowGrab(window, SDL_TRUE);
+
+	event_t event;
+	int wwidth, wheight;
+	SDL_GetWindowSize(window, &wwidth, &wheight);
+	//SDL_memset(&event, 0, sizeof(event_t));
+	event.type = ev_mouse;
+	event.key = 0;
+	event.x = (INT32)lround(mousemovex * ((float)wwidth / (float)realwidth));
+	event.y = (INT32)lround(mousemovey * ((float)wheight / (float)realheight));
+	D_PostEvent(&event);
+	mousemovex = 0;
+	mousemovey = 0;
 }
 
 void EMSCRIPTEN_KEEPALIVE mouse_button_down(int button)
@@ -2123,6 +2135,24 @@ void EMSCRIPTEN_KEEPALIVE mouse_button_up(int button)
 	event.button.state = SDL_RELEASED;
 	event.button.x = 0;
 	event.button.y = 0;
+	SDL_PushEvent(&event);
+}
+
+void EMSCRIPTEN_KEEPALIVE mouse_wheel(int delta)
+{
+	SDL_Event event;
+	event.type = SDL_MOUSEWHEEL;
+	event.wheel.y = -delta; // Positive for up in SDL, but JS deltaY positive for down
+	event.wheel.x = 0;
+	SDL_PushEvent(&event);
+}
+
+void EMSCRIPTEN_KEEPALIVE mouse_wheel_xy(int dx, int dy)
+{
+	SDL_Event event;
+	event.type = SDL_MOUSEWHEEL;
+	event.wheel.x = -dx; // Assuming similar convention
+	event.wheel.y = -dy;
 	SDL_PushEvent(&event);
 }
 
