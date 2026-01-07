@@ -15894,6 +15894,7 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/i_net.c.o: /workspaces/SRB2web/src/sdl/i_net.c \
   /workspaces/SRB2web/src/netcode/i_net.h \
   /workspaces/SRB2web/src/netcode/i_tcp.h \
   /workspaces/SRB2web/src/netcode/mserv.h \
+  /workspaces/SRB2web/src/netcode/net_command.h \
   /workspaces/SRB2web/src/netcode/protocol.h \
   /workspaces/SRB2web/src/p_mobj.h \
   /workspaces/SRB2web/src/p_pspr.h \

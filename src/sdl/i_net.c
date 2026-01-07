@@ -21,6 +21,7 @@
 #include "../netcode/i_net.h"
 #include "../z_zone.h"
 #include "../netcode/i_tcp.h"
+#include "../netcode/net_command.h"
 
 #ifdef HAVE_SDL
 
@@ -75,6 +76,7 @@ extern int SRB2_GetPort(void);
 // Other JS functions
 extern int SRB2_InitNetwork(void);
 extern int SRB2_ConnectTo(const char* addr);
+extern void SendKicksForNode(SINT8 node, UINT8 msg);
 
 #endif
 // ------------------------------------------
@@ -137,6 +139,18 @@ void SRB2_SetClientIP(int clientId, const char* ip) {
             }
             clientaddress[i].host = ip_hash; // Overwrite with hash for banning
             DEBFILE(va("Set IP for client %d: %s (hash: %u)\n", clientId, ip, ip_hash));
+            break;
+        }
+    }
+}
+
+EMSCRIPTEN_KEEPALIVE
+void SRB2_ClientDisconnected(int clientId) {
+    // Find the node for this clientId and disconnect it
+    for (int i = 1; i < MAXNETNODES; i++) {
+        if (nodeconnected[i] && clientaddress[i].host == clientId) {
+            //DEBFILE(va("Client %d disconnected, kicking node %d\n", clientId, i));
+            SendKicksForNode(i, KICK_MSG_PLAYER_QUIT | KICK_MSG_KEEP_BODY);
             break;
         }
     }

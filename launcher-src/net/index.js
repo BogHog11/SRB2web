@@ -76,7 +76,8 @@ class SRB2Relay {
       );
     }
     if (json.method == "leave") {
-      // A client left, perhaps notify SRB2
+      // A client left, notify SRB2 to disconnect them
+      //Module.ccall("SRB2_ClientDisconnected", null, ["number"], [json.id]);
     }
     /*if (json.method == "pong") {}*/
     if (json.method == "data") {
