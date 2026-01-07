@@ -288,7 +288,11 @@ var LockMouse = () => {
     Module.ccall("lock_mouse", null, [], []);
     gameCanvas.focus();
     if (gameCanvas.requestPointerLock) {
-      gameCanvas.requestPointerLock();
+      try{
+       gameCanvas.requestPointerLock().catch((e) => {});
+      }catch(e){
+        console.warn("Mouse lock request failed: ",e);
+      }
     }
   }
 };
@@ -316,24 +320,26 @@ document.addEventListener('mousedown', (e) => {
     Module.ccall('mouse_button_down', 'void', ['number'], [e.button]);
     e.preventDefault();
   }
-});
+}, true);
 document.addEventListener('mouseup', (e) => {
   if (document.pointerLockElement === gameCanvas) {
     Module.ccall('mouse_button_up', 'void', ['number'], [e.button]);
     e.preventDefault();
   }
-});
+}, true);
 document.addEventListener('wheel', (e) => {
   if (document.pointerLockElement === gameCanvas) {
     Module.ccall('mouse_wheel_xy', 'void', ['number', 'number'], [Math.round(e.deltaX), Math.round(e.deltaY)]);
     e.preventDefault();
   }
-});gameCanvas.addEventListener('mousemove', (e) => {
+}, true);
+gameCanvas.addEventListener('mousemove', (e) => {
   if (document.pointerLockElement === gameCanvas) {
     Module.ccall('SRB2_AddMouseDelta', 'void', ['number', 'number'], [e.movementX, e.movementY]);
     e.preventDefault();
   }
-});window.addEventListener(
+},true);
+window.addEventListener(
   "load",
   (_) => {
     document.addEventListener("keydown", CaptureFullscreenKey, true);
