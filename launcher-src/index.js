@@ -17,3 +17,7 @@ playButton.addEventListener("click", function () {
   launcherMain.hidden = true;
   startGame();
 });
+
+var relay = require("./net");
+var relayURL = "wss://hys8ss-3000.csb.app/";
+var relayConnect = new relay.SRB2Relay(relayURL);

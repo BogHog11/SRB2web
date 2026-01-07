@@ -73,6 +73,7 @@
 #include "../i_joy.h"
 #include "../st_stuff.h"
 #include "../hu_stuff.h"
+#include "../g_input.h"
 #include "../g_game.h"
 #include "../i_video.h"
 #include "../console.h"
@@ -2094,6 +2095,35 @@ void EMSCRIPTEN_KEEPALIVE inject_keycode(int key, int type)
 void EMSCRIPTEN_KEEPALIVE unlock_mouse(void)
 {
 	SDLforceUngrabMouse();
+}
+
+void EMSCRIPTEN_KEEPALIVE SRB2_AddMouseDelta(int dx, int dy)
+{
+	mousemovex += dx;
+	mousemovey += dy;
+	SDL_SetWindowGrab(window, SDL_TRUE);
+}
+
+void EMSCRIPTEN_KEEPALIVE mouse_button_down(int button)
+{
+	SDL_Event event;
+	event.type = SDL_MOUSEBUTTONDOWN;
+	event.button.button = button + 1; // SDL buttons are 1-based
+	event.button.state = SDL_PRESSED;
+	event.button.x = 0;
+	event.button.y = 0;
+	SDL_PushEvent(&event);
+}
+
+void EMSCRIPTEN_KEEPALIVE mouse_button_up(int button)
+{
+	SDL_Event event;
+	event.type = SDL_MOUSEBUTTONUP;
+	event.button.button = button + 1;
+	event.button.state = SDL_RELEASED;
+	event.button.x = 0;
+	event.button.y = 0;
+	SDL_PushEvent(&event);
 }
 
 void EMSCRIPTEN_KEEPALIVE lock_mouse(void)

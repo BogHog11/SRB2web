@@ -100,26 +100,10 @@ async function initGame() {
     console.log(err);
     Module.callMain(["-home", "/home/web_user"]);
   });
-
   setInterval(() => {
     FS.syncfs(false, (err) => {});
-  },100);
+  }, 100);
 }
-
-window.LockMouse = () => {
-  if (didStart) {
-    Module.ccall("lock_mouse", null, [], []);
-  }
-};
-window.UnlockMouse = (force = false) => {
-  if (didStart) {
-    if (force && document.pointerLockElement) {
-      document.exitPointerLock();
-    } else if (!document.pointerLockElement) {
-      Module.ccall("unlock_mouse", null, [], []);
-    }
-  }
-};
 
 var GetViewportWidth = () => {
   return Math.round(document.documentElement.clientWidth);
@@ -155,7 +139,8 @@ async function startGame() {
   Module.printErrr = console.error;
   Module.canvas = gameCanvas;
   Module.onRuntimeInitialized = initGame;
-  
+  Module.pauseOnVisibilityChange = false;
+
   try {
     await loadScript();
   } catch (e) {
@@ -173,6 +158,19 @@ window.StartedMainLoopCallback = function () {
   setTimeout(() => {
     window.ChangeResolution();
   }, 10);
+
+  // Add click listener after canvas is shown
+  gameCanvas.addEventListener("click", () => {
+    console.log("Canvas clicked, locking mouse");
+    window.LockMouse();
+  });
+
+  // Add mousemove listener for manual mouse delta handling
+  document.addEventListener('mousemove', (e) => {
+    if (document.pointerLockElement === gameCanvas) {
+      Module.ccall('SRB2_AddMouseDelta', 'void', ['number', 'number'], [Math.round(e.movementX), Math.round(e.movementY)]);
+    }
+  });
 
   function resumeAudio() {
     // SDL2 creates an AudioContext on the Module
@@ -208,47 +206,132 @@ const GT_CTF = 5;
 
 // Mock Server Fetch
 async function fetchMS() {
-    return [
-        { ip: "192.168.1.10:5029", name: "Classic Co-op Adventure", version: "2.2.13", players: 2, max_players: 8, gametype: GT_COOP },
-        { ip: "192.168.1.11:5029", name: "Monday Night Race", version: "2.2.13", players: 6, max_players: 12, gametype: GT_RACE },
-        { ip: "192.168.1.12:5029", name: "CTF Chaos", version: "2.2.13", players: 8, max_players: 16, gametype: GT_CTF }
-    ];
+  return [
+    {
+      ip: "192.168.1.10:5029",
+      name: "Classic Co-op Adventure",
+      version: "2.2.13",
+      players: 2,
+      max_players: 8,
+      gametype: GT_COOP,
+    },
+    {
+      ip: "192.168.1.11:5029",
+      name: "Monday Night Race",
+      version: "2.2.13",
+      players: 6,
+      max_players: 12,
+      gametype: GT_RACE,
+    },
+    {
+      ip: "192.168.1.12:5029",
+      name: "CTF Chaos",
+      version: "2.2.13",
+      players: 8,
+      max_players: 16,
+      gametype: GT_CTF,
+    },
+  ];
 }
 
 // ----------------------------------------------------
 // THE CRITICAL FUNCTION CALLED BY C
 // ----------------------------------------------------
-Module.fetchServerList = function() {
-    window.alert("JS: C code requested server list...");
+Module.fetchServerList = function () {
+  window.alert("JS: C code requested server list...");
 
-    // 1. Clear the old list in C
-    try {
-        Module.ccall('SRB2_ClearServerList', 'void', [], []);
-    } catch(e) { console.error("Could not clear list:", e); }
+  // 1. Clear the old list in C
+  try {
+    Module.ccall("SRB2_ClearServerList", "void", [], []);
+  } catch (e) {
+    console.error("Could not clear list:", e);
+  }
 
-    // 2. Fetch and Populate
-    fetchMS().then(data => {
-        data.forEach(server => {
-            Module.ccall('SRB2_AddServerToList', 
-                'void', 
-                ['string', 'string', 'string', 'number', 'number', 'number', 'number'], 
-                [
-                    server.ip,       
-                    server.name,     
-                    server.version,  
-                    server.players,      
-                    server.max_players, 
-                    100,             
-                    server.gametype  
-                ]
-            );
-        });
+  // 2. Fetch and Populate
+  fetchMS()
+    .then((data) => {
+      data.forEach((server) => {
+        Module.ccall(
+          "SRB2_AddServerToList",
+          "void",
+          [
+            "string",
+            "string",
+            "string",
+            "number",
+            "number",
+            "number",
+            "number",
+          ],
+          [
+            server.ip,
+            server.name,
+            server.version,
+            server.players,
+            server.max_players,
+            100,
+            server.gametype,
+          ],
+        );
+      });
 
-        // 3. Tell C we are done
-        Module.ccall('SRB2_FinishServerList', 'void', [], []);
+      // 3. Tell C we are done
+      Module.ccall("SRB2_FinishServerList", "void", [], []);
     })
-    .catch(err => {
-        console.error("JS: Error fetching servers:", err);
+    .catch((err) => {
+      console.error("JS: Error fetching servers:", err);
     });
 };
+
+var LockMouse = () => {
+  if (didStart) {
+    Module.ccall("lock_mouse", null, [], []);
+    gameCanvas.focus();
+    if (gameCanvas.requestPointerLock) {
+      gameCanvas.requestPointerLock();
+    }
+  }
+};
+window.LockMouse = LockMouse;
+
+var UnlockMouse = (force = false) => {
+  if (didStart) {
+    if (force && document.pointerLockElement)
+      document.exitPointerLock(); // this method should fire again, so don't unlock_mouse right now
+    else if (!document.pointerLockElement)
+      Module.ccall("unlock_mouse", null, [], []);
+  }
+};
+window.UnlockMouse = UnlockMouse;
+
+var CaptureFullscreenKey = (e) => {
+  // Let F11 do fullscreen
+  if (e instanceof KeyboardEvent && e.key === "F11") e.stopPropagation();
+};
+
+window.addEventListener("mousedown", LockMouse, false);
+document.addEventListener("pointerlockchange", (_) => UnlockMouse(), false);
+document.addEventListener('mousedown', (e) => {
+  if (document.pointerLockElement === gameCanvas) {
+    Module.ccall('mouse_button_down', 'void', ['number'], [e.button]);
+  }
+});
+document.addEventListener('mouseup', (e) => {
+  if (document.pointerLockElement === gameCanvas) {
+    Module.ccall('mouse_button_up', 'void', ['number'], [e.button]);
+  }
+});gameCanvas.addEventListener('mousemove', (e) => {
+  if (document.pointerLockElement === gameCanvas) {
+    Module.ccall('SRB2_AddMouseDelta', 'void', ['number', 'number'], [e.movementX, e.movementY]);
+  }
+});window.addEventListener(
+  "load",
+  (_) => {
+    document.addEventListener("keydown", CaptureFullscreenKey, true);
+    document.addEventListener("keyup", CaptureFullscreenKey, true);
+    document.addEventListener("keypress", CaptureFullscreenKey, true);
+  },
+  { once: true },
+);
+
 module.exports = { startGame };

@@ -59,6 +59,8 @@
 #define CV_RESTRICT 0
 #endif
 
+#include <emscripten.h>
+
 // ------
 // protos
 // ------
@@ -5131,3 +5133,9 @@ static void BaseNumLaps_OnChange(void)
 			CONS_Printf(M_GetText("Number of laps will be changed to %d next round.\n"), cv_basenumlaps.value);
 	}
 }
+#if EMSCRIPTEN
+EMSCRIPTEN_KEEPALIVE
+void SRB2_LOG(char *textlog) {
+    CONS_Printf(M_GetText(textlog));
+}
+#endif

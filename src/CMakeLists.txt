@@ -137,8 +137,9 @@ target_link_options(SRB2SDL2 PRIVATE
     "-sUSE_SDL=2"
     "-sASYNCIFY"
     "-lidbfs.js"
-    "-sEXPORTED_RUNTIME_METHODS=['callMain','FS','ccall','cwrap','IDBFS']"
-    "-sUSE_SDL_MIXER=2"
+    "-sEXPORTED_RUNTIME_METHODS=['callMain','FS','ccall','cwrap','IDBFS','HEAPU8']"
+    "-sEXPORTED_FUNCTIONS=['_main','_free','_malloc']"
+	"-sUSE_SDL_MIXER=2"
 	"-sSDL2_MIXER_FORMATS=['ogg','wav']"
 
     # 1. FIX THE CRASH: Increase Stack Size

@@ -63,5 +63,6 @@ module.exports = [
     element: "canvas",
     className: "gameCanvas",
     gid: "gameCanvas",
+    tabindex: "0",
   },
 ];

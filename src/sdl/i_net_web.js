@@ -10,7 +10,7 @@ mergeInto(LibraryManager.library, {
   SRB2_NetworkSend: function (node_id, data_ptr, len) {
     if (window.SRB2WebNet && window.SRB2WebNet.SendPacket) {
       // For now, ignore node_id, assume single connection
-      return window.SRB2WebNet.SendPacket(data_ptr, len);
+      return window.SRB2WebNet.SendPacket(node_id, data_ptr, len);
     }
     return 1;
   },
