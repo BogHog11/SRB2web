@@ -66,6 +66,9 @@ if(TARGET SDL2main)
 endif()
 
 target_compile_definitions(SRB2SDL2 PRIVATE -DDIRECTFULLSCREEN -DHAVE_SDL)
+if(EMSCRIPTEN)
+    target_compile_definitions(SRB2SDL2 PRIVATE -DHAVE_SDLNET)
+endif()
 target_include_directories(SRB2SDL2 PRIVATE ${SDL2_INCLUDE_DIR})
 
 # --- SOUND DRIVER LOGIC START ---

@@ -1,38 +1,42 @@
 mergeInto(LibraryManager.library, {
-  JS_InitNetwork: function () {
+  SRB2_InitNetwork: function () {
     // If Module.WebNet exists and has Init, call it. Otherwise return 1 (Success)
-    if (window.WebNet && window.WebNet.Init) {
-      return window.WebNet.Init();
+    if (window.SRB2WebNet && window.SRB2WebNet.InitNetwork) {
+      return window.SRB2WebNet.InitNetwork();
     }
     return 1;
   },
-
-  JS_OpenSocket: function () {
-    if (window.WebNet && window.WebNet.OpenSocket) {
-      return window.WebNet.OpenSocket();
+  ////////////////////////////////
+  SRB2_NetworkSend: function (node_id, data_ptr, len) {
+    if (window.SRB2WebNet && window.SRB2WebNet.SendPacket) {
+      // For now, ignore node_id, assume single connection
+      return window.SRB2WebNet.SendPacket(data_ptr, len);
     }
     return 1;
   },
-
-  JS_Connect: function (addr_ptr) {
-    if (window.WebNet && window.WebNet.Connect) {
-      return window.WebNet.Connect(UTF8ToString(addr_ptr));
+  SRB2_ListenOn: function (port) {
+    if (window.SRB2WebNet && window.SRB2WebNet.ListenOn) {
+      return window.SRB2WebNet.ListenOn(port);
     }
     return 1;
   },
-
-  JS_SendPacket: function (data_ptr, len) {
-    if (window.WebNet && window.WebNet.SendPacket) {
-      // We pass the raw pointer and length to the main JS
-      return window.WebNet.SendPacket(data_ptr, len);
+  SRB2_ConnectTo: function (addr_ptr) {
+    if (window.SRB2WebNet && window.SRB2WebNet.ConnectTo) {
+      return window.SRB2WebNet.ConnectTo(UTF8ToString(addr_ptr));
     }
     return 1;
   },
-
-  JS_GetPacket: function (buf_ptr, max_len) {
-    if (window.WebNet && window.WebNet.GetPacket) {
-      return window.WebNet.GetPacket(buf_ptr, max_len);
+  SRB2_CloseSocket: function () {
+    if (window.SRB2WebNet && window.SRB2WebNet.CloseSocket) {
+      return window.SRB2WebNet.CloseSocket();
     }
-    return 0;
+    return 1;
   },
+  SRB2_GetPort: function () {
+    if (window.SRB2WebNet && window.SRB2WebNet.GetPort) {
+      return window.SRB2WebNet.GetPort();
+    }
+    return 5029; // Default port
+  },
+
 });

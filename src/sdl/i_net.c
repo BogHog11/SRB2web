@@ -66,26 +66,82 @@ void SRB2_NetworkReceive(char *data, int length, int from_id) {
 // We call this JS function to send data
 // You must implement "SRB2_NetworkSend(node_id, ptr, length)" in your HTML/JS
 extern void SRB2_NetworkSend(int node_id, void* data, int length);
+extern int SRB2_ListenOn(int port);
+extern void SRB2_SetClientIP(int clientId, const char* ip);
+extern int SRB2_CloseSocket(void);
+extern int SRB2_GetPort(void);
+
+
+// Other JS functions
+extern int SRB2_InitNetwork(void);
+extern int SRB2_ConnectTo(const char* addr);
 
 #endif
 // ------------------------------------------
 
 #ifdef HAVE_SDLNET
 
+#ifdef EMSCRIPTEN
+// Dummy types for EMSCRIPTEN since SDL_net is not available
+typedef struct {
+    unsigned int host;
+    unsigned short port;
+} IPaddress;
+
+typedef struct {
+    int channel;
+    unsigned char *data;
+    int len;
+    int maxlen;
+    int status;
+    IPaddress address;
+} UDPpacket;
+
+typedef void* UDPsocket;
+typedef void* SDLNet_SocketSet;
+
+#define INADDR_BROADCAST 0xFFFFFFFF
+#define MAXPACKETLENGTH 1450
+#define SOCK_PORT 5029
+#else
 #include "SDL_net.h"
+#endif
 
 #define MAXBANS 20
 
+// Global variables for SDL network driver
+static boolean nodeconnected[MAXNETNODES+1];
+static UINT16 sock_port = 5029;
+static INT32 net_bandwidth;
 static IPaddress clientaddress[MAXNETNODES+1];
 static IPaddress banned[MAXBANS];
-
 static UDPpacket mypacket;
 static UDPsocket mysocket = NULL;
 static SDLNet_SocketSet myset = NULL;
-
 static size_t numbans = 0;
 static boolean NET_bannednode[MAXNETNODES+1];
 static boolean init_SDLNet_driver = false;
+
+// New function to set client IP for banning
+#ifdef EMSCRIPTEN
+EMSCRIPTEN_KEEPALIVE
+void SRB2_SetClientIP(int clientId, const char* ip) {
+    // Find the node for this clientId
+    for (int i = 1; i < MAXNETNODES; i++) {
+        if (nodeconnected[i] && clientaddress[i].host == clientId) {
+            // For now, store the IP as a hash or something in host
+            // Since host is unsigned int, hash the IP string
+            unsigned int ip_hash = 0;
+            for (int j = 0; ip[j]; j++) {
+                ip_hash = ip_hash * 31 + ip[j];
+            }
+            clientaddress[i].host = ip_hash; // Overwrite with hash for banning
+            DEBFILE(va("Set IP for client %d: %s (hash: %u)\n", clientId, ip, ip_hash));
+            break;
+        }
+    }
+}
+#endif
 
 static const char *NET_AddrToStr(IPaddress* sk)
 {
@@ -97,7 +153,11 @@ static const char *NET_AddrToStr(IPaddress* sk)
 #else
     static char s[22]; // 255.255.255.255:65535
     strcpy(s, SDLNet_ResolveIP(sk));
-    if (sk->port != 0) strcat(s, va(":%d", sk->port));
+    if (sk->port != 0) {
+        char portstr[10];
+        sprintf(portstr, ":%d", sk->port);
+        strcat(s, portstr);
+    }
     return s;
 #endif
 }
@@ -131,7 +191,7 @@ static boolean NET_CanGet(void)
 #endif
 }
 
-static void NET_Get(void)
+static boolean NET_Get(void)
 {
     INT32 mystatus = -1;
     INT32 newnode;
@@ -140,7 +200,7 @@ static void NET_Get(void)
     if (!NET_CanGet())
     {
         doomcom->remotenode = -1; // no packet
-        return;
+        return false;
     }
 
 #ifdef EMSCRIPTEN
@@ -185,7 +245,7 @@ static void NET_Get(void)
         {
             doomcom->remotenode = found_node;
             doomcom->datalength = mypacket.len;
-            return;
+            return true;
         }
 
         // It is a new node!
@@ -222,7 +282,7 @@ static void NET_Get(void)
             }
             if (i == numbans)
                 NET_bannednode[newnode] = false;
-            return;
+            return true;
         }
         else
             I_OutputMsg("SDL_Net: No more free slots");
@@ -234,6 +294,7 @@ static void NET_Get(void)
 
     DEBFILE("New node detected: No more free slots\n");
     doomcom->remotenode = -1; // no packet
+    return false;
 }
 
 static void NET_Send(void)
@@ -342,6 +403,9 @@ static void I_InitSDLNetDriver(void)
 
 static void NET_CloseSocket(void)
 {
+#ifdef EMSCRIPTEN
+    SRB2_CloseSocket();
+#endif
 #ifndef EMSCRIPTEN
     if (mysocket)
         SDLNet_UDP_Close(mysocket);
@@ -373,6 +437,10 @@ static SINT8 NET_NetMakeNodewPort(const char *hostname, const char *port)
     if (newnode == -1) return -1;
     
     M_Memcpy(&clientaddress[newnode],&hostnameIP,sizeof (IPaddress));
+
+    if (SRB2_ConnectTo(hostname) != 0)
+        return -1;
+
     return (SINT8)newnode;
 #else
     // Standard Desktop DNS Resolution
@@ -410,6 +478,11 @@ static boolean NET_OpenSocket(void)
 
     NET_CloseSocket();
     mysocket = NET_Socket();
+
+    #ifdef EMSCRIPTEN
+        if (server && SRB2_ListenOn(sock_port) != 0)
+            return false;
+    #endif
 
     if (!mysocket)
         return false;
@@ -481,6 +554,10 @@ boolean I_InitNetwork(void)
     if (!init_SDLNet_driver)
         return false;
 
+#ifdef EMSCRIPTEN
+    SRB2_InitNetwork();
+#endif
+
     if (M_CheckParm("-udpport"))
     {
         if (M_IsNextParm())
@@ -529,6 +606,8 @@ boolean I_InitNetwork(void)
             net_bandwidth = 800000;
             hardware_MAXPACKETLENGTH = MAXPACKETLENGTH;
         }
+
+        ret = true;
     }
 
     mypacket.maxlen = hardware_MAXPACKETLENGTH;

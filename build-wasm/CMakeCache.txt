@@ -28,7 +28,7 @@ CMAKE_BUILD_TYPE:STRING=Release
 CMAKE_COLOR_MAKEFILE:BOOL=ON
 
 //No help, variable specified on the command line.
-CMAKE_CROSSCOMPILING_EMULATOR:UNINITIALIZED=/workspaces/SRB2web/emsdk/node/22.16.0_64bit/bin/node
+CMAKE_CROSSCOMPILING_EMULATOR:UNINITIALIZED=../emsdk/node/22.16.0_64bit/bin/node
 
 //Flags used by the CXX compiler during all build types.
 CMAKE_CXX_FLAGS:STRING=
@@ -203,7 +203,7 @@ CMAKE_STRIP:FILEPATH=/usr/bin/llvm-strip
 CMAKE_TAPI:FILEPATH=CMAKE_TAPI-NOTFOUND
 
 //No help, variable specified on the command line.
-CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=/workspaces/SRB2web/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
+CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=../emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
 
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
@@ -269,7 +269,7 @@ CPACK_SOURCE_ZIP:BOOL=OFF
 CURL_FOUND:UNINITIALIZED=TRUE
 
 //No help, variable specified on the command line.
-CURL_INCLUDE_DIR:UNINITIALIZED=/workspaces/SRB2/libs/curl/include
+CURL_INCLUDE_DIR:UNINITIALIZED=../libs/curl/include
 
 //No help, variable specified on the command line.
 CURL_LIBRARY:UNINITIALIZED=curl
@@ -297,13 +297,13 @@ PNG_FOUND:UNINITIALIZED=TRUE
 PNG_LIBRARY:UNINITIALIZED=png
 
 //No help, variable specified on the command line.
-PNG_PNG_INCLUDE_DIR:UNINITIALIZED=/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include
+PNG_PNG_INCLUDE_DIR:UNINITIALIZED=../emsdk/upstream/emscripten/cache/sysroot/include
 
 //No help, variable specified on the command line.
-SDL2_CONFIG_INCLUDE_DIR:UNINITIALIZED=/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include
+SDL2_CONFIG_INCLUDE_DIR:UNINITIALIZED=../emsdk/upstream/emscripten/cache/sysroot/include
 
 //No help, variable specified on the command line.
-SDL2_DIR:UNINITIALIZED=/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/lib/cmake/SDL2
+SDL2_DIR:UNINITIALIZED=../emsdk/upstream/emscripten/cache/sysroot/lib/cmake/SDL2
 
 //No help, variable specified on the command line.
 SDL2_FOUND:UNINITIALIZED=TRUE
@@ -406,7 +406,7 @@ USE_ZLIB:UNINITIALIZED=1
 ZLIB_FOUND:UNINITIALIZED=TRUE
 
 //No help, variable specified on the command line.
-ZLIB_INCLUDE_DIR:UNINITIALIZED=/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot/include
+ZLIB_INCLUDE_DIR:UNINITIALIZED=../emsdk/upstream/emscripten/cache/sysroot/include
 
 //No help, variable specified on the command line.
 ZLIB_LIBRARY:UNINITIALIZED=zlib
