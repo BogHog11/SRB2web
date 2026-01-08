@@ -17,38 +17,6 @@ function loadScript() {
   });
 }
 
-var antiThrottleCtx = null;
-function enableAntiThrottle() {
-  if (antiThrottleCtx) return; // Already running
-
-  try {
-    var AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContext) return;
-
-    antiThrottleCtx = new AudioContext();
-
-    // Create a blank oscillator
-    const oscillator = antiThrottleCtx.createOscillator();
-    const gainNode = antiThrottleCtx.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(antiThrottleCtx.destination);
-
-    // Set gain to near-zero (inaudible but technically "playing")
-    // Note: strictly 0 sometimes allows browsers to optimize it away, 0.001 is safer
-    gainNode.gain.setValueAtTime(0.001, antiThrottleCtx.currentTime);
-
-    oscillator.start();
-    console.log("Anti-throttle audio active: Background freezing disabled.");
-  } catch (e) {
-    console.warn("Failed to enable anti-throttle audio:", e);
-  }
-}
-
-setInterval(() => {
-  enableAntiThrottle();
-}, 100);
-
 (function () {
   // 1. Create a Worker that ticks 60 times/sec (16ms)
   // This runs in a separate thread that Chrome does NOT throttle.
