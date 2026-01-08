@@ -75,7 +75,7 @@ extern int SRB2_GetPort(void);
 
 // Other JS functions
 extern int SRB2_InitNetwork(void);
-extern int SRB2_ConnectTo(const char* addr);
+extern int SRB2_ConnectTo(const char* addr, int port);
 extern void SendKicksForNode(SINT8 node, UINT8 msg);
 
 #endif
@@ -458,7 +458,7 @@ static SINT8 NET_NetMakeNodewPort(const char *hostname, const char *port)
     
     M_Memcpy(&clientaddress[newnode],&hostnameIP,sizeof (IPaddress));
 
-    if (SRB2_ConnectTo(hostname) != 0)
+    if (SRB2_ConnectTo(hostname, port) != 0)
         return -1;
 
     return (SINT8)newnode;
