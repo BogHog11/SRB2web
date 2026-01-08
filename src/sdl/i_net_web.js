@@ -20,9 +20,9 @@ mergeInto(LibraryManager.library, {
     }
     return 1;
   },
-  SRB2_ConnectTo: function (addr_ptr) {
+  SRB2_ConnectTo: function (addr, port) {
     if (window.SRB2WebNet && window.SRB2WebNet.ConnectTo) {
-      return window.SRB2WebNet.ConnectTo(UTF8ToString(addr_ptr));
+      return window.SRB2WebNet.ConnectTo(UTF8ToString(addr,port));
     }
     return 1;
   },

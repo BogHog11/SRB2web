@@ -75,7 +75,7 @@ extern int SRB2_GetPort(void);
 
 // Other JS functions
 extern int SRB2_InitNetwork(void);
-extern int SRB2_ConnectTo(const char* addr, int port);
+extern int SRB2_ConnectTo(const char* addr, char* port);
 extern void SendKicksForNode(SINT8 node, UINT8 msg);
 
 #endif
