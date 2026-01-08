@@ -28,13 +28,39 @@ module.exports = [
       {
         element: "button",
         className: "button playButton",
-        textContent: "Play",
+        children: [
+          {
+            element: "img",
+            src: "images/play.svg",
+            style: {
+              height: "32px"
+            }
+          },
+          {
+            element: "span",
+            textContent: "Play",
+          }
+        ],
         gid: "playButton",
       },
       {
-        element: "button",
+        element: "a",
         className: "button fsButton",
-        textContent: "Manage files",
+        href: "file.html",
+        target: "_blank",
+        children: [
+          {
+            element: "img",
+            src: "images/folder.svg",
+            style: {
+              height: "32px"
+            }
+          },
+          {
+            element: "span",
+            textContent: "Manage files & addons",
+          }
+        ],
         gid: "fsButton",
       },
     ],

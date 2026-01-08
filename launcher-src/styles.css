@@ -1,5 +1,5 @@
 body {
-    background: #163f54;
+    background: #000000;
     font-weight: bold;
     font-family: Arial, sans-serif;
     margin: 0;
@@ -34,7 +34,8 @@ body {
   top: 0px;
   transform: translate(-50%, 0px);
 
-  background: rgba(255, 255, 255, 0.619);
+  background: rgba(0, 0, 0, 0.619);
+  color: #ffffff;
   border-radius: 1px;
   overflow: auto;
 }
@@ -58,6 +59,10 @@ body {
     background: rgba(9, 255, 0, 0.5);
     width: 100%;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10;
 }
 
 .playButton:hover {
@@ -70,6 +75,10 @@ body {
     background: rgba(255, 157, 0, 0.5);
     width: 100%;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10;
 }
 
 .fsButton:hover {
