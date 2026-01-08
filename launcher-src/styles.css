@@ -64,6 +64,18 @@ body {
     background: rgba(9, 255, 0, 0.7);
 }
 
+.fsButton {
+    font-size: 30px;
+    font-weight: bold;
+    background: rgba(255, 157, 0, 0.5);
+    width: 100%;
+    text-align: center;
+}
+
+.fsButton:hover {
+    background: rgba(255, 157, 0, 0.7);
+}
+
 .gameCanvas {
     background: black;
     width: 100%;

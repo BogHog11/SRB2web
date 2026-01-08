@@ -31,6 +31,12 @@ module.exports = [
         textContent: "Play",
         gid: "playButton",
       },
+      {
+        element: "button",
+        className: "button fsButton",
+        textContent: "Manage files",
+        gid: "fsButton",
+      },
     ],
   },
   {
