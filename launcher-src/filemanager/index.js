@@ -14,7 +14,7 @@ var FS = null;
 var filePathInput = elements.getGPId("filePathInput");
 var fileListContainer = elements.getGPId("fileListContainer");
 var clickDropdownMenu = elements.getGPId("clickDropdownMenu");
-var currentPath = "/addons/.srb2";
+var currentPath = "/addons/userdata";
 clickDropdownMenu.hidden = true;
 async function syncFs() {
     return new Promise((resolve, reject) => {

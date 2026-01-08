@@ -63,6 +63,53 @@ module.exports = [
         ],
         gid: "fsButton",
       },
+      {
+        element: "div",
+        children: [
+          "Sonic Robo Blast 2 is a 3D Sonic the Hedgehog fangame built on a heavily modified Doom Legacy engine.",
+          {
+            element: "br"
+          },
+          " Visit ",
+          {
+            element: "a",
+            href: "https://www.srb2.org/",
+            target: "_blank",
+            textContent: "srb2.org",
+          },
+          " for more information.",
+          {
+            element: "br"
+          },
+          "SRB2Web is developed by ",
+          {
+            element: "a",
+            href: "https://github.com/gvbvdxxalt2",
+            target: "_blank",
+            textContent: "Gvbvdxx",
+          },
+          ", with the help of Google Gemini and other AI tools.",
+          {
+            element: "br"
+          },
+          {
+            element: "a",
+            href: "https://github.com/gvbvdxxalt2/SRB2Web",
+            target: "_blank",
+            textContent: "Click here to view the source code on GitHub.",
+          },
+          {
+            element: "br"
+          },
+          "Sonic Robo Blast 2, its name, characters, and all related elements are trademarks of their respective owners. This fangame is not affiliated with or endorsed by SEGA Corporation.",
+        ],
+          style: {
+            marginTop: "20px",
+            fontSize: "14px",
+            color: "#ffffff",
+          },
+          gid: "launcherInfo"
+      }
     ],
   },
   {
