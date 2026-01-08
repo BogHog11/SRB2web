@@ -120,11 +120,15 @@ class SRB2Relay {
     var _this = this;
     window.SRB2WebNet = {
       InitNetwork: function () { return 0; },
-      ConnectTo: function (address) {
+      ConnectTo: function (address,port) {
         if (!_this.isOpen || _this.hasActiveNetgame) return 0;
         
         var id = address;
-        if (id.indexOf(":") == -1) id += ":5029";
+        if (port) {
+          id += ":" + port;
+        } else {
+          id += ":5029";
+        }
         
         _this.ws.send(JSON.stringify({ method: "connect", id: id }));
         return 0;
