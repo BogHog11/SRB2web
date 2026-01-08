@@ -2,6 +2,14 @@ if (window["Module"]) {
   var Module = window["Module"];
 }
 
+var LZString = require("./lzstring");
+
+function logInSRB2(msg) {
+  try{
+  Module.ccall("SRB2_LOG", "void", ["string"], [msg+"\n"]);
+  }catch(e){}
+}
+
 class SRB2Relay {
   constructor(url) {
     this.url = url;
@@ -49,18 +57,12 @@ class SRB2Relay {
     var json = JSON.parse(event.data);
     if (json.method == "ready") {
       this.myIP = json.ip;
-      console.log("Relay ready, my IP: " + this.myIP);
       if (this.hasActiveNetgame) {
         this.ws.send(JSON.stringify({ method: "listen" }));
       }
     }
     if (json.method == "listening") {
-      Module.ccall(
-        "SRB2_LOG",
-        "void",
-        ["char"],
-        ["RELAY: Now listening on " + json.listening],
-      );
+      logInSRB2("RELAY: Relayed netgame available on " + json.listening);
     }
     if (json.method == "connected") {
     }
@@ -81,7 +83,7 @@ class SRB2Relay {
     }
     /*if (json.method == "pong") {}*/
     if (json.method == "data") {
-      var binaryString = json.data;
+      var binaryString = LZString.decompress(json.data);
       var data = [];
       for (var i = 0; i < binaryString.length; i++) {
         data.push(binaryString.charCodeAt(i));
@@ -114,8 +116,11 @@ class SRB2Relay {
         return 0;
       },
       ConnectTo: function (address) {
+        if (!_this.isOpen) {
+          return 0; // Not connected
+        }
         if (_this.hasActiveNetgame) {
-          return 1; // Can't connect if already in netgame
+          return 0; // Can't connect if already in netgame
         }
         var id = address;
         if (id.indexOf(":") == -1) {
@@ -130,21 +135,24 @@ class SRB2Relay {
         return 0;
       },
       SendPacket: function (node_id, data_ptr, length) {
+        if (!_this.isOpen) {
+          return 0; // Not connected
+        }
         // Extract the binary data from the heap
         var data = new Uint8Array(Module.HEAPU8.buffer, data_ptr, length);
 
         // Convert to Base64
-        var base64Data = String.fromCharCode.apply(null, data);
+        var stringData = String.fromCharCode.apply(null, data);
 
         // Send as JSON
         _this.ws.send(
           JSON.stringify({
             method: "data",
             id: node_id,
-            data: base64Data,
+            data: LZString.compress(stringData),
           }),
         );
-        return 1;
+        return 0;
       },
       ListenOn: function (port) {
         _this.startNetgame();

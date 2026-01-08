@@ -34,11 +34,17 @@
 
 // This defines a C function 'JS_RequestServerList' that runs the JavaScript inside the {}
 EM_JS(void, JS_RequestServerList, (void), {
-    if (Module.fetchServerList) {
-        console.log("C: Calling Module.fetchServerList()...");
-        Module.fetchServerList();
+    var fn = null;
+    if (typeof globalThis !== 'undefined' && typeof globalThis.fetchServerList === 'function') {
+        fn = globalThis.fetchServerList;
+    } else if (typeof Module !== 'undefined' && Module && typeof Module.fetchServerList === 'function') {
+        fn = Module.fetchServerList;
+    }
+    if (fn) {
+        console.log("C: Calling fetchServerList() from C...");
+        try { fn(); } catch (e) { console.error("C: fetchServerList threw:", e); }
     } else {
-        console.log("C: Module.fetchServerList not found. Check your JS.");
+        console.log("C: fetchServerList not found. Ensure it's attached to globalThis or Module.");
     }
 });
 #endif

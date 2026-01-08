@@ -419,12 +419,18 @@ static void NET_CloseSocket(void)
 {
 #ifdef EMSCRIPTEN
     SRB2_CloseSocket();
+    mysocket = NULL;
 #endif
 #ifndef EMSCRIPTEN
     if (mysocket)
         SDLNet_UDP_Close(mysocket);
 #endif
     mysocket = NULL;
+}
+
+EMSCRIPTEN_KEEPALIVE
+void SRB2_ForceCloseSocket(void)  {
+    NET_CloseSocket();
 }
 
 // NOTE: This function is tricky for Web. 

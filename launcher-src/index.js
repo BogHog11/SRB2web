@@ -19,5 +19,5 @@ playButton.addEventListener("click", function () {
 });
 
 var relay = require("./net");
-var relayURL = "wss://hys8ss-3000.csb.app/";
+var relayURL = "wss://ideal-memory-v6rqr7v9qq6q2x9p-3000.app.github.dev/";
 var relayConnect = new relay.SRB2Relay(relayURL);
