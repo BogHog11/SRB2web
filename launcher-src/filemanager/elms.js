@@ -4,6 +4,10 @@ module.exports = [
     textContent: require("./styles.css"),
   },
   {
+    element: "style",
+    textContent: "[hidden] { display: none; }",
+  },
+  {
     element: "div",
     className: "loadingScreen",
     gid: "loadingScreen",
@@ -25,5 +29,10 @@ module.exports = [
     element: "div",
     className: "fileList",
     gid: "fileListContainer"
+  },
+  {
+    element: "div",
+    className: "clickDropdownMenu",
+    gid: "clickDropdownMenu"
   }
 ];

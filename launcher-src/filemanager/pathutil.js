@@ -1,5 +1,5 @@
 function makePathEasyToProcess(path) {
-  var a = path.replaceAll("\\", "/").toLowerCase();
+  var a = path.replaceAll("\\", "/");
   if (a[0] == "." && a[1] == "/") {
     var i = 2;
     var parsedPath = "";

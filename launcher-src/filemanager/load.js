@@ -25,13 +25,6 @@ async function loadFilesystem() {
   FS.symlink("/home/web_user/.srb2", "/addons/.srb2");
   FS.symlink("/home/web_user/.srb2", "/addons/userdata");
   FS.mount(IDBFS, {}, "/home/web_user");
-  FS.syncfs(true, (err) => {
-    console.log("SyncFS done");
-    console.log(err);
-  });
-  setInterval(() => {
-    FS.syncfs(false, (err) => {});
-  }, 100);
 }
 
 module.exports = { loadFilesystem };
