@@ -102,7 +102,12 @@ function refreshFileList() {
                 }
             }
         };
-    })));
+    })).concat([
+        {
+            element: "div",
+            className: "bottomFileMarker"
+        }
+    ]));
     filePathInput.value = currentPath;
 }
 window.addEventListener("click", function() {

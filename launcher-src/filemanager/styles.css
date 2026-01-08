@@ -167,3 +167,9 @@ body {
   font-weight: bold;
   font-size: var(--popup-dialog-message-size);
 }
+
+.bottomFileMarker {
+    height: calc(100% - 40px);
+    width: 100%;
+    flex-shrink: 0;
+}
