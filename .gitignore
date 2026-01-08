@@ -41,3 +41,4 @@ build-wasm/HEAD
 build-wasm/Makefile
 node_modules/
 emsdk/
+libs/vcpkg/
