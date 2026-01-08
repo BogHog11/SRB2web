@@ -26,6 +26,7 @@ module.exports = {
   devtool: false,
   entry: {
     launcher: "./launcher-src/index.js",
+    filemanager: "./launcher-src/filemanager/index.js"
   },
   optimization: {
     splitChunks: {
@@ -63,6 +64,12 @@ module.exports = {
       title: `Sonic Robo Blast 2 Web`,
       template: "./launcher-src/base_html.html",
       chunks: ["launcher"],
+    }),
+    new HtmlWebpackPlugin({
+      filename: `file.html`,
+      title: `Sonic Robo Blast 2 Web - File Manager`,
+      template: "./launcher-src/base_html.html",
+      chunks: ["filemanager"],
     }),
     new CopyWebpackPlugin({
       patterns: [

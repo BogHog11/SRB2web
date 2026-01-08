@@ -19,40 +19,40 @@ function loadScript() {
 
 var antiThrottleCtx = null;
 function enableAntiThrottle() {
-    if (antiThrottleCtx) return; // Already running
+  if (antiThrottleCtx) return; // Already running
 
-    try {
-        var AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContext) return;
+  try {
+    var AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
 
-        antiThrottleCtx = new AudioContext();
-        
-        // Create a blank oscillator
-        const oscillator = antiThrottleCtx.createOscillator();
-        const gainNode = antiThrottleCtx.createGain();
+    antiThrottleCtx = new AudioContext();
 
-        oscillator.connect(gainNode);
-        gainNode.connect(antiThrottleCtx.destination);
+    // Create a blank oscillator
+    const oscillator = antiThrottleCtx.createOscillator();
+    const gainNode = antiThrottleCtx.createGain();
 
-        // Set gain to near-zero (inaudible but technically "playing")
-        // Note: strictly 0 sometimes allows browsers to optimize it away, 0.001 is safer
-        gainNode.gain.setValueAtTime(0.001, antiThrottleCtx.currentTime);
+    oscillator.connect(gainNode);
+    gainNode.connect(antiThrottleCtx.destination);
 
-        oscillator.start();
-        console.log("Anti-throttle audio active: Background freezing disabled.");
-    } catch (e) {
-        console.warn("Failed to enable anti-throttle audio:", e);
-    }
+    // Set gain to near-zero (inaudible but technically "playing")
+    // Note: strictly 0 sometimes allows browsers to optimize it away, 0.001 is safer
+    gainNode.gain.setValueAtTime(0.001, antiThrottleCtx.currentTime);
+
+    oscillator.start();
+    console.log("Anti-throttle audio active: Background freezing disabled.");
+  } catch (e) {
+    console.warn("Failed to enable anti-throttle audio:", e);
+  }
 }
 
 setInterval(() => {
   enableAntiThrottle();
-},100);
+}, 100);
 
-(function() {
-    // 1. Create a Worker that ticks 60 times/sec (16ms)
-    // This runs in a separate thread that Chrome does NOT throttle.
-    const workerScript = `
+(function () {
+  // 1. Create a Worker that ticks 60 times/sec (16ms)
+  // This runs in a separate thread that Chrome does NOT throttle.
+  const workerScript = `
         let intervalId = null;
         self.onmessage = function(e) {
             if (e.data === 'start') {
@@ -66,45 +66,48 @@ setInterval(() => {
             }
         };
     `;
-    const blob = new Blob([workerScript], { type: 'application/javascript' });
-    const worker = new Worker(URL.createObjectURL(blob));
+  const blob = new Blob([workerScript], { type: "application/javascript" });
+  const worker = new Worker(URL.createObjectURL(blob));
 
-    const nativeRequestAnimationFrame = window.requestAnimationFrame;
-    let callbackQueue = []; 
-    let isHidden = false;
+  const nativeRequestAnimationFrame = window.requestAnimationFrame;
+  let callbackQueue = [];
+  let isHidden = false;
 
-    // 2. Detect when tab is hidden
-    document.addEventListener('visibilitychange', () => {
-        isHidden = document.hidden;
-        console.log("[Anti-Freeze] Visibility:", isHidden ? "HIDDEN (Worker taking over)" : "VISIBLE (Native)");
-        
-        if (isHidden) {
-            worker.postMessage('start'); // Start the background ticker
-        } else {
-            worker.postMessage('stop');  // Stop the background ticker
-        }
-    });
+  // 2. Detect when tab is hidden
+  document.addEventListener("visibilitychange", () => {
+    isHidden = document.hidden;
+    console.log(
+      "[Anti-Freeze] Visibility:",
+      isHidden ? "HIDDEN (Worker taking over)" : "VISIBLE (Native)",
+    );
 
-    // 3. When the worker ticks, FORCE the main thread to run the game loop
-    worker.onmessage = function(e) {
-        if (e.data === 'tick' && isHidden) {
-            // Run all queued game updates immediately
-            const toRun = callbackQueue;
-            callbackQueue = []; 
-            toRun.forEach(cb => cb(performance.now()));
-        }
-    };
+    if (isHidden) {
+      worker.postMessage("start"); // Start the background ticker
+    } else {
+      worker.postMessage("stop"); // Stop the background ticker
+    }
+  });
 
-    // 4. Hijack requestAnimationFrame
-    // This effectively tricks Emscripten into using our Worker instead of the Browser's timer
-    window.requestAnimationFrame = function(callback) {
-        if (isHidden) {
-            callbackQueue.push(callback);
-            return callbackQueue.length; 
-        } else {
-            return nativeRequestAnimationFrame(callback);
-        }
-    };
+  // 3. When the worker ticks, FORCE the main thread to run the game loop
+  worker.onmessage = function (e) {
+    if (e.data === "tick" && isHidden) {
+      // Run all queued game updates immediately
+      const toRun = callbackQueue;
+      callbackQueue = [];
+      toRun.forEach((cb) => cb(performance.now()));
+    }
+  };
+
+  // 4. Hijack requestAnimationFrame
+  // This effectively tricks Emscripten into using our Worker instead of the Browser's timer
+  window.requestAnimationFrame = function (callback) {
+    if (isHidden) {
+      callbackQueue.push(callback);
+      return callbackQueue.length;
+    } else {
+      return nativeRequestAnimationFrame(callback);
+    }
+  };
 })();
 
 var CACHE_NAME = "srb2-assets-v1";
@@ -230,6 +233,9 @@ async function startGame() {
   Module.canvas = gameCanvas;
   Module.onRuntimeInitialized = initGame;
   Module.pauseOnVisibilityChange = false;
+  Module.onExit = function () {
+    window.location.reload();
+  };
 
   try {
     await loadScript();
@@ -256,9 +262,14 @@ window.StartedMainLoopCallback = function () {
   });
 
   // Add mousemove listener for manual mouse delta handling
-  document.addEventListener('mousemove', (e) => {
+  document.addEventListener("mousemove", (e) => {
     if (document.pointerLockElement === gameCanvas) {
-      Module.ccall('SRB2_AddMouseDelta', 'void', ['number', 'number'], [Math.round(e.movementX), Math.round(e.movementY)]);
+      Module.ccall(
+        "SRB2_AddMouseDelta",
+        "void",
+        ["number", "number"],
+        [Math.round(e.movementX), Math.round(e.movementY)],
+      );
     }
   });
 
@@ -378,10 +389,10 @@ var LockMouse = () => {
     Module.ccall("lock_mouse", null, [], []);
     gameCanvas.focus();
     if (gameCanvas.requestPointerLock) {
-      try{
-       gameCanvas.requestPointerLock().catch((e) => {});
-      }catch(e){
-        console.warn("Mouse lock request failed: ",e);
+      try {
+        gameCanvas.requestPointerLock().catch((e) => {});
+      } catch (e) {
+        console.warn("Mouse lock request failed: ", e);
       }
     }
   }
@@ -405,30 +416,56 @@ var CaptureFullscreenKey = (e) => {
 
 window.addEventListener("mousedown", LockMouse, false);
 document.addEventListener("pointerlockchange", (_) => UnlockMouse(), false);
-document.addEventListener('mousedown', (e) => {
-  if (document.pointerLockElement === gameCanvas) {
-    Module.ccall('mouse_button_down', 'void', ['number'], [e.button]);
-    e.preventDefault();
-  }
-}, true);
-document.addEventListener('mouseup', (e) => {
-  if (document.pointerLockElement === gameCanvas) {
-    Module.ccall('mouse_button_up', 'void', ['number'], [e.button]);
-    e.preventDefault();
-  }
-}, true);
-document.addEventListener('wheel', (e) => {
-  if (document.pointerLockElement === gameCanvas) {
-    Module.ccall('mouse_wheel_xy', 'void', ['number', 'number'], [Math.round(e.deltaX), Math.round(e.deltaY)]);
-    e.preventDefault();
-  }
-}, true);
-gameCanvas.addEventListener('mousemove', (e) => {
-  if (document.pointerLockElement === gameCanvas) {
-    Module.ccall('SRB2_AddMouseDelta', 'void', ['number', 'number'], [e.movementX, e.movementY]);
-    e.preventDefault();
-  }
-},true);
+document.addEventListener(
+  "mousedown",
+  (e) => {
+    if (document.pointerLockElement === gameCanvas) {
+      Module.ccall("mouse_button_down", "void", ["number"], [e.button]);
+      e.preventDefault();
+    }
+  },
+  true,
+);
+document.addEventListener(
+  "mouseup",
+  (e) => {
+    if (document.pointerLockElement === gameCanvas) {
+      Module.ccall("mouse_button_up", "void", ["number"], [e.button]);
+      e.preventDefault();
+    }
+  },
+  true,
+);
+document.addEventListener(
+  "wheel",
+  (e) => {
+    if (document.pointerLockElement === gameCanvas) {
+      Module.ccall(
+        "mouse_wheel_xy",
+        "void",
+        ["number", "number"],
+        [Math.round(e.deltaX), Math.round(e.deltaY)],
+      );
+      e.preventDefault();
+    }
+  },
+  true,
+);
+gameCanvas.addEventListener(
+  "mousemove",
+  (e) => {
+    if (document.pointerLockElement === gameCanvas) {
+      Module.ccall(
+        "SRB2_AddMouseDelta",
+        "void",
+        ["number", "number"],
+        [e.movementX, e.movementY],
+      );
+      e.preventDefault();
+    }
+  },
+  true,
+);
 window.addEventListener(
   "load",
   (_) => {

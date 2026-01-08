@@ -15,11 +15,11 @@ class SRB2Relay {
     this.url = url;
     this.isOpen = false;
     this.hasActiveNetgame = false;
-    
+
     // Performance: Reusable TextDecoder if supported (Modern Browsers)
     // Falls back to manual loop if not available.
     if (typeof TextDecoder !== "undefined") {
-        this.decoder = new TextDecoder("iso-8859-1");
+      this.decoder = new TextDecoder("iso-8859-1");
     }
 
     this.attemptConnection();
@@ -30,8 +30,8 @@ class SRB2Relay {
     this.myIP = "0.0.0.0";
     this.ws = new WebSocket(this.url);
     // Optimization: Use binaryType if you eventually switch to binary frames
-    // this.ws.binaryType = 'arraybuffer'; 
-    
+    // this.ws.binaryType = 'arraybuffer';
+
     var _this = this;
     this.ws.onopen = (event) => {
       _this.isOpen = true;
@@ -43,7 +43,7 @@ class SRB2Relay {
       if (_this.pingInterval) clearInterval(_this.pingInterval);
       console.log("Relay disconnected, attempting reconnect...");
       // 1s is reasonable, but you can lower to 500ms for more aggressive reconnects
-      setTimeout(() => _this.attemptConnection(), 1000); 
+      setTimeout(() => _this.attemptConnection(), 1000);
     };
     this.ws.onerror = (error) => {
       console.error("WebSocket error:", error);
@@ -67,8 +67,10 @@ class SRB2Relay {
   onRelayMessage(event) {
     // Optimization: Try/Catch parsing to prevent crashes on bad packets
     try {
-        var json = JSON.parse(event.data);
-    } catch (e) { return; }
+      var json = JSON.parse(event.data);
+    } catch (e) {
+      return;
+    }
 
     if (json.method == "data") {
       // 1. Decompress
@@ -76,9 +78,9 @@ class SRB2Relay {
       if (!binaryString) return;
 
       var len = binaryString.length;
-      
+
       // 2. OPTIMIZATION: Allocating size once is much faster than pushing to array
-      var uint8array = new Uint8Array(len); 
+      var uint8array = new Uint8Array(len);
       for (var i = 0; i < len; i++) {
         uint8array[i] = binaryString.charCodeAt(i);
       }
@@ -105,7 +107,12 @@ class SRB2Relay {
     } else if (json.method == "listening") {
       logInSRB2("RELAY: Relayed netgame available on " + json.listening);
     } else if (json.method == "join") {
-      Module.ccall("SRB2_SetClientIP", null, ["number", "string"], [json.id, json.ip]);
+      Module.ccall(
+        "SRB2_SetClientIP",
+        null,
+        ["number", "string"],
+        [json.id, json.ip],
+      );
     }
   }
 
@@ -119,17 +126,18 @@ class SRB2Relay {
   addListeners() {
     var _this = this;
     window.SRB2WebNet = {
-      InitNetwork: function () { return 0; },
-      ConnectTo: function (address,port) {
+      InitNetwork: function () {
+        return 0;
+      },
+      ConnectTo: function (address, port) {
         if (!_this.isOpen || _this.hasActiveNetgame) return 0;
-        
         var id = address;
         if (port) {
           id += ":" + port;
         } else {
           id += ":5029";
         }
-        
+
         _this.ws.send(JSON.stringify({ method: "connect", id: id }));
         return 0;
       },
@@ -144,8 +152,8 @@ class SRB2Relay {
         // Processing in chunks of 4096 is safe and fast.
         var chunk = 4096;
         for (var i = 0; i < length; i += chunk) {
-            var end = Math.min(i + chunk, length);
-            stringData += String.fromCharCode.apply(null, data.subarray(i, end));
+          var end = Math.min(i + chunk, length);
+          stringData += String.fromCharCode.apply(null, data.subarray(i, end));
         }
 
         _this.ws.send(
@@ -153,7 +161,7 @@ class SRB2Relay {
             method: "data",
             id: node_id,
             data: LZString.compress(stringData),
-          })
+          }),
         );
         return 0;
       },
@@ -165,7 +173,9 @@ class SRB2Relay {
         _this.endNetgame();
         return 0;
       },
-      GetPort: function () { return 5029; },
+      GetPort: function () {
+        return 5029;
+      },
     };
   }
 }
