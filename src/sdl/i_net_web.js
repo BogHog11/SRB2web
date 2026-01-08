@@ -22,7 +22,7 @@ mergeInto(LibraryManager.library, {
   },
   SRB2_ConnectTo: function (addr, port) {
     if (window.SRB2WebNet && window.SRB2WebNet.ConnectTo) {
-      return window.SRB2WebNet.ConnectTo(UTF8ToString(addr,port));
+      return window.SRB2WebNet.ConnectTo(UTF8ToString(addr), UTF8ToString(port));
     }
     return 1;
   },
