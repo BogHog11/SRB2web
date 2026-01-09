@@ -16,6 +16,7 @@ class SRB2Relay {
     this.isOpen = false;
     this.hasActiveNetgame = false;
     this.currentConnection = null;
+    this.ipCache = {};
 
     // Performance: Reusable TextDecoder if supported (Modern Browsers)
     // Falls back to manual loop if not available.
@@ -97,12 +98,19 @@ class SRB2Relay {
       );
       Module._free(dataPtr);
 
-      Module.ccall(
-          "SRB2_SetClientIP",              // C function name
-          null,                            // Return type ('void' -> null)
-          ["number", "string", "number"],  // Argument types: int, char*, short
-          [json.id || 0, ""+json.ip || "0.0.0.0", "" + (json.port || 0)]         // The actual values
-      );
+      // Inside onRelayMessage, replace the SetClientIP call with:
+        var rId = json.id || 0;
+        var rIp = "" + (json.ip || "0.0.0.0");
+        
+        if (this.ipCache[rId] !== rIp) {
+            this.ipCache[rId] = rIp;
+            Module.ccall(
+              "SRB2_SetClientIP",
+              null,
+              ["number", "string", "number"],
+              [rId, rIp, "" + (json.port || 0)]
+            );
+        }
 
       return; // Exit early for data packets to skip other checks
     }
