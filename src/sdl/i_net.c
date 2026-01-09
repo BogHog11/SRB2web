@@ -142,7 +142,9 @@ void SRB2_SetClientIP(int clientId, const char* ip, short portnumber) {
             }
             clientaddress[i].host = ip_hash; // Overwrite with hash for banning
             clientaddress[i].port = portnumber;
-            CONS_Printf(Get"Set client %d IP to %s:%d\n", clientId, clientaddress[i].ip, clientaddress[i].port);
+            CONS_Printf(M_GetText(clientId) + "\n");
+            CONS_Printf(M_GetText(clientaddress[i].host) + "\n");
+            CONS_Printf(M_GetText(clientaddress[i].port) + "\n");
             break;
         }
     }
