@@ -87,6 +87,7 @@ extern void SendKicksForNode(SINT8 node, UINT8 msg);
 // Dummy types for EMSCRIPTEN since SDL_net is not available
 typedef struct {
     unsigned int host;
+    unsigned int relayid; // Used to store Web Client ID
     unsigned short port;
 } IPaddress;
 
@@ -130,7 +131,7 @@ EMSCRIPTEN_KEEPALIVE
 void SRB2_SetClientIP(int clientId, const char* ip) {
     // Find the node for this clientId
     for (int i = 1; i < MAXNETNODES; i++) {
-        if (nodeconnected[i] && clientaddress[i].host == clientId) {
+        if (nodeconnected[i] && clientaddress[i].relayid == (unsigned int)clientId) {
             // For now, store the IP as a hash or something in host
             // Since host is unsigned int, hash the IP string
             unsigned int ip_hash = 0;
@@ -138,20 +139,27 @@ void SRB2_SetClientIP(int clientId, const char* ip) {
                 ip_hash = ip_hash * 31 + ip[j];
             }
             clientaddress[i].host = ip_hash; // Overwrite with hash for banning
-            DEBFILE(va("Set IP for client %d: %s (hash: %u)\n", clientId, ip, ip_hash));
             break;
         }
     }
 }
 
+#include "../g_game.h"
+
 EMSCRIPTEN_KEEPALIVE
 void SRB2_ClientDisconnected(int clientId) {
-    // Find the node for this clientId and disconnect it
     for (int i = 1; i < MAXNETNODES; i++) {
-        if (nodeconnected[i] && clientaddress[i].host == clientId) {
-            //DEBFILE(va("Client %d disconnected, kicking node %d\n", clientId, i));
-            SendKicksForNode(i, KICK_MSG_PLAYER_QUIT | KICK_MSG_KEEP_BODY);
-            break;
+        if (clientaddress[i].relayid == (unsigned int)clientId) {
+            if (playeringame[i]) {                
+                // KICK_MSG_PLAYER_QUIT = Tell everyone they left.
+                SendKicksForNode(i, KICK_MSG_PLAYER_QUIT);
+            } 
+            else {
+                Net_CloseConnection(i | FORCECLOSE);
+                nodeconnected[i] = false;
+                clientaddress[i].host = 0;
+            }
+            return;
         }
     }
 }
@@ -192,6 +200,9 @@ static const char *NET_GetBanAddress(size_t ban)
 
 static boolean NET_cmpaddr(IPaddress* a, IPaddress* b)
 {
+    #if EMSCRIPTEN
+    return (a->relayid == b->relayid);
+    #endif
     // For Web, we compare the "host" (Client ID) only
     return (a->host == b->host); 
 }
@@ -218,6 +229,7 @@ static boolean NET_Get(void)
     }
 
 #ifdef EMSCRIPTEN
+
     // --- WEB IMPLEMENTATION ---
     // Pop from our queue
     ws_packet_t *pkt = &packet_queue[queue_tail];
@@ -227,7 +239,8 @@ static boolean NET_Get(void)
     memcpy(mypacket.data, pkt->data, pkt->length);
     
     // Set address (We use .host to store the Web Client ID)
-    mypacket.address.host = pkt->from_node_id;
+    mypacket.address.relayid = pkt->from_node_id;
+    mypacket.address.host = 0;
     mypacket.address.port = 0;
     
     // Remove from queue

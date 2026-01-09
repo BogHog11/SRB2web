@@ -45,7 +45,7 @@
 //   firstticstosend is used to optimize a condition
 // Normally maketic >= gametic > 0
 
-#define FORCECLOSE 0x8000
+//Define FORCECLOSE is moved to d_net.h
 tic_t connectiontimeout = (10*TICRATE);
 
 /// \brief network packet

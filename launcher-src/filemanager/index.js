@@ -131,6 +131,28 @@ function showDropdownMenu(e) {
         {
             element: "div",
             className: "dropdownItem",
+            textContent: "Create folder",
+            onclick: function() {
+                dialog.prompt("Enter a name for the new folder:", "New Folder").then(async (folderName) => {
+                    if (folderName) {
+                        loadingScreen.hidden = false;
+                        loadingScreen.textContent = "Creating folder \""+folderName+"\"...";
+                        try{
+                            var fullPath = joinPaths(currentPath, folderName);
+                            FS.mkdir(fullPath);
+                            refreshFileList();
+                            await syncFs();
+                        }catch(e){
+                            dialog.alert("Failed to create folder: " + e);
+                        }
+                        loadingScreen.hidden = true;
+                    }
+                });
+            }
+        },
+        {
+            element: "div",
+            className: "dropdownItem",
             textContent: "Upload file(s)",
             onclick: function() {
                 var fileInput = document.createElement("input");
@@ -153,9 +175,10 @@ function showDropdownMenu(e) {
                             FS.writeFile(fullPath, uint8Array);
                             refreshFileList();
                             await syncFs();
-                            loadingScreen.hidden = true;
                             if (index + 1 < files.length) {
                                 loadFile(index + 1);
+                            } else {
+                                loadingScreen.hidden = true;
                             }
                         };
                         reader.readAsArrayBuffer(file);
@@ -182,28 +205,32 @@ function showFileDropdownMenu(e, fullPath, isDir, fileName) {
                     if (confirmed) {
                         loadingScreen.hidden = false;
                         loadingScreen.textContent = "Deleting \""+fileName+"\"...";
-                        if (isDir) {
-                            function removeDirContents(path) {
-                                var items = FS.readdir(path).slice(2);
-                                for (var i = 0; i < items.length; i++) {
-                                    var itemPath = joinPaths(path, items[i]);
-                                    var stat = FS.stat(itemPath);
-                                    if (FS.isDir(stat.mode)) {
-                                        removeDirContents(itemPath);
-                                        FS.rmdir(itemPath);
-                                    }
-                                    else {
-                                        FS.unlink(itemPath);
+                        try{
+                            if (isDir) {
+                                function removeDirContents(path) {
+                                    var items = FS.readdir(path).slice(2);
+                                    for (var i = 0; i < items.length; i++) {
+                                        var itemPath = joinPaths(path, items[i]);
+                                        var stat = FS.stat(itemPath);
+                                        if (FS.isDir(stat.mode)) {
+                                            removeDirContents(itemPath);
+                                            FS.rmdir(itemPath);
+                                        }
+                                        else {
+                                            FS.unlink(itemPath);
+                                        }
                                     }
                                 }
+                                removeDirContents(fullPath);
+                                FS.rmdir(fullPath);
+                            } else {
+                                FS.unlink(fullPath);
                             }
-                            removeDirContents(fullPath);
-                            FS.rmdir(fullPath);
-                        } else {
-                            FS.unlink(fullPath);
+                            refreshFileList();
+                            await syncFs();
+                        }catch(e){
+                            dialog.alert("Failed to delete file/folder: " + e);
                         }
-                        refreshFileList();
-                        await syncFs();
                         loadingScreen.hidden = true;
                     }
                 });
@@ -226,11 +253,15 @@ function showFileDropdownMenu(e, fullPath, isDir, fileName) {
                     loadingScreen.textContent = "Uploading \""+fileName+"\" and replacing file...";
                     var reader = new FileReader();
                     reader.onload = async function() {
-                        var arrayBuffer = reader.result;
-                        var uint8Array = new Uint8Array(arrayBuffer);
-                        FS.writeFile(fullPath, uint8Array);
-                        refreshFileList();
-                        await syncFs();
+                        try{
+                            var arrayBuffer = reader.result;
+                            var uint8Array = new Uint8Array(arrayBuffer);
+                            FS.writeFile(fullPath, uint8Array);
+                            refreshFileList();
+                            await syncFs();
+                        }catch(e){
+                            dialog.alert("Failed to replace file: " + e);
+                        }
                         loadingScreen.hidden = true;
                     };
                     reader.readAsArrayBuffer(file);
@@ -247,11 +278,15 @@ function showFileDropdownMenu(e, fullPath, isDir, fileName) {
                 dialog.prompt("Enter a new name for \"" + fileName + "\":", fileName).then(async (newName) => {
                     if (newName && newName != fileName) {
                         loadingScreen.hidden = false;
-                        loadingScreen.textContent = "Renaming \""+fileName+"\" to \""+newName+"\"...";
-                        var newFullPath = joinPaths(currentPath, newName);
-                        FS.rename(fullPath, newFullPath);
-                        refreshFileList();
-                        await syncFs();
+                        try{
+                            loadingScreen.textContent = "Renaming \""+fileName+"\" to \""+newName+"\"...";
+                            var newFullPath = joinPaths(currentPath, newName);
+                            FS.rename(fullPath, newFullPath);
+                            refreshFileList();
+                            await syncFs();
+                        }catch(e){
+                            dialog.alert("Failed to rename file: " + e);
+                        }
                         loadingScreen.hidden = true;
                     }
                 });
@@ -265,14 +300,18 @@ function showFileDropdownMenu(e, fullPath, isDir, fileName) {
             onclick: function() {
                 loadingScreen.hidden = false;
                 loadingScreen.textContent = "Preparing download for \""+fileName+"\"...";
-                var fileData = FS.readFile(fullPath);
-                var blob = new Blob([fileData], {type: "application/octet-stream"});
-                var a = document.createElement("a");
-                a.href = URL.createObjectURL(blob);
-                a.download = fileName;
-                document.body.append(a);
-                a.click();
-                a.remove();
+                try{
+                    var fileData = FS.readFile(fullPath);
+                    var blob = new Blob([fileData], {type: "application/octet-stream"});
+                    var a = document.createElement("a");
+                    a.href = URL.createObjectURL(blob);
+                    a.download = fileName;
+                    document.body.append(a);
+                    a.click();
+                    a.remove();
+                }catch(e){
+                    dialog.alert("Failed to download file: " + e);
+                }
                 loadingScreen.hidden = true;
             }
         },
@@ -282,34 +321,39 @@ function showFileDropdownMenu(e, fullPath, isDir, fileName) {
             textContent: "Download (save to zip)",
             hidden: !isDir,
             onclick: function() {
-                loadingScreen.hidden = false;
-                loadingScreen.textContent = "Preparing download for \""+fileName+"\"...";
-                var zip = new jszip();
-                function addFolderToZip(zipFolder, path) {
-                    var items = FS.readdir(path).slice(2);
-                    for (var i = 0; i < items.length; i++) {
-                        var itemPath = joinPaths(path, items[i]);
-                        var stat = FS.stat(itemPath);
-                        if (FS.isDir(stat.mode)) {
-                            var newZipFolder = zipFolder.folder(items[i]);
-                            addFolderToZip(newZipFolder, itemPath);
-                        }
-                        else {
-                            var fileData = FS.readFile(itemPath);
-                            zipFolder.file(items[i], fileData);
+                try{
+                    loadingScreen.hidden = false;
+                    loadingScreen.textContent = "Preparing download for \""+fileName+"\"...";
+                    var zip = new jszip();
+                    function addFolderToZip(zipFolder, path) {
+                        var items = FS.readdir(path).slice(2);
+                        for (var i = 0; i < items.length; i++) {
+                            var itemPath = joinPaths(path, items[i]);
+                            var stat = FS.stat(itemPath);
+                            if (FS.isDir(stat.mode)) {
+                                var newZipFolder = zipFolder.folder(items[i]);
+                                addFolderToZip(newZipFolder, itemPath);
+                            }
+                            else {
+                                var fileData = FS.readFile(itemPath);
+                                zipFolder.file(items[i], fileData);
+                            }
                         }
                     }
-                }
-                addFolderToZip(zip.folder(fileName), fullPath);
-                zip.generateAsync({type:"blob"}).then(function(content) {
-                    var a = document.createElement("a");
-                    a.href = URL.createObjectURL(content);
-                    a.download = fileName + ".zip";
-                    document.body.append(a);
-                    a.click();
-                    a.remove();
+                    addFolderToZip(zip.folder(fileName), fullPath);
+                    zip.generateAsync({type:"blob"}).then(function(content) {
+                        var a = document.createElement("a");
+                        a.href = URL.createObjectURL(content);
+                        a.download = fileName + ".zip";
+                        document.body.append(a);
+                        a.click();
+                        a.remove();
+                        loadingScreen.hidden = true;
+                    });
+                }catch(e){
+                    dialog.alert("Failed to download folder: " + e);
                     loadingScreen.hidden = true;
-                });
+                }
             }
         }
     ]);
@@ -344,10 +388,26 @@ filePathInput.addEventListener("change", function() {
         FS = Module.FS;
         //document.body.textContent = (Object.keys(FS));
         FS.syncfs(true, (err) => {
-            refreshFileList();
+            try{
+                refreshFileList();
+            }catch(e){
+                try{
+                    currentPath = "/";
+                    refreshFileList();
+                    dialog.alert(
+                        "To view the addons directory, play SRB2 Web first to create the necessary folders.");
+                }catch(e){
+                    dialog.alert(
+                        "Failed to load filesystem: " + e +
+                        "\nReload to try again.\nThis might have happened because you haven't loaded SRB2 Web.")
+                    .then(() => {
+                        window.location.reload();
+                    });
+                }
+            }
         });
     }catch(e){
-        window.alert("Failed to load filesystem: " + e + "\nReload to try again.");
+        dialog.alert("Failed to load filesystem: " + e + "\nReload to try again.");
         window.location.reload();
     }
 })();

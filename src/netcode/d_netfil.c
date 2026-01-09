@@ -1611,23 +1611,6 @@ void CURLGetFile(void)
 HTTP_login *
 CURLGetLogin (const char *url, HTTP_login ***return_prev_next)
 {
-	HTTP_login  * login;
-	HTTP_login ** prev_next;
-
-	for (
-			prev_next = &curl_logins;
-			( login = (*prev_next));
-			prev_next = &login->next
-	){
-		if (strcmp(login->url, url) == 0)
-		{
-			if (return_prev_next)
-				(*return_prev_next) = prev_next;
-
-			return login;
-		}
-	}
-
 	return NULL;
 }
 

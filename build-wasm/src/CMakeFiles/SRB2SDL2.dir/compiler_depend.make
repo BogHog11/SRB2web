@@ -15874,11 +15874,15 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/i_net.c.o: /workspaces/SRB2web/src/sdl/i_net.c \
   /workspaces/SRB2web/src/doomstat.h \
   /workspaces/SRB2web/src/doomtype.h \
   /workspaces/SRB2web/src/endian.h \
+  /workspaces/SRB2web/src/g_demo.h \
+  /workspaces/SRB2web/src/g_game.h \
   /workspaces/SRB2web/src/g_state.h \
   /workspaces/SRB2web/src/i_sound.h \
   /workspaces/SRB2web/src/i_system.h \
   /workspaces/SRB2web/src/info.h \
   /workspaces/SRB2web/src/m_argv.h \
+  /workspaces/SRB2web/src/m_cheat.h \
+  /workspaces/SRB2web/src/m_cond.h \
   /workspaces/SRB2web/src/m_fixed.h \
   /workspaces/SRB2web/src/m_swap.h \
   /workspaces/SRB2web/src/command.h \

@@ -15,6 +15,7 @@ class SRB2Relay {
     this.url = url;
     this.isOpen = false;
     this.hasActiveNetgame = false;
+    this.currentConnection = null;
 
     // Performance: Reusable TextDecoder if supported (Modern Browsers)
     // Falls back to manual loop if not available.
@@ -95,6 +96,14 @@ class SRB2Relay {
         [dataPtr, len, json.id || 0],
       );
       Module._free(dataPtr);
+
+      Module.ccall(
+        "SRB2_SetClientIP",
+        null,
+        ["number", "string"],
+        [json.id || 0, json.ip],
+      );
+
       return; // Exit early for data packets to skip other checks
     }
 
@@ -103,9 +112,23 @@ class SRB2Relay {
       this.myIP = json.ip;
       if (this.hasActiveNetgame) {
         this.ws.send(JSON.stringify({ method: "listen" }));
+      } else if (this.currentConnection) {
+        this.ws.send(
+          JSON.stringify({
+            method: "connect",
+            id: this.currentConnection,
+          }),
+        );
       }
     } else if (json.method == "listening") {
       logInSRB2("RELAY: Relayed netgame available on " + json.listening);
+    } else if (json.method == "leave") {
+      Module.ccall(
+        "SRB2_ClientDisconnected",
+        null,
+        ["number"],
+        [json.id],
+      );
     } else if (json.method == "join") {
       Module.ccall(
         "SRB2_SetClientIP",
@@ -137,7 +160,7 @@ class SRB2Relay {
         } else {
           id += ":5029";
         }
-
+        _this.currentConnection = id;
         _this.ws.send(JSON.stringify({ method: "connect", id: id }));
         return 0;
       },
@@ -166,10 +189,12 @@ class SRB2Relay {
         return 0;
       },
       ListenOn: function (port) {
+        _this.currentConnection = null;
         _this.startNetgame();
         return 0;
       },
       CloseSocket: function () {
+        _this.currentConnection = null;
         _this.endNetgame();
         return 0;
       },
