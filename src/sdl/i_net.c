@@ -228,7 +228,7 @@ static boolean NET_Get(void)
     // Set address (We use .host to store the Web Client ID)
     mypacket.address.host = pkt->from_node_id;
     mypacket.address.port = 0;
-    mypacket.address.relayid = clientaddress[pkt->relayid].relayid;
+    mypacket.address.relayid = clientaddress[pkt->from_node_id].relayid;
     
     // Remove from queue
     queue_tail = NextIndex(queue_tail);
