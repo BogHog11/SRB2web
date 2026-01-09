@@ -98,17 +98,6 @@ class SRB2Relay {
       );
       Module._free(dataPtr);
 
-      // Inside onRelayMessage, replace the SetClientIP call with:
-        var rId = json.id || 0;
-        var rIp = "" + (json.ip || "0.0.0.0");
-        
-        Module.ccall(
-              "SRB2_SetClientIP",
-              null,
-              ["number", "string", "number"],
-              [rId, rIp, "" + (json.port || 0)]
-            );
-
       return; // Exit early for data packets to skip other checks
     }
 
@@ -127,13 +116,18 @@ class SRB2Relay {
       }
     } else if (json.method == "listening") {
       logInSRB2("RELAY: Relayed netgame available on " + json.listening);
-    } else if (json.method == "leave") {
+    } else if (json.method == "join") {
+      Module.ccall('SRB2_RegisterWebClient', 'number', ['number'], [json.id]);
+      var rId = json.id || 0;
+      var rIp = "" + (json.ip || "0.0.0.0");
       Module.ccall(
-        "SRB2_ClientDisconnected",
-        null,
-        ["number"],
-        [json.id],
-      );
+              "SRB2_SetClientIP",
+              null,
+              ["number", "string", "number"],
+              [rId, rIp, "" + (json.port || 0)]
+            );
+    } else if (json.method == "leave") {
+      Module.ccall('SRB2_UnregisterWebClient', 'null', ['number'], [json.id]);
     }
   }
 

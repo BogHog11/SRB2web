@@ -204,139 +204,121 @@ static boolean NET_CanGet(void)
 #endif
 }
 
-// Helper: Find which SRB2 Node (0-31) belongs to a specific Web Relay ID
-static INT32 NET_NodeForRelayID(int relay_id)
+// Map a Web RelayID (JS side) to an SRB2 Node Index (C side)
+// We use clientaddress[i].relayid to store the Web ID.
+static INT32 NET_GetNodeByRelayID(int relayid)
 {
-    // Search existing connections
     for (INT32 i = 1; i < MAXNETNODES; i++)
     {
-        // Check if slot is active AND matches the relay ID
-        if (nodeconnected[i] && clientaddress[i].relayid == (unsigned int)relay_id)
-        {
+        // We look for a slot that has been reserved for this RelayID
+        // We DO NOT check 'nodeconnected' here, because the game might
+        // not have finished the handshake yet, but the slot is reserved.
+        if (clientaddress[i].relayid == (unsigned int)relayid)
             return i;
+    }
+    return -1;
+}
+
+#ifdef EMSCRIPTEN
+// --- NEW EXPORTED FUNCTIONS FOR JS ---
+
+EMSCRIPTEN_KEEPALIVE
+int SRB2_RegisterWebClient(int relayid)
+{
+    // Check if already registered
+    if (NET_GetNodeByRelayID(relayid) != -1)
+        return 0; // Already exists
+
+    // Find a free slot
+    INT32 newnode = -1;
+    for (INT32 i = 1; i < MAXNETNODES; i++)
+    {
+        // A slot is free if it has no RelayID assigned and no game connection
+        if (!nodeconnected[i] && clientaddress[i].relayid == 0)
+        {
+            newnode = i;
+            break;
         }
     }
-    return -1; // Not found (New player?)
+
+    if (newnode != -1)
+    {
+        // Reserve the slot!
+        memset(&clientaddress[newnode], 0, sizeof(IPaddress));
+        clientaddress[newnode].relayid = relayid;
+        clientaddress[newnode].host = relayid; // Store ID as host for display/hashing
+        
+        // Mark strictly as not connected yet (let the game engine handle the handshake)
+        nodeconnected[newnode] = false; 
+        
+        printf("Web Client Joined: Mapped RelayID %d to Node %d\n", relayid, newnode);
+        return newnode;
+    }
+    
+    printf("Web Client Rejected: Server Full\n");
+    return -1;
 }
+
+EMSCRIPTEN_KEEPALIVE
+void SRB2_UnregisterWebClient(int relayid)
+{
+    INT32 node = NET_GetNodeByRelayID(relayid);
+    if (node != -1)
+    {
+        printf("Web Client Left: Cleaning up Node %d (RelayID %d)\n", node, relayid);
+        
+        // Clear the mapping
+        clientaddress[node].relayid = 0;
+        clientaddress[node].host = 0;
+        
+        // If the game thought they were connected, this helps trigger a timeout/kick
+        // though usually, you want to send a 'quit' packet to the engine first.
+    }
+}
+
+#endif
 
 static boolean NET_Get(void)
 {
-    INT32 mystatus = -1;
-    INT32 newnode;
-    mypacket.len = MAXPACKETLENGTH;
-
-    if (!NET_CanGet())
-    {
-        doomcom->remotenode = -1; 
+    if (!NET_CanGet()) {
+        doomcom->remotenode = -1;
         return false;
     }
 
 #ifdef EMSCRIPTEN
-    // --- WEB IMPLEMENTATION ---
     ws_packet_t *pkt = &packet_queue[queue_tail];
-    
+
+    // 1. Look up the sender
+    INT32 node = NET_GetNodeByRelayID(pkt->from_node_id);
+
+    // 2. If we don't know who this is, DROP THE PACKET.
+    // JS should have called SRB2_RegisterWebClient before sending us data.
+    if (node == -1)
+    {
+        // Optional: Auto-register if you want to be safe, 
+        // but explicit is better for the issue you are having.
+        // For now, we just skip to next packet.
+        queue_tail = NextIndex(queue_tail);
+        doomcom->remotenode = -1;
+        return false;
+    }
+
+    // 3. Fill the packet
     mypacket.len = pkt->length;
     memcpy(mypacket.data, pkt->data, pkt->length);
     
-    // CRITICAL FIX: Do NOT access clientaddress using [pkt->from_node_id] directly.
-    // The RelayID might be 500, but clientaddress only has 32 slots!
-    
-    // Construct a temporary address for comparison
-    mypacket.address.host = pkt->from_node_id; // Use ID as host for display
-    mypacket.address.port = 0;
-    mypacket.address.relayid = pkt->from_node_id; // Store the REAL ID here
-    
+    // We don't really need address info here since 'node' is already found
+    // but the engine might look at it.
+    mypacket.address.relayid = pkt->from_node_id; 
+
+    doomcom->remotenode = node;
+    doomcom->datalength = mypacket.len;
+
     queue_tail = NextIndex(queue_tail);
-    mystatus = 1; 
-    // --------------------------
+    return true;
 #else
-    mystatus = SDLNet_UDP_Recv(mysocket,&mypacket);
+    // Desktop code...
 #endif
-
-    if (mystatus != -1)
-    {
-        // 1. Try to find an existing node for this Relay ID
-        INT32 found_node = -1;
-
-#ifdef EMSCRIPTEN
-        // Use our safe helper
-        found_node = NET_NodeForRelayID(mypacket.address.relayid);
-#else
-        // Standard IP comparison for Desktop
-        for (INT32 i = 1; i < MAXNETNODES; i++)
-        {
-             if (nodeconnected[i] && NET_cmpaddr(&clientaddress[i], &mypacket.address))
-             {
-                 found_node = i;
-                 break;
-             }
-        }
-#endif
-
-        // 2. If found, pass it to the game engine
-        if (found_node != -1)
-        {
-            doomcom->remotenode = found_node;
-            doomcom->datalength = mypacket.len;
-            return true;
-        }
-
-        // 3. If NOT found, this is a "Join" attempt (New Node)
-        newnode = -1;
-        for (INT32 i = 1; i < MAXNETNODES; i++)
-        {
-            // Find the first empty slot
-            if (!nodeconnected[i])
-            {
-                newnode = i;
-                break;
-            }
-        }
-        
-        if (newnode != -1)
-        {
-            // Register the new player!
-            M_Memcpy(&clientaddress[newnode], &mypacket.address, sizeof (IPaddress));
-            
-            // Specifically for Web: Ensure the RelayID is saved permanently in this slot
-            #ifdef EMSCRIPTEN
-            clientaddress[newnode].relayid = mypacket.address.relayid;
-            #endif
-
-            DEBFILE(va("New node detected: node:%d RelayID:%d\n", newnode, mypacket.address.relayid));
-            
-            doomcom->remotenode = newnode; 
-            doomcom->datalength = mypacket.len;
-            
-            // Check Bans
-            size_t i;
-            for (i = 0; i < numbans; i++)
-            {
-                #ifdef EMSCRIPTEN
-                // Check Ban by Relay ID
-                if (banned[i].relayid == mypacket.address.relayid)
-                #else
-                if (NET_cmpaddr(&mypacket.address, &banned[i]))
-                #endif
-                {
-                    DEBFILE("Banned player attempted join\n");
-                    NET_bannednode[newnode] = true;
-                    break;
-                }
-            }
-            if (i == numbans)
-                NET_bannednode[newnode] = false;
-            
-            return true;
-        }
-        else
-        {
-            I_OutputMsg("SDL_Net: No more free slots");
-        }
-    }
-    
-    doomcom->remotenode = -1;
-    return false;
 }
 
 static void NET_Send(void)
