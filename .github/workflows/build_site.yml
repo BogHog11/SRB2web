@@ -33,8 +33,8 @@ jobs:
         # Ensure 'npm run build' actually creates the 'launcher-dist' folder
 
       - name: Deploy to Deploy Branch 🚀
-        # Only deploy when pushing to main, not on Pull Requests
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        # Only deploy when pushing to master, not on Pull Requests
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: launcher-dist # The folder containing your built website files
