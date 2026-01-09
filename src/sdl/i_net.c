@@ -59,7 +59,7 @@ void SRB2_NetworkReceive(char *data, int length, int from_id) {
     
     memcpy(packet_queue[queue_head].data, data, length);
     packet_queue[queue_head].length = length;
-    packet_queue[queue_head].from_node_id = from_id; //todo: add c join function to map id to node
+    packet_queue[queue_head].from_node_id = from_id;
     
     queue_head = next_head;
 }
@@ -130,15 +130,17 @@ EMSCRIPTEN_KEEPALIVE
 void SRB2_SetClientIP(int clientId, const char* ip) {
     // Find the node for this clientId
     for (int i = 1; i < MAXNETNODES; i++) {
-        if (nodeconnected[i] && clientaddress[i].relayid == (unsigned int)clientId) {
-            // For now, store the IP as a hash or something in host
-            // Since host is unsigned int, hash the IP string
+        // Only update if the relayid matches
+        if (clientaddress[i].relayid == (unsigned int)clientId) {
+            // Hash the IP string to store in .host for banning/identification
             unsigned int ip_hash = 0;
             for (int j = 0; ip[j]; j++) {
                 ip_hash = ip_hash * 31 + ip[j];
             }
-            clientaddress[i].host = ip_hash; // Overwrite with hash for banning
-            //DEBFILE(va("Set IP for client %d: %s (hash: %u)\n", clientId, ip, ip_hash));
+            // Preserve the "occupied" status if hash is 0 (unlikely)
+            if (ip_hash == 0) ip_hash = 1; 
+            
+            clientaddress[i].host = ip_hash; 
             break;
         }
     }
@@ -148,8 +150,15 @@ EMSCRIPTEN_KEEPALIVE
 void SRB2_ClientDisconnected(int clientId) {
     // Find the node for this clientId and disconnect it
     for (int i = 1; i < MAXNETNODES; i++) {
-        if (nodeconnected[i] && clientaddress[i].relayid == (unsigned int)clientId) {
-            SendKicksForNode(i, KICK_MSG_PLAYER_QUIT);
+        if (clientaddress[i].relayid == (unsigned int)clientId) {
+            // Note: In a real UDP game, you usually wait for timeout,
+            // but for WebSockets we know instantly when they leave.
+            // Send a kick to the engine to free the slot gracefully.
+            if (nodeconnected[i])
+                SendKicksForNode(i, KICK_MSG_PLAYER_QUIT);
+            
+            // We do NOT clear the clientaddress here immediately; 
+            // let the engine handle the disconnect logic first.
             break;
         }
     }
@@ -160,8 +169,8 @@ static const char *NET_AddrToStr(IPaddress* sk)
 {
 #ifdef EMSCRIPTEN
     static char s[22];
-    // In web, the "host" is just the Client ID
-    sprintf(s, "Client-%d", sk->host);
+    // In web, the "host" is just the Client ID or Hash
+    sprintf(s, "Client-%u", sk->relayid);
     return s;
 #else
     static char s[22]; // 255.255.255.255:65535
@@ -191,7 +200,7 @@ static const char *NET_GetBanAddress(size_t ban)
 
 static boolean NET_cmpaddr(IPaddress* a, IPaddress* b)
 {
-    // For Web, we compare the "host" (Client ID) only
+    // For Web, we compare the "relayid" (Client ID)
     return (a->relayid == b->relayid); 
 }
 
@@ -204,45 +213,42 @@ static boolean NET_CanGet(void)
 #endif
 }
 
-// Map a Web RelayID (JS side) to an SRB2 Node Index (C side)
-// We use clientaddress[i].relayid to store the Web ID.
-static INT32 NET_GetNodeByRelayID(int relayid)
-{
-    // FIX: If we are a Client, RelayID 0 is ALWAYS the Server (Node 0).
-    // The 'server' boolean is global in SRB2 (doomstat.h).
-    if (relayid == 0 && !server)
-    {
-        return 0;
-    }
-
-    // Otherwise, search for registered clients (Nodes 1-31)
-    for (INT32 i = 1; i < MAXNETNODES; i++)
-    {
-        if (nodeconnected[i] || clientaddress[i].relayid != 0)
-        {
-             if (clientaddress[i].relayid == (unsigned int)relayid)
-                return i;
-        }
-    }
-    return -1;
-}
+// -----------------------------------------------------------------------
+//   WEB RELAY NODE MAPPING
+//   Maps incoming Web RelayIDs to SRB2 Node Indexes (0-31)
+// -----------------------------------------------------------------------
 
 #ifdef EMSCRIPTEN
-// --- NEW EXPORTED FUNCTIONS FOR JS ---
-
-EMSCRIPTEN_KEEPALIVE
-int SRB2_RegisterWebClient(int relayid)
+static INT32 NET_WebToNode(INT32 relayid)
 {
-    // Check if already registered
-    if (NET_GetNodeByRelayID(relayid) != -1)
-        return 0; // Already exists
+    // 1. If we are a CLIENT and the ID is 0, that is the HOST.
+    if (!server && relayid == 0)
+    {
+        return 0; // Node 0 is always the host
+    }
 
-    // Find a free slot
+    // 2. Search for an existing mapping in our list
+    for (INT32 i = 0; i < MAXNETNODES; i++)
+    {
+        // We check .host != 0 to ensure the slot is actually occupied.
+        // We check .relayid to match the sender.
+        if (clientaddress[i].host != 0 && clientaddress[i].relayid == (unsigned int)relayid)
+        {
+            return i;
+        }
+    }
+
+    // 3. Not found? We need to allocate a NEW slot.
+    // This happens when a new player sends a packet (Auto-Discovery).
+    
     INT32 newnode = -1;
+    
+    // Start at 1 (0 is Server/Host)
     for (INT32 i = 1; i < MAXNETNODES; i++)
     {
-        // A slot is free if it has no RelayID assigned and no game connection
-        if (!nodeconnected[i] && clientaddress[i].relayid == 0)
+        // A slot is TRULY free if .host is 0. 
+        // We ignore 'nodeconnected' because a slot might be reserved but not fully joined.
+        if (clientaddress[i].host == 0)
         {
             newnode = i;
             break;
@@ -251,40 +257,30 @@ int SRB2_RegisterWebClient(int relayid)
 
     if (newnode != -1)
     {
-        // Reserve the slot!
+        // Reserve the slot immediately so the next packet knows this player exists
         memset(&clientaddress[newnode], 0, sizeof(IPaddress));
         clientaddress[newnode].relayid = relayid;
-        clientaddress[newnode].host = relayid; // Store ID as host for display/hashing
+        clientaddress[newnode].host = relayid; // Mark as occupied. IMPORTANT: Must be non-zero.
+        if (clientaddress[newnode].host == 0) clientaddress[newnode].host = 1; // Fallback for ID 0
+
+        clientaddress[newnode].port = 0;
         
-        // Mark strictly as not connected yet (let the game engine handle the handshake)
+        // Ensure game knows they aren't fully in yet
         nodeconnected[newnode] = false; 
         
-        printf("Web Client Joined: Mapped RelayID %d to Node %d\n", relayid, newnode);
+        // Debug output
+        printf("[WebNet] Auto-Allocated Node %d to RelayID %d\n", newnode, relayid);
+        
         return newnode;
     }
-    
-    printf("Web Client Rejected: Server Full\n");
+
+    // Server is full
     return -1;
 }
-
-EMSCRIPTEN_KEEPALIVE
-void SRB2_UnregisterWebClient(int relayid)
-{
-    INT32 node = NET_GetNodeByRelayID(relayid);
-    if (node != -1)
-    {
-        printf("Web Client Left: Cleaning up Node %d (RelayID %d)\n", node, relayid);
-        
-        // Clear the mapping
-        clientaddress[node].relayid = 0;
-        clientaddress[node].host = 0;
-        
-        // If the game thought they were connected, this helps trigger a timeout/kick
-        // though usually, you want to send a 'quit' packet to the engine first.
-    }
-}
-
 #endif
+
+// -----------------------------------------------------------------------
+
 static boolean NET_Get(void)
 {
     if (!NET_CanGet()) {
@@ -295,22 +291,22 @@ static boolean NET_Get(void)
 #ifdef EMSCRIPTEN
     ws_packet_t *pkt = &packet_queue[queue_tail];
 
-    // 1. Look up the sender
-    INT32 node = NET_GetNodeByRelayID(pkt->from_node_id);
+    // Resolve the Node Index using our Auto-Discovery Logic
+    INT32 node = NET_WebToNode(pkt->from_node_id);
 
-    // 2. If valid node found, process it
+    // If valid node found (or created), process it
     if (node != -1)
     {
         mypacket.len = pkt->length;
         memcpy(mypacket.data, pkt->data, pkt->length);
         
-        // IMPORTANT: If this is the server (Node 0), we must ensure 
-        // the address is set so the engine doesn't reject it.
+        mypacket.address.relayid = pkt->from_node_id;
+        mypacket.address.host = pkt->from_node_id; 
+        
+        // Special case: If it's the server (Node 0), ensure address format is clean
         if (node == 0) {
-             mypacket.address.relayid = 0;
-             mypacket.address.host = 0; 
-        } else {
-             mypacket.address.relayid = pkt->from_node_id;
+            mypacket.address.relayid = 0;
+            mypacket.address.host = 0xBADC0DE; // Fake Host ID to mark as "Occupied"
         }
 
         doomcom->remotenode = node;
@@ -320,12 +316,41 @@ static boolean NET_Get(void)
         return true;
     }
     
-    // Node not found (unregistered client?) -> Drop Packet
+    // Node not found (Server Full?) -> Drop Packet
     queue_tail = NextIndex(queue_tail);
     doomcom->remotenode = -1;
     return false;
 #else
     // Desktop code...
+    if (SDLNet_UDP_Recv(mysocket,&mypacket))
+    {
+        INT32 i;
+        doomcom->remotenode = -1;
+        // find the node
+        for (i=0; i<MAXNETNODES; i++)
+        {
+            if (NET_cmpaddr(&mypacket.address,&clientaddress[i]))
+            {
+                doomcom->remotenode = i;
+                break;
+            }
+        }
+        
+        if (doomcom->remotenode == -1)
+        {
+            // not found, maybe a new player?
+             // (Desktop specific new player logic would go here if not handled by bind)
+             // For standard SRB2, unknown packets are usually ignored until a specific join packet
+             // but here we just return false if we don't know them, 
+             // unless it's a broadcast/server info request.
+             // Standard SRB2 logic usually relies on "0" being a specific state.
+             doomcom->remotenode = MAXNETNODES; // Signals "Unknown Source"
+        }
+        
+        doomcom->datalength = mypacket.len;
+        return true;
+    }
+    return false;
 #endif
 }
 
@@ -460,22 +485,31 @@ static SINT8 NET_NetMakeNodewPort(const char *hostname, const char *port)
     IPaddress hostnameIP;
     
 #ifdef EMSCRIPTEN
-    // Assume hostname IS the Client ID (integer)
-    hostnameIP.host = atoi(hostname);
+    // 1. Try to parse hostname as integer (Room ID)
+    hostnameIP.relayid = atoi(hostname);
+    
+    // 2. IMPORTANT: If atoi returns 0 (e.g. string room code), force .host to be non-zero.
+    // This marks the slot as "Occupied" in our lookup logic later.
+    hostnameIP.host = hostnameIP.relayid;
+    if (hostnameIP.host == 0) hostnameIP.host = 0xBADC0DE; // Dummy Value to prevent "Free Slot" detection
+    
     hostnameIP.port = 0;
     
-    // Just find a free node slot
+    // 3. Find a free slot (Standard logic)
     newnode = -1;
     for (INT32 i = 1; i < MAXNETNODES; i++) {
-        if (!nodeconnected[i]) {
+        // Check both nodeconnected AND host to see if slot is truly free
+        if (!nodeconnected[i] && clientaddress[i].host == 0) {
             newnode = i;
             break;
         }
     }
     if (newnode == -1) return -1;
     
-    M_Memcpy(&clientaddress[newnode],&hostnameIP,sizeof (IPaddress));
+    // 4. Save the mapping
+    M_Memcpy(&clientaddress[newnode], &hostnameIP, sizeof(IPaddress));
 
+    // 5. Connect via JS
     if (SRB2_ConnectTo(hostname, port) != 0)
         return -1;
 

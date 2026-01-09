@@ -118,7 +118,7 @@ class SRB2Relay {
     } else if (json.method == "listening") {
       logInSRB2("RELAY: Relayed netgame available on " + json.listening);
     } else if (json.method == "join") {
-      Module.ccall('SRB2_RegisterWebClient', 'number', ['number'], [json.id]);
+      /*Module.ccall('SRB2_RegisterWebClient', 'number', ['number'], [json.id]);
       var rId = json.id || 0;
       var rIp = "" + (json.ip || "0.0.0.0");
       Module.ccall(
@@ -126,9 +126,9 @@ class SRB2Relay {
               null,
               ["number", "string", "number"],
               [rId, rIp, "" + (json.port || 0)]
-            );
+            );*/
     } else if (json.method == "leave") {
-      Module.ccall('SRB2_UnregisterWebClient', 'null', ['number'], [json.id]);
+      /*Module.ccall('SRB2_UnregisterWebClient', 'null', ['number'], [json.id]);*/
     }
   }
 
