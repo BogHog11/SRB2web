@@ -192,7 +192,7 @@ static const char *NET_GetBanAddress(size_t ban)
 static boolean NET_cmpaddr(IPaddress* a, IPaddress* b)
 {
     // For Web, we compare the "host" (Client ID) only
-    return (a->host == b->host); 
+    return (a->relayid == b->relayid); 
 }
 
 static boolean NET_CanGet(void)
