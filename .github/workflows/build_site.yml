@@ -2,9 +2,9 @@ name: Build and Deploy
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 permissions:
   contents: write
@@ -18,7 +18,7 @@ jobs:
         node-version: [18.x] # Updated to 18 (16 is End-of-Life)
 
     steps:
-      - name: Checkout main branch 🛎️
+      - name: Checkout master branch 🛎️
         uses: actions/checkout@v4
 
       - name: Use Node.js ${{ matrix.node-version }} ⚙️
