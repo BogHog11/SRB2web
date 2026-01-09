@@ -208,13 +208,21 @@ static boolean NET_CanGet(void)
 // We use clientaddress[i].relayid to store the Web ID.
 static INT32 NET_GetNodeByRelayID(int relayid)
 {
+    // FIX: If we are a Client, RelayID 0 is ALWAYS the Server (Node 0).
+    // The 'server' boolean is global in SRB2 (doomstat.h).
+    if (relayid == 0 && !server)
+    {
+        return 0;
+    }
+
+    // Otherwise, search for registered clients (Nodes 1-31)
     for (INT32 i = 1; i < MAXNETNODES; i++)
     {
-        // We look for a slot that has been reserved for this RelayID
-        // We DO NOT check 'nodeconnected' here, because the game might
-        // not have finished the handshake yet, but the slot is reserved.
-        if (clientaddress[i].relayid == (unsigned int)relayid)
-            return i;
+        if (nodeconnected[i] || clientaddress[i].relayid != 0)
+        {
+             if (clientaddress[i].relayid == (unsigned int)relayid)
+                return i;
+        }
     }
     return -1;
 }
@@ -277,7 +285,6 @@ void SRB2_UnregisterWebClient(int relayid)
 }
 
 #endif
-
 static boolean NET_Get(void)
 {
     if (!NET_CanGet()) {
@@ -291,31 +298,32 @@ static boolean NET_Get(void)
     // 1. Look up the sender
     INT32 node = NET_GetNodeByRelayID(pkt->from_node_id);
 
-    // 2. If we don't know who this is, DROP THE PACKET.
-    // JS should have called SRB2_RegisterWebClient before sending us data.
-    if (node == -1)
+    // 2. If valid node found, process it
+    if (node != -1)
     {
-        // Optional: Auto-register if you want to be safe, 
-        // but explicit is better for the issue you are having.
-        // For now, we just skip to next packet.
+        mypacket.len = pkt->length;
+        memcpy(mypacket.data, pkt->data, pkt->length);
+        
+        // IMPORTANT: If this is the server (Node 0), we must ensure 
+        // the address is set so the engine doesn't reject it.
+        if (node == 0) {
+             mypacket.address.relayid = 0;
+             mypacket.address.host = 0; 
+        } else {
+             mypacket.address.relayid = pkt->from_node_id;
+        }
+
+        doomcom->remotenode = node;
+        doomcom->datalength = mypacket.len;
+        
         queue_tail = NextIndex(queue_tail);
-        doomcom->remotenode = -1;
-        return false;
+        return true;
     }
-
-    // 3. Fill the packet
-    mypacket.len = pkt->length;
-    memcpy(mypacket.data, pkt->data, pkt->length);
     
-    // We don't really need address info here since 'node' is already found
-    // but the engine might look at it.
-    mypacket.address.relayid = pkt->from_node_id; 
-
-    doomcom->remotenode = node;
-    doomcom->datalength = mypacket.len;
-
+    // Node not found (unregistered client?) -> Drop Packet
     queue_tail = NextIndex(queue_tail);
-    return true;
+    doomcom->remotenode = -1;
+    return false;
 #else
     // Desktop code...
 #endif
