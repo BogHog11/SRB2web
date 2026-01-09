@@ -11,7 +11,7 @@
 
 #ifdef CMAKECONFIG
 
-#define SRB2_COMP_REVISION       "57e20d199"
+#define SRB2_COMP_REVISION       "3da287bdc"
 #define SRB2_COMP_BRANCH         "master"
 #define SRB2_COMP_NOTE           "Commit"
 // This is done with configure_file instead of defines in order to avoid
