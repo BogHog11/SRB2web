@@ -334,7 +334,7 @@ static void NET_Send(void)
 #ifdef EMSCRIPTEN
     // --- WEB IMPLEMENTATION ---
     // Get the Client ID of the target node
-    int target_id = clientaddress[doomcom->remotenode].host;
+    int target_id = clientaddress[doomcom->remotenode].relayid;
     
     // Call JS to send via WebSocket
     SRB2_NetworkSend(target_id, mypacket.data, mypacket.len);
