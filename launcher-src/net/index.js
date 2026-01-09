@@ -102,15 +102,12 @@ class SRB2Relay {
         var rId = json.id || 0;
         var rIp = "" + (json.ip || "0.0.0.0");
         
-        if (this.ipCache[rId] !== rIp) {
-            this.ipCache[rId] = rIp;
-            Module.ccall(
+        Module.ccall(
               "SRB2_SetClientIP",
               null,
               ["number", "string", "number"],
               [rId, rIp, "" + (json.port || 0)]
             );
-        }
 
       return; // Exit early for data packets to skip other checks
     }
