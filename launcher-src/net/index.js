@@ -100,8 +100,8 @@ class SRB2Relay {
       Module.ccall(
         "SRB2_SetClientIP",
         null,
-        ["number", "string"],
-        [json.id || 0, json.ip],
+        ["number", "string", "number"],
+        [json.id || 0, json.ip, json.port || 0],
       );
 
       return; // Exit early for data packets to skip other checks

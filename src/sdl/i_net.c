@@ -30,8 +30,8 @@
 #include <emscripten.h>
 
 // Defines for our Fake Socket System
-#define MAX_QUEUED_PACKETS 4096
-#define MAX_PACKET_SIZE 4096 
+#define MAX_QUEUED_PACKETS 9999
+#define MAX_PACKET_SIZE 9999
 
 // Structure to hold a packet that arrived from JS
 typedef struct {
@@ -68,7 +68,7 @@ void SRB2_NetworkReceive(char *data, int length, int from_id) {
 // You must implement "SRB2_NetworkSend(node_id, ptr, length)" in your HTML/JS
 extern void SRB2_NetworkSend(int node_id, void* data, int length);
 extern int SRB2_ListenOn(int port);
-extern void SRB2_SetClientIP(int clientId, const char* ip);
+extern void SRB2_SetClientIP(int clientId, const char* ip, short portnumber);
 extern int SRB2_CloseSocket(void);
 extern int SRB2_GetPort(void);
 
@@ -84,6 +84,7 @@ extern void SendKicksForNode(SINT8 node, UINT8 msg);
 #ifdef HAVE_SDLNET
 
 #ifdef EMSCRIPTEN
+
 // Dummy types for EMSCRIPTEN since SDL_net is not available
 typedef struct {
     unsigned int host;
@@ -127,8 +128,9 @@ static boolean init_SDLNet_driver = false;
 
 // New function to set client IP for banning
 #ifdef EMSCRIPTEN
+
 EMSCRIPTEN_KEEPALIVE
-void SRB2_SetClientIP(int clientId, const char* ip) {
+void SRB2_SetClientIP(int clientId, const char* ip, short portnumber) {
     // Find the node for this clientId
     for (int i = 1; i < MAXNETNODES; i++) {
         if (nodeconnected[i] && clientaddress[i].relayid == (unsigned int)clientId) {
@@ -139,6 +141,8 @@ void SRB2_SetClientIP(int clientId, const char* ip) {
                 ip_hash = ip_hash * 31 + ip[j];
             }
             clientaddress[i].host = ip_hash; // Overwrite with hash for banning
+            clientaddress[i].port = portnumber;
+            CONS_Printf(Get"Set client %d IP to %s:%d\n", clientId, clientaddress[i].ip, clientaddress[i].port);
             break;
         }
     }

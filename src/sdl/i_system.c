@@ -2780,6 +2780,12 @@ void I_ShutdownSystem(void)
 
 void I_GetDiskFreeSpace(INT64 *freespace)
 {
+	#ifdef EMSCRIPTEN
+		// Emscripten does not support statvfs or GetDiskFreeSpaceExA
+		// Dummy for platform independent; 1GB should be enough
+		*freespace = 1024LL * 1024LL * 1024LL * 2LL;
+		return;
+	#endif
 #if defined (__unix__) || defined(__APPLE__) || defined (UNIXCOMMON)
 	struct statvfs stfs;
 	if (statvfs(srb2home, &stfs) == -1)
