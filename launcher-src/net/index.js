@@ -71,6 +71,7 @@ class SRB2Relay {
     try {
       var json = JSON.parse(event.data);
     } catch (e) {
+      console.log("RELAY: Received invalid JSON packet. ", e);
       return;
     }
 
