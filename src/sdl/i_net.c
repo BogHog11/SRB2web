@@ -132,16 +132,16 @@ static boolean init_SDLNet_driver = false;
 EMSCRIPTEN_KEEPALIVE
 void SRB2_SetClientIP(int clientId, const char* ip, short portnumber) {
     for (int i = 1; i < MAXNETNODES; i++) {
+        // We found the node that matches the Relay ID
         if (clientaddress[i].relayid == (unsigned int)clientId) {
+            
             unsigned int ip_hash = 0;
             for (int j = 0; ip[j]; j++) {
                 ip_hash = ip_hash * 31 + ip[j];
             }
-            clientaddress[i].host = ip_hash; // Overwrite with hash for banning
+            
+            clientaddress[i].host = ip_hash; 
             clientaddress[i].port = portnumber;
-            CONS_Printf(M_GetText(clientId) + "\n");
-            CONS_Printf(M_GetText(clientaddress[i].host) + "\n");
-            CONS_Printf(M_GetText(clientaddress[i].port) + "\n");
             break;
         }
     }

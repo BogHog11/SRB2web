@@ -419,16 +419,24 @@ document.addEventListener(
   },
   true,
 );
+var mouseMoveX = 0;
+var mouseMoveY = 0;
+setInterval(() => {
+  if (didStart) {
+    Module.ccall(
+        "SRB2_AddMouseDelta",
+        "void",
+        ["number", "number"],
+        [mouseMoveX, mouseMoveY],
+      );
+  }
+},1000/55);
 gameCanvas.addEventListener(
   "mousemove",
   (e) => {
     if (document.pointerLockElement === gameCanvas) {
-      Module.ccall(
-        "SRB2_AddMouseDelta",
-        "void",
-        ["number", "number"],
-        [e.movementX, e.movementY],
-      );
+      mouseMoveX += e.movementX;
+      mouseMoveY += e.movementY;
       e.preventDefault();
     }
   },

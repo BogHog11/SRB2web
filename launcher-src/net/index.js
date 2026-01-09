@@ -101,7 +101,7 @@ class SRB2Relay {
           "SRB2_SetClientIP",              // C function name
           null,                            // Return type ('void' -> null)
           ["number", "string", "number"],  // Argument types: int, char*, short
-          [json.id, json.ip, json.port]         // The actual values
+          [json.id || 0, ""+json.ip || "0.0.0.0", "" + (json.port || 0)]         // The actual values
       );
 
       return; // Exit early for data packets to skip other checks
@@ -128,13 +128,6 @@ class SRB2Relay {
         null,
         ["number"],
         [json.id],
-      );
-    } else if (json.method == "join") {
-      Module.ccall(
-        "SRB2_SetClientIP",
-        null,
-        ["number", "string"],
-        [json.id, json.ip],
       );
     }
   }
