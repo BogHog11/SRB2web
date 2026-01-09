@@ -98,10 +98,10 @@ class SRB2Relay {
       Module._free(dataPtr);
 
       Module.ccall(
-        "SRB2_SetClientIP",
-        null,
-        ["number", "string", "number"],
-        [json.id || 0, json.ip, json.port || 0],
+          "SRB2_SetClientIP",              // C function name
+          null,                            // Return type ('void' -> null)
+          ["number", "string", "number"],  // Argument types: int, char*, short
+          [json.id, json.ip, json.port]         // The actual values
       );
 
       return; // Exit early for data packets to skip other checks

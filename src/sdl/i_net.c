@@ -131,11 +131,8 @@ static boolean init_SDLNet_driver = false;
 
 EMSCRIPTEN_KEEPALIVE
 void SRB2_SetClientIP(int clientId, const char* ip, short portnumber) {
-    // Find the node for this clientId
     for (int i = 1; i < MAXNETNODES; i++) {
-        if (nodeconnected[i] && clientaddress[i].relayid == (unsigned int)clientId) {
-            // For now, store the IP as a hash or something in host
-            // Since host is unsigned int, hash the IP string
+        if (clientaddress[i].relayid == (unsigned int)clientId) {
             unsigned int ip_hash = 0;
             for (int j = 0; ip[j]; j++) {
                 ip_hash = ip_hash * 31 + ip[j];
