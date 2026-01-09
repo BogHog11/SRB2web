@@ -1,0 +1,41 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x] # Updated to 18 (16 is End-of-Life)
+
+    steps:
+      - name: Checkout main branch 🛎️
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }} ⚙️
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install and Build Frontend 🏗️
+        run: |
+          npm install
+          npm run build
+        # Ensure 'npm run build' actually creates the 'launcher-dist' folder
+
+      - name: Deploy to Deploy Branch 🚀
+        # Only deploy when pushing to main, not on Pull Requests
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: launcher-dist # The folder containing your built website files
+          branch: deploy        # The branch you want to push to
