@@ -429,6 +429,8 @@ setInterval(() => {
         ["number", "number"],
         [mouseMoveX, mouseMoveY],
       );
+    mouseMoveX = 0;
+    mouseMoveY = 0;
   }
 },1000/55);
 gameCanvas.addEventListener(
