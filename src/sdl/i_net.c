@@ -221,33 +221,22 @@ static boolean NET_CanGet(void)
 #ifdef EMSCRIPTEN
 static INT32 NET_WebToNode(INT32 relayid)
 {
-    // 1. If we are a CLIENT and the ID is 0, that is the HOST.
-    if (!server && relayid == 0)
-    {
-        return 0; // Node 0 is always the host
-    }
-
-    // 2. Search for an existing mapping in our list
+    // 1. Search for existing mapping
+    // This will now find the Server (ID 0) because we set relayid=0 in MakeNodewPort!
     for (INT32 i = 0; i < MAXNETNODES; i++)
     {
-        // We check .host != 0 to ensure the slot is actually occupied.
-        // We check .relayid to match the sender.
         if (clientaddress[i].host != 0 && clientaddress[i].relayid == (unsigned int)relayid)
         {
             return i;
         }
     }
 
-    // 3. Not found? We need to allocate a NEW slot.
-    // This happens when a new player sends a packet (Auto-Discovery).
+    // 2. Not found? Allocate NEW slot (Auto-Discovery for other players)
+    // (Only do this if we are the SERVER, or if it's a peer player joining)
     
     INT32 newnode = -1;
-    
-    // Start at 1 (0 is Server/Host)
     for (INT32 i = 1; i < MAXNETNODES; i++)
     {
-        // A slot is TRULY free if .host is 0. 
-        // We ignore 'nodeconnected' because a slot might be reserved but not fully joined.
         if (clientaddress[i].host == 0)
         {
             newnode = i;
@@ -257,24 +246,19 @@ static INT32 NET_WebToNode(INT32 relayid)
 
     if (newnode != -1)
     {
-        // Reserve the slot immediately so the next packet knows this player exists
         memset(&clientaddress[newnode], 0, sizeof(IPaddress));
         clientaddress[newnode].relayid = relayid;
-        clientaddress[newnode].host = relayid; // Mark as occupied. IMPORTANT: Must be non-zero.
-        if (clientaddress[newnode].host == 0) clientaddress[newnode].host = 1; // Fallback for ID 0
-
-        clientaddress[newnode].port = 0;
+        clientaddress[newnode].host = relayid; // Mark occupied
+        if (clientaddress[newnode].host == 0) clientaddress[newnode].host = 1; 
         
-        // Ensure game knows they aren't fully in yet
         nodeconnected[newnode] = false; 
         
-        // Debug output
+        // Debug print to see who is joining
         printf("[WebNet] Auto-Allocated Node %d to RelayID %d\n", newnode, relayid);
         
         return newnode;
     }
 
-    // Server is full
     return -1;
 }
 #endif
