@@ -30,8 +30,8 @@
 #include <emscripten.h>
 
 // Defines for our Fake Socket System
-#define MAX_QUEUED_PACKETS 128
-#define MAX_PACKET_SIZE 1450 
+#define MAX_QUEUED_PACKETS 4096
+#define MAX_PACKET_SIZE 4096 
 
 // Structure to hold a packet that arrived from JS
 typedef struct {
