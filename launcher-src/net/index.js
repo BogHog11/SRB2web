@@ -99,7 +99,19 @@ class SRB2Relay {
       );
       Module._free(dataPtr);
 
-      return; // Exit early for data packets to skip other checks
+      var rId = json.id;
+      if (!rId) {
+        return;
+      }
+      var rIp = "" + (json.ip || "0.0.0.0");
+      Module.ccall(
+              "SRB2_SetClientIP",
+              null,
+              ["number", "string", "number"],
+              [rId, rIp, "" + (json.port || 0)]
+            );
+
+      return;
     }
 
     // Handle other low-frequency messages
@@ -128,7 +140,7 @@ class SRB2Relay {
               [rId, rIp, "" + (json.port || 0)]
             );*/
     } else if (json.method == "leave") {
-      /*Module.ccall('SRB2_UnregisterWebClient', 'null', ['number'], [json.id]);*/
+      Module.ccall('SRB2_NetworkClosed', 'null', ['number'], [json.id]);
     }
   }
 
