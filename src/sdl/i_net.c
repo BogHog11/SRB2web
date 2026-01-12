@@ -31,8 +31,8 @@
 #include <emscripten.h>
 #include <stdio.h> 
 
-#define MAX_QUEUED_PACKETS 5000
-#define MAX_PACKET_SIZE 1024
+#define MAX_QUEUED_PACKETS 1000
+#define MAX_PACKET_SIZE 5000
 
 typedef struct {
     unsigned char data[MAX_PACKET_SIZE];
@@ -111,7 +111,7 @@ typedef void* UDPsocket;
 typedef void* SDLNet_SocketSet;
 
 #define INADDR_BROADCAST 0xFFFFFFFF
-#define MAXPACKETLENGTH 1450
+#define MAXPACKETLENGTH 1024
 #define SOCK_PORT 5029
 #else
 #include "SDL_net.h"

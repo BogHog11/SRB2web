@@ -1019,7 +1019,7 @@ static void SV_EndFileSend(INT32 node)
 	filestosend--;
 }
 
-#define FILEFRAGMENTSIZE 700
+#define FILEFRAGMENTSIZE 400
 
 /** Handles file transmission
   *
@@ -1136,6 +1136,7 @@ void FileSendTicker(void)
 		// Build a packet containing a file fragment
 		p = &netbuffer->u.filetxpak;
 		fragmentsize = FILEFRAGMENTSIZE;
+
 		if (f->size-transfer[i].position < fragmentsize)
 			fragmentsize = f->size-transfer[i].position;
 		if (ram)
