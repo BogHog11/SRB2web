@@ -68,7 +68,6 @@ void SRB2_NetworkReceive(char *data, int length, int from_id, char *from_ip) {
     packet_queue[queue_head].length = length;
     packet_queue[queue_head].from_node_id = from_id;
     
-    // Safety check for null IP
     if (from_ip) {
         strncpy((char*)packet_queue[queue_head].from_ip, from_ip, 63);
         packet_queue[queue_head].from_ip[63] = '\0';
@@ -96,9 +95,7 @@ typedef struct {
     unsigned short port; 
     unsigned int relayid; 
     char ip[64];
-    
-    // Added Reason field (Note: Standard game code doesn't populate this yet)
-    char reason[256];     
+    char reason[256]; // Added for ban reasons
 } IPaddress;
 
 typedef struct {
@@ -236,12 +233,17 @@ void SRB2_NetworkClosed(int relay_id) {
     
     //CONS_Printf("SRB2: Connection Closed for Node %d", node);
     
-    if (netnodes[node].ingame && netnodes[node].player) SendKicksForNode(node, KICK_MSG_PLAYER_QUIT); 
+    if (netnodes[node].ingame && netnodes[node].player) SendKicksForNode(node, 0); 
+    Net_CloseConnection(node);
+    netnodes[node].ingame = false;
+    netnodes[node].player = -1;
+    nodeconnected[node] = false;
+    NET_bannednode[node] = false;
 }
 #endif
 
 // -----------------------------------------------------------------------
-// NET_Get: THE FIX IS HERE (prevents overwriting IP with empty string)
+// NET_Get: IP SAFETY LOCK & SILENT BAN CHECK
 // -----------------------------------------------------------------------
 static boolean NET_Get(void)
 {
@@ -260,6 +262,7 @@ static boolean NET_Get(void)
         // =========================================================
         // FIX: IP SAFETY LOCK
         // Only update the IP if the packet contains a valid non-empty string.
+        // This prevents the "RelayID-0" ban bug and the rejoin corruption.
         // =========================================================
         if (pkt->from_ip[0] != '\0') {
             
@@ -275,22 +278,17 @@ static boolean NET_Get(void)
 
                      sprintf(logbuf, "Node %d IP Update: %s", node, clientaddress[node].ip);
                      //CONS_Printf("%s", logbuf);
-
-                     // Check Ban immediately on IP update
-                     for (size_t i = 0; i < numbans; i++) {
-                        if (NET_cmpaddr(&clientaddress[node], &banned[i])) {
-                            if (banned[i].reason[0]) {
-                                //CONS_Printf("\n!!! BAN MATCH DETECTED: %s (Reason: %s) !!!\n", clientaddress[node].ip, banned[i].reason);
-                            } else {
-                                //CONS_Printf("\n!!! BAN MATCH DETECTED: %s !!!\n", clientaddress[node].ip);
-                            }
-                            
-                            // UNCOMMENT TO ENABLE KICKING:
-                            NET_bannednode[node] = true; 
-                            break;
-                        }
-                     }
                 }
+            }
+        }
+        // =========================================================
+
+        // Check Ban on every packet silently
+        for (size_t i = 0; i < numbans; i++) {
+            if (NET_cmpaddr(&clientaddress[node], &banned[i])) {
+                // Ban Match Found - Enforce Kick
+                NET_bannednode[node] = true; 
+                break;
             }
         }
 
@@ -299,7 +297,7 @@ static boolean NET_Get(void)
         
         mypacket.address.relayid = pkt->from_node_id;
         
-        // CRITICAL: Use the stored SAFE ip, not the packet's potentially empty IP
+        // Always use the stored SAFE IP
         mypacket.address.host = clientaddress[node].host;
         strncpy(mypacket.address.ip, clientaddress[node].ip, 63);
 
@@ -500,9 +498,6 @@ static boolean NET_Ban(INT32 node)
     // Default reason (since I_Ban doesn't accept arguments)
 #ifdef EMSCRIPTEN
     strcpy(banned[numbans].reason, "Manual Ban"); 
-    
-    // Print to console for verification
-    //CONS_Printf("Driver Banning Node %d (IP: %s)\n", node, banned[numbans].ip);
 #endif
 
     numbans++;
