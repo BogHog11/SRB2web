@@ -1291,7 +1291,7 @@ void FileReceiveTicker(void)
 
 		if (file->status == FS_DOWNLOADING)
 		{
-			if (lasttimeackpacketsent - I_GetTime() > TICRATE / 2)
+			if (I_GetTime() - lasttimeackpacketsent > TICRATE / 2)
 				SendAckPacket(file->ackpacket, i);
 
 			// When resuming a tranfer, start with telling
@@ -1299,7 +1299,7 @@ void FileReceiveTicker(void)
 			if (file->ackresendposition != UINT32_MAX && file->status == FS_DOWNLOADING)
 			{
 				// Acknowledge ~70 MB/s, whichs means the client sends ~18 KB/s
-				for (INT32 j = 0; j < 2048; j++)
+				for (INT32 j = 0; j < 100; j++)
 				{
 					if (file->receivedfragments[file->ackresendposition])
 						AddFragmentToAckPacket(file->ackpacket, file->iteration, file->ackresendposition, i);
