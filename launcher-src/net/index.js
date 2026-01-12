@@ -94,22 +94,10 @@ class SRB2Relay {
       Module.ccall(
         "SRB2_NetworkReceive",
         "void",
-        ["number", "number", "number"],
-        [dataPtr, len, json.id || 0],
+        ["number", "number", "number", "string"],
+        [dataPtr, len, json.id || 0, json.ip],
       );
       Module._free(dataPtr);
-
-      var rId = json.id;
-      if (!rId) {
-        return;
-      }
-      var rIp = "" + (json.ip || "0.0.0.0");
-      Module.ccall(
-              "SRB2_SetClientIP",
-              null,
-              ["number", "string", "number"],
-              [rId, rIp, "" + (json.port || 0)]
-            );
 
       return;
     }
