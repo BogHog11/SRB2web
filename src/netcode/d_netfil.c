@@ -1591,111 +1591,14 @@ static size_t curlwrite_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
 
 boolean CURLPrepareFile(const char* url, int dfilenum)
 {
-    HTTP_login *login;
-    CURLcode cc;
+    // Prevent "Unused variable" compiler warnings
+    (void)url; 
+    (void)dfilenum;
 
-#ifdef PARANOIA
-    if (M_CheckParm("-nodownload"))
-        I_Error("Attempted to download files in -nodownload mode");
-#endif
-
-    if (!multi_handle)
-    {
-        cc = curl_global_init(CURL_GLOBAL_ALL);
-        if (cc < 0)
-        {
-            I_OutputMsg("libcurl: curl_global_init() returned %d\n", cc);
-        }
-        else
-        {
-            multi_handle = curl_multi_init();
-        }
-        if (!multi_handle)
-        {
-            I_OutputMsg("libcurl: curl_multi_init() failed\n");
-            curl_global_cleanup();
-            return false;
-        }
-    }
-
-    http_handle = curl_easy_init();
-    if (http_handle)
-    {
-        CURLMcode mc;
-
-        cc = curl_easy_setopt(http_handle, CURLOPT_ERRORBUFFER, curl_errbuf);
-        if (cc != CURLE_OK) I_OutputMsg("libcurl: CURLOPT_ERRORBUFFER failed\n");
-        curl_errbuf[0] = 0x00;
-
-        I_mkdir(downloaddir, 0755);
-
-        curl_curfile = &fileneeded[dfilenum];
-        curl_realname = curl_curfile->filename;
-        nameonly(curl_realname);
-
-        curl_origfilesize = curl_curfile->currentsize;
-        curl_origtotalfilesize = curl_curfile->totalsize;
-
-        char md5tmp[33];
-        for (INT32 j = 0; j < 16; j++)
-            sprintf(&md5tmp[j*2], "%02x", curl_curfile->md5sum[j]);
-
-        cc = curl_easy_setopt(http_handle, CURLOPT_URL, va("%s/%s?md5=%s", url, curl_realname, md5tmp));
-        if (cc != CURLE_OK) I_OutputMsg("libcurl: %s\n", curl_errbuf);
-
-        // Protocol checks
-#if (LIBCURL_VERSION_MAJOR <= 7) && (LIBCURL_VERSION_MINOR < 85)
-        cc = curl_easy_setopt(http_handle, CURLOPT_PROTOCOLS, CURLPROTO_HTTP|CURLPROTO_HTTPS);
-#else
-        cc = curl_easy_setopt(http_handle, CURLOPT_PROTOCOLS_STR, "http,https");
-#endif
-        
-        cc = curl_easy_setopt(http_handle, CURLOPT_USERAGENT, va("Sonic Robo Blast 2/%s", VERSIONSTRING));
-        
-        // Login handling
-        login = CURLGetLogin(url, NULL);
-        if (login)
-        {
-            cc = curl_easy_setopt(http_handle, CURLOPT_USERPWD, login->auth);
-        }
-
-        cc = curl_easy_setopt(http_handle, CURLOPT_FOLLOWLOCATION, 1L);
-        cc = curl_easy_setopt(http_handle, CURLOPT_FAILONERROR, 1L);
-
-        CONS_Printf("Downloading addon \"%s\" from %s\n", curl_realname, url);
-
-        strcatbf(curl_curfile->filename, downloaddir, "/");
-        curl_curfile->file = fopen(curl_curfile->filename, "wb");
-
-        cc = curl_easy_setopt(http_handle, CURLOPT_WRITEDATA, curl_curfile->file);
-        cc = curl_easy_setopt(http_handle, CURLOPT_WRITEFUNCTION, curlwrite_data);
-        cc = curl_easy_setopt(http_handle, CURLOPT_NOPROGRESS, 0L);
-        cc = curl_easy_setopt(http_handle, CURLOPT_XFERINFOFUNCTION, curlprogress_callback);
-
-        curl_curfile->status = FS_DOWNLOADING;
-
-        mc = curl_multi_add_handle(multi_handle, http_handle);
-        if (mc != CURLM_OK) I_OutputMsg("libcurl: %s\n", curl_multi_strerror(mc));
-
-        // Start the transfer immediately to get things moving
-        mc = curl_multi_perform(multi_handle, &curl_runninghandles);
-
-        curl_starttime = time(NULL);
-
-        filedownload.current = dfilenum;
-        filedownload.http_running = true;
-
-        // ==========================================================
-        // CHANGE FOR EMSCRIPTEN:
-        // We do NOT spawn a thread here. The browser main loop handles the logic.
-        // The game loop MUST call CURLGetFile() periodically.
-        // ==========================================================
-        
-        return true;
-    }
-
-    filedownload.http_running = false;
-    return false;
+    // Return FALSE immediately.
+    // This tells SRB2: "HTTP download failed/unavailable."
+    // SRB2 will then automatically fall back to the UDP Packet Downloader.
+    return false; 
 }
 
 void CURLAbortFile(void)
@@ -1709,134 +1612,14 @@ void CURLAbortFile(void)
 
 void CURLGetFile(void)
 {
-#ifndef EMSCRIPTEN
-    I_lock_mutex(&downloadmutex);
-#endif
 
-    CURLMcode mc;
-    CURLcode easyres;
-    CURLMsg *m;
-    CURL *e;
-    int msgs_left;
-    const char *easy_handle_error;
-
-    // Safety: If download system isn't running, exit immediately
-    if (!filedownload.http_running || !multi_handle)
-    {
-#ifndef EMSCRIPTEN
-        I_unlock_mutex(&downloadmutex);
-#endif
-        return;
-    }
-
-    // 1. Perform one "tick" of the download
-    // This keeps the connection alive and processes data without blocking.
-    mc = curl_multi_perform(multi_handle, &curl_runninghandles);
-    if (mc != CURLM_OK) 
-    {
-        I_OutputMsg("libcurl: %s\n", curl_multi_strerror(mc));
-    }
-
-    // Update progress for the UI
-    if (curl_curfile)
-    {
-        curl_curfile->currentsize = curl_dlnow; // Ensure these globals are updated by your progress callback
-        curl_curfile->totalsize = curl_dltotal;
-    }
-
-    // 2. Check for completed transfers (Success or Failure)
-    while ((m = curl_multi_info_read(multi_handle, &msgs_left)))
-    {
-        if (m && (m->msg == CURLMSG_DONE))
-        {
-            e = m->easy_handle;
-            easyres = m->data.result;
-
-            char *filename = Z_StrDup(curl_realname);
-            nameonly(filename);
-
-            if (easyres != CURLE_OK)
-            {
-                long response_code = 0;
-
-                if (easyres == CURLE_HTTP_RETURNED_ERROR)
-                {
-                    CURLcode cc = curl_easy_getinfo(e, CURLINFO_RESPONSE_CODE, &response_code);
-                    if (cc != CURLE_OK) I_OutputMsg("libcurl: %s\n", curl_errbuf);
-                }
-
-                if (response_code == 404)
-                    curl_curfile->failed = FDOWNLOAD_FAIL_NOTFOUND;
-                else
-                    curl_curfile->failed = FDOWNLOAD_FAIL_OTHER;
-
-                easy_handle_error = (response_code) ? va("HTTP response code %ld", response_code) : curl_easy_strerror(easyres);
-                curl_curfile->status = FS_FALLBACK;
-                curl_curfile->currentsize = curl_origfilesize;
-                curl_curfile->totalsize = curl_origtotalfilesize;
-                filedownload.http_failed = true;
-                
-                if (curl_curfile->file)
-                {
-                    fclose(curl_curfile->file);
-                    curl_curfile->file = NULL;
-                }
-                remove(curl_curfile->filename);
-                CONS_Alert(CONS_ERROR, M_GetText("Failed to download addon \"%s\" (%s)\n"), filename, easy_handle_error);
-            }
-            else
-            {
-                if (curl_curfile->file)
-                {
-                    fclose(curl_curfile->file);
-                    curl_curfile->file = NULL;
-                }
-
-                CONS_Printf(M_GetText("Finished download of \"%s\"\n"), filename);
-
-                if (checkfilemd5(curl_curfile->filename, curl_curfile->md5sum) == FS_MD5SUMBAD)
-                {
-                    CONS_Alert(CONS_WARNING, M_GetText("File \"%s\" does not match the version used by the server\n"), filename);
-                    curl_curfile->status = FS_FALLBACK;
-                    curl_curfile->failed = FDOWNLOAD_FAIL_MD5SUMBAD;
-                    filedownload.http_failed = true;
-                }
-                else
-                {
-                    filedownload.completednum++;
-                    filedownload.completedsize += curl_curfile->totalsize;
-                    curl_curfile->status = FS_FOUND;
-                }
-            }
-
-            Z_Free(filename);
-
-            filedownload.remaining--;
-            mc = curl_multi_remove_handle(multi_handle, e);
-            if (mc != CURLM_OK) I_OutputMsg("libcurl: %s\n", curl_multi_strerror(mc));
-            curl_easy_cleanup(e);
-
-            // If we are done with ALL files, cleanup the global system
-            if (!filedownload.remaining)
-            {
-                mc = curl_multi_cleanup(multi_handle);
-                if (mc != CURLM_OK) I_OutputMsg("libcurl: %s\n", curl_multi_strerror(mc));
-                curl_global_cleanup();
-                multi_handle = NULL;
-                filedownload.http_running = false;
-            }
-        }
-    }
-
-#ifndef EMSCRIPTEN
-    I_unlock_mutex(&downloadmutex);
-#endif
 }
 
-HTTP_login *
-CURLGetLogin (const char *url, HTTP_login ***return_prev_next)
+HTTP_login *CURLGetLogin(const char *url, HTTP_login ***return_prev_next)
 {
-	return NULL;
+    (void)url;
+    (void)return_prev_next;
+    return NULL;
 }
 
 // Functions cut and pasted from Doomatic :)
