@@ -31,8 +31,8 @@
 #include <emscripten.h>
 #include <stdio.h> 
 
-#define MAX_QUEUED_PACKETS 128
-#define MAX_PACKET_SIZE 1450 
+#define MAX_QUEUED_PACKETS 5000
+#define MAX_PACKET_SIZE 1024
 
 typedef struct {
     unsigned char data[MAX_PACKET_SIZE];

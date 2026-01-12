@@ -360,68 +360,91 @@ void CL_AbortDownloadResume(void)
   */
 boolean CL_SendFileRequest(void)
 {
-	char *p;
-	INT64 totalfreespaceneeded = 0, availablefreespace;
+    char *p;
+    INT64 totalfreespaceneeded = 0, availablefreespace;
 
 #ifdef PARANOIA
-	if (M_CheckParm("-nodownload"))
-	{
-		CONS_Printf("Attempted to download files in -nodownload mode");
-		return false;
-	}
+    if (M_CheckParm("-nodownload"))
+    {
+        CONS_Printf("Attempted to download files in -nodownload mode");
+        return false;
+    }
 #endif
 
-	for (INT32 i = 0; i < fileneedednum; i++)
-	{
-		if (fileneeded[i].status != FS_FOUND && fileneeded[i].status != FS_OPEN
-			&& (fileneeded[i].willsend == WILLSEND_TOOLARGE || fileneeded[i].willsend == WILLSEND_NO || fileneeded[i].folder))
-		{
-			CONS_Printf("Attempted to download files that were not sendable");
-			return false;
-		}
+    // 1. Check disk space for ALL missing files first.
+    // We still calculate the total space needed to ensure the user has room
+    // for everything, even though we are only requesting one file right now.
+    for (INT32 i = 0; i < fileneedednum; i++)
+    {
+        if (fileneeded[i].status != FS_FOUND && fileneeded[i].status != FS_OPEN
+            && (fileneeded[i].willsend == WILLSEND_TOOLARGE || fileneeded[i].willsend == WILLSEND_NO || fileneeded[i].folder))
+        {
+            CONS_Printf("Attempted to download files that were not sendable");
+            return false;
+        }
 
-		if (fileneeded[i].status == FS_NOTFOUND || fileneeded[i].status == FS_MD5SUMBAD)
-		{
-			// Error check for the first time around.
-			totalfreespaceneeded += fileneeded[i].totalsize;
-		}
-	}
+        if (fileneeded[i].status == FS_NOTFOUND || fileneeded[i].status == FS_MD5SUMBAD)
+        {
+            totalfreespaceneeded += fileneeded[i].totalsize;
+        }
+    }
 
-	I_GetDiskFreeSpace(&availablefreespace);
-	if (totalfreespaceneeded > availablefreespace)
-	{
-		CONS_Printf("To play on this server you must download %s KB,\n"
-			"but you have only %s KB free space on your device\n",
-			sizeu1((size_t)(totalfreespaceneeded>>10)), sizeu2((size_t)(availablefreespace>>10)));
-		return false;
-	}
+    I_GetDiskFreeSpace(&availablefreespace);
+    if (totalfreespaceneeded > availablefreespace)
+    {
+        CONS_Printf("To play on this server you must download %s KB,\n"
+            "but you have only %s KB free space on your device\n",
+            sizeu1((size_t)(totalfreespaceneeded>>10)), sizeu2((size_t)(availablefreespace>>10)));
+        return false;
+    }
 
-	netbuffer->packettype = PT_REQUESTFILE;
-	p = (char *)netbuffer->u.textcmd;
-	for (INT32 i = 0; i < fileneedednum; i++)
-		if (fileneeded[i].status == FS_NOTFOUND || fileneeded[i].status == FS_MD5SUMBAD)
-		{
-			WRITEUINT8(p, i); // fileid
+    // 2. Prepare the Request Packet
+    netbuffer->packettype = PT_REQUESTFILE;
+    p = (char *)netbuffer->u.textcmd;
 
-			// put it in download dir
-			nameonly(fileneeded[i].filename);
-			strcatbf(fileneeded[i].filename, downloaddir, "/");
+    boolean found_one = false;
 
-			fileneeded[i].status = FS_REQUESTED;
-		}
+    for (INT32 i = 0; i < fileneedednum; i++)
+    {
+        if (fileneeded[i].status == FS_NOTFOUND || fileneeded[i].status == FS_MD5SUMBAD)
+        {
+            WRITEUINT8(p, i); // fileid
 
-	WRITEUINT8(p, 0xFF);
+            // put it in download dir
+            nameonly(fileneeded[i].filename);
+            strcatbf(fileneeded[i].filename, downloaddir, "/");
 
-	if (!HSendPacket(servernode, true, 0, p - (char *)netbuffer->u.textcmd))
-	{
-		CONS_Printf("Could not send download request packet to server\n");
-		return false;
-	}
+            fileneeded[i].status = FS_REQUESTED;
 
-	// prepare to download
-	I_mkdir(downloaddir, 0755);
+            // ==========================================================
+            // FIX: ONE FILE LIMIT
+            // We break the loop immediately after adding the first file.
+            // This ensures the packet is small and limits the download flow.
+            // The game loop will call this function again automatically
+            // once this file is finished.
+            // ==========================================================
+            found_one = true;
+            break; 
+        }
+    }
 
-	return true;
+    // If we didn't find any files needed (or all are already requested), just return.
+    if (!found_one)
+        return true;
+
+    WRITEUINT8(p, 0xFF); // Packet Terminator
+
+    // 3. Send the Packet
+    if (!HSendPacket(servernode, true, 0, p - (char *)netbuffer->u.textcmd))
+    {
+        CONS_Printf("Could not send download request packet to server\n");
+        return false;
+    }
+
+    // prepare to download
+    I_mkdir(downloaddir, 0755);
+
+    return true;
 }
 
 // get request filepak and put it on the send queue
@@ -996,7 +1019,7 @@ static void SV_EndFileSend(INT32 node)
 	filestosend--;
 }
 
-#define FILEFRAGMENTSIZE (software_MAXPACKETLENGTH - (FILETXHEADER + BASEPACKETSIZE))
+#define FILEFRAGMENTSIZE 700
 
 /** Handles file transmission
   *
@@ -1612,7 +1635,28 @@ void CURLAbortFile(void)
 
 void CURLGetFile(void)
 {
-
+	// If we are stuck in "FS_REQUESTED" for too long, re-send the request.
+    // This acts as a "Kick" if the first packet was lost.
+    static int retry_timer = 0;
+    
+    if (filedownload.remaining > 0 && !filedownload.http_running)
+    {
+        // Find the file we are waiting for
+        for (int i = 0; i < fileneedednum; i++)
+        {
+            if (fileneeded[i].status == FS_REQUESTED)
+            {
+                // If 2 seconds pass without a response, ask again.
+                if (++retry_timer > 70) 
+                {
+                    CONS_Printf("Stalled? Re-requesting file %s...\n", fileneeded[i].filename);
+                    CL_SendFileRequest();
+                    retry_timer = 0;
+                }
+                return;
+            }
+        }
+    }
 }
 
 HTTP_login *CURLGetLogin(const char *url, HTTP_login ***return_prev_next)
