@@ -236,12 +236,7 @@ void SRB2_NetworkClosed(int relay_id) {
     
     //CONS_Printf("SRB2: Connection Closed for Node %d", node);
     
-    if (netnodes[node].ingame && netnodes[node].player) SendKicksForNode(node, 0); 
-    Net_CloseConnection(node);
-    netnodes[node].ingame = false;
-    netnodes[node].player = -1;
-    nodeconnected[node] = false;
-    NET_bannednode[node] = false;
+    if (netnodes[node].ingame && netnodes[node].player) SendKicksForNode(node, KICK_MSG_PLAYER_QUIT); 
 }
 #endif
 

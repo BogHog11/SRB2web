@@ -17,67 +17,6 @@ function loadScript() {
   });
 }
 
-(function () {
-  // 1. Create a Worker that ticks 60 times/sec (16ms)
-  // This runs in a separate thread that Chrome does NOT throttle.
-  const workerScript = `
-        let intervalId = null;
-        self.onmessage = function(e) {
-            if (e.data === 'start') {
-                if (intervalId) clearInterval(intervalId);
-                intervalId = setInterval(() => {
-                    self.postMessage('tick');
-                }, 16); 
-            } else if (e.data === 'stop') {
-                if (intervalId) clearInterval(intervalId);
-                intervalId = null;
-            }
-        };
-    `;
-  const blob = new Blob([workerScript], { type: "application/javascript" });
-  const worker = new Worker(URL.createObjectURL(blob));
-
-  const nativeRequestAnimationFrame = window.requestAnimationFrame;
-  let callbackQueue = [];
-  let isHidden = false;
-
-  // 2. Detect when tab is hidden
-  document.addEventListener("visibilitychange", () => {
-    isHidden = document.hidden;
-    console.log(
-      "[Anti-Freeze] Visibility:",
-      isHidden ? "HIDDEN (Worker taking over)" : "VISIBLE (Native)",
-    );
-
-    if (isHidden) {
-      worker.postMessage("start"); // Start the background ticker
-    } else {
-      worker.postMessage("stop"); // Stop the background ticker
-    }
-  });
-
-  // 3. When the worker ticks, FORCE the main thread to run the game loop
-  worker.onmessage = function (e) {
-    if (e.data === "tick" && isHidden) {
-      // Run all queued game updates immediately
-      const toRun = callbackQueue;
-      callbackQueue = [];
-      toRun.forEach((cb) => cb(performance.now()));
-    }
-  };
-
-  // 4. Hijack requestAnimationFrame
-  // This effectively tricks Emscripten into using our Worker instead of the Browser's timer
-  window.requestAnimationFrame = function (callback) {
-    if (isHidden) {
-      callbackQueue.push(callback);
-      return callbackQueue.length;
-    } else {
-      return nativeRequestAnimationFrame(callback);
-    }
-  };
-})();
-
 var CACHE_NAME = "srb2-assets-v1";
 async function downloadAndSaveAssets() {
   const assetList = [
