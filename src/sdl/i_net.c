@@ -257,6 +257,10 @@ static boolean NET_Get(void)
     ws_packet_t *pkt = (ws_packet_t*)&packet_queue[tail];
     INT32 node = NET_WebToNode(pkt->from_node_id);
 
+    if (!server) {
+        node = 1; //Server is ALWAYS 1 when client connecting.
+    }
+
     if (node != -1)
     {
         // =========================================================

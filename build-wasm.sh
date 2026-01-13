@@ -1,5 +1,5 @@
 #!/bin/bash
-./load-emsdk.sh
+source ./load-emsdk.sh
 
 mkdir -p build-wasm
 cd build-wasm

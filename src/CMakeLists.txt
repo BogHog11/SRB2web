@@ -156,7 +156,7 @@ target_link_options(SRB2SDL2 PRIVATE
     "-sALLOW_MEMORY_GROWTH=0"
 )
 
-target_compile_features(SRB2SDL2 PRIVATE c_std_23 cxx_std_17)
+### target_compile_features(SRB2SDL2 PRIVATE c_std_23 cxx_std_17)
 
 ### Configuration
 set(SRB2_CONFIG_DEV_BUILD OFF CACHE BOOL
