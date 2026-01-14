@@ -66,7 +66,7 @@ function messageHandler(e) {
       "SRB2_NetworkReceive",
       "void",
       ["number", "number", "number", "string"],
-      [dataPtr, len, json.id || 0, json.ip || "0.0.0.0"]
+      [dataPtr, len, json.id || 0, ip || "0.0.0.0"]
     );
     Module._free(dataPtr);
 
@@ -74,9 +74,7 @@ function messageHandler(e) {
   }
 }
 
-var packets = [];
-
-window.SRB2WebNet.SendPacket = function () {
+SRB2WebNet.SendPacket = function () {
   if (!open) {
     return;
   }
@@ -92,10 +90,46 @@ window.SRB2WebNet.SendPacket = function () {
   socket.send(
     JSON.stringify({
       method: "data",
-      id: node_id,
+      id: isListening ? node_id : undefined,
       data: LZString.compress(stringData),
     })
   );
+  return 0;
+};
+
+SRB2WebNet.ConnectTo = function (address, port) {
+  var url = address;
+  if (port) {
+    url += ":" + port;
+  } else {
+    url += ":5029";
+  }
+  socket.send(
+    JSON.stringify({
+      method: "connect",
+      url,
+    })
+  );
+  isListening = false;
+  return 0;
+};
+
+SRB2WebNet.ListenOn = function () {
+  socket.send(
+    JSON.stringify({
+      method: "listen",
+    })
+  );
+  return 0;
+};
+
+SRB2WebNet.CloseSocket = function () {
+  socket.send(
+    JSON.stringify({
+      method: "close",
+    })
+  );
+  isListening = false;
   return 0;
 };
 
@@ -118,6 +152,7 @@ function connectLoop() {
       url += "ws://";
     }
     url += host + "/";
+    url += resumeID; //Allows resuming from the websocket connection.
     socket = new WebSocket(host);
     socket.onerror = function () {
       console.error("Failed to connect to relay.");
