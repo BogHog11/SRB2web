@@ -138,3 +138,62 @@ a:hover {
   display: flex;
   flex-direction: column;
 }
+
+:root {
+  --popup-dialog-font: Arial, sans-serif;
+  --popup-dialog-background: #fff;
+  --popup-dialog-border-radius: 10px;
+  --popup-dialog-text-color: #000;
+  --popup-dialog-button-background: #5985ff;
+  --popup-dialog-button-hover-background: #4275ff;
+  --popup-dialog-button-text-color: #fff;
+  --popup-dialog-button-radius: 5px;
+  --popup-dialog-input-background: #fff;
+  --popup-dialog-input-border-width: 1.5px;
+  --popup-dialog-input-border-color: #bababa;
+  --popup-dialog-input-text-color: #000;
+  --popup-dialog-message-size: 16px;
+}
+
+.windowDialogContainer {
+  font-family: var(--popup-dialog-font);
+}
+
+.windowDialogBackground {
+  background-color: black;
+  backdrop-filter: blur(2px);
+}
+
+.windowDialogBox {
+  background: var(--popup-dialog-background);
+  border-radius: var(--popup-dialog-border-radius);
+  color: var(--popup-dialog-text-color);
+}
+
+.windowDialogButton {
+  background: var(--popup-dialog-button-background);
+  color: var(--popup-dialog-button-text-color);
+  border-radius: var(--popup-dialog-button-radius);
+  padding: 4px 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.windowDialogButton:hover {
+  background: var(--popup-dialog-button-hover-background);
+}
+
+.windowDialogInput {
+  background: var(--popup-dialog-input-background);
+  border: var(--popup-dialog-input-border-width) solid
+    var(--popup-dialog-input-border-color);
+  color: var(--popup-dialog-input-text-color);
+  outline: none;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+.windowDialogHeader {
+  font-weight: bold;
+  font-size: var(--popup-dialog-message-size);
+}
