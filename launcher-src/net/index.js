@@ -204,3 +204,5 @@ net.disable = function () {
   enabled = false;
   stopConnectLoop();
 };
+
+module.exports = net;

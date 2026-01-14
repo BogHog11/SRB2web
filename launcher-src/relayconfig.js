@@ -1,5 +1,12 @@
 var elements = require("./gp2/elements.js");
 var relayConfig = elements.getGPId("relayConfig");
+var lstorageName = "SRB2WebRelayConfig";
+
+var relays = [];
+
+class RelayOption {
+  constructor() {}
+}
 
 var defaultRelays = [
   {
@@ -7,3 +14,6 @@ var defaultRelays = [
     name: "Debug relay server",
   },
 ];
+
+if (localStorage.getItem("relayConfig")) {
+}
