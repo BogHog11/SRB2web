@@ -12,6 +12,7 @@ var resumeID = ""; //Intentionally a empty string.
 var enabled = false;
 var open = false;
 var isListening = false; //Tell game if we're listening.
+var isClosed = true;
 var LZString = require("../lzstring.js");
 var openIDs = {};
 
@@ -119,11 +120,13 @@ SRB2WebNet.ConnectTo = function (address, port) {
     })
   );
   isListening = false;
+  isClosed = false;
   return 0;
 };
 
 SRB2WebNet.ListenOn = function () {
   isListening = true;
+  isClosed = false;
   if (!open) {
     return 0;
   }
@@ -137,6 +140,7 @@ SRB2WebNet.ListenOn = function () {
 
 SRB2WebNet.CloseSocket = function () {
   isListening = false;
+  isClosed = true;
   if (!open) {
     return 0;
   }
@@ -153,6 +157,13 @@ function openHandler() {
     socket.send(
       JSON.stringify({
         method: "listen",
+      })
+    );
+  }
+  if (isClosed) {
+    socket.send(
+      JSON.stringify({
+        method: "close",
       })
     );
   }
@@ -191,6 +202,7 @@ function connectLoop() {
     enabled = false;
     open = false;
     isListening = false;
+    isClosed = true;
     resumeID = "";
     return;
   }
@@ -204,7 +216,8 @@ function stopConnectLoop() {
   socket = null;
   resumeID = "";
   open = false;
-  isListening = null;
+  isListening = false;
+  isClosed = true;
 }
 
 net.enable = function (h) {
