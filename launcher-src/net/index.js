@@ -42,6 +42,8 @@ function messageHandler(e) {
   if (json.method == "leave") {
     openIDs[json.id] = 0;
     delete openIDs[json.id];
+
+    Module.ccall("SRB2_NetworkClosed", "null", ["number"], [json.id || 0]);
   }
   if (json.method == "data") {
     var addr = openIDs[json.id];
@@ -66,7 +68,7 @@ function messageHandler(e) {
       "SRB2_NetworkReceive",
       "void",
       ["number", "number", "number", "string"],
-      [dataPtr, len, json.id || 0, ip || "0.0.0.0"]
+      [dataPtr, len, json.id || 0, ip]
     );
     Module._free(dataPtr);
 
@@ -93,7 +95,7 @@ SRB2WebNet.SendPacket = function (node_id, data_ptr, length) {
   socket.send(
     JSON.stringify({
       method: "data",
-      id: isListening ? node_id : undefined,
+      id: node_id,
       data: LZString.compress(stringData),
     })
   );
@@ -107,6 +109,9 @@ SRB2WebNet.ConnectTo = function (address, port) {
   } else {
     url += ":5029";
   }
+  if (!open) {
+    return 0;
+  }
   socket.send(
     JSON.stringify({
       method: "connect",
@@ -118,6 +123,10 @@ SRB2WebNet.ConnectTo = function (address, port) {
 };
 
 SRB2WebNet.ListenOn = function () {
+  isListening = true;
+  if (!open) {
+    return 0;
+  }
   socket.send(
     JSON.stringify({
       method: "listen",
@@ -127,12 +136,15 @@ SRB2WebNet.ListenOn = function () {
 };
 
 SRB2WebNet.CloseSocket = function () {
+  isListening = false;
+  if (!open) {
+    return 0;
+  }
   socket.send(
     JSON.stringify({
       method: "close",
     })
   );
-  isListening = false;
   return 0;
 };
 
