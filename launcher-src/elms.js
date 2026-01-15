@@ -74,6 +74,16 @@ module.exports = [
         gid: "relayConfig",
         className: "relayConfig",
       },
+      {
+        element: "div",
+        children: [
+          "Relay servers allow you to connect to netgames and let you host netgames. (without port forwarding)",
+          {
+            element: "br",
+          },
+          "The connection speed of a netgame depends on the relay server and the host's computer.",
+        ],
+      },
       { element: "div", className: "sep" },
       {
         element: "div",

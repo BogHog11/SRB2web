@@ -172,6 +172,10 @@ a:hover {
   font-weight: bold;
 }
 
+.relayHost {
+  font-size: 8px;
+}
+
 .relayStatus {
   display: flex;
   gap: 3px;

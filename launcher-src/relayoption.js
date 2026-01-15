@@ -34,12 +34,13 @@ class RelayOption {
         element: "div",
         className: "configuredRelay",
         children: [
+          //Name and stuff.
           {
             element: "div",
             style: {
               display: "flex",
               alignItems: "center",
-              gap: "8px",
+              gap: "10px",
             },
             children: [
               {
@@ -64,15 +65,22 @@ class RelayOption {
                 className: "relayName",
                 GPWhenCreated: (elm) => (_this.relayNameSpan = elm),
               },
+              {
+                element: "span",
+                className: "relayHost",
+                GPWhenCreated: (elm) => (_this.relayHostSpan = elm),
+              },
             ],
           },
+          //
         ],
       },
     ])[0];
   }
   updateContents() {
-    var { relayNameSpan, name, host } = this;
+    var { relayNameSpan, relayHostSpan, name, host } = this;
     relayNameSpan.textContent = name;
+    relayHostSpan.textContent = host;
   }
   save() {
     return {
