@@ -63,6 +63,18 @@ module.exports = [
         ],
         gid: "fsButton",
       },
+      { element: "div", className: "sep" },
+      {
+        element: "span",
+        className: "sectionHeader",
+        textContent: "Relay server configuration:",
+      },
+      {
+        element: "div",
+        gid: "relayConfig",
+        className: "relayConfig",
+      },
+      { element: "div", className: "sep" },
       {
         element: "div",
         children: [
@@ -109,15 +121,6 @@ module.exports = [
           color: "#ffffff",
         },
         gid: "launcherInfo",
-      },
-      {
-        element: "div",
-        gid: "",
-      },
-      {
-        element: "div",
-        gid: "relayConfig",
-        className: "relayConfig",
       },
     ],
   },

@@ -18,6 +18,8 @@ playButton.addEventListener("click", function () {
   startGame();
 });
 
+require("./relayconfig.js");
+
 //var relay = require("./oldnet");
 //var relayURL = "wss://rczylh-3000.csb.app/";
 //var relayConnect = new relay.SRB2Relay(relayURL);
