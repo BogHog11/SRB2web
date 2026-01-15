@@ -70,6 +70,24 @@ module.exports = [
         textContent: "Relay server configuration:",
       },
       {
+        element: "div",
+        style: {
+          display: "flex",
+        },
+        children: [
+          {
+            element: "span",
+            style: { fontWeight: "bold" },
+            textContent: "Enable relay server:",
+          },
+          {
+            element: "input",
+            type: "checkbox",
+            gid: "relayServerCheckbox",
+          },
+        ],
+      },
+      {
         element: "button",
         className: "button",
         gid: "addRelayButton",

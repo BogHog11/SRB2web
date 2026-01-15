@@ -1,6 +1,7 @@
 var elements = require("./gp2/elements.js");
 var dialog = require("./dialog.js");
 var relayConfig = elements.getGPId("relayConfig");
+var relayServerCheckbox = elements.getGPId("relayServerCheckbox");
 var lstorageName = "SRB2WebRelayConfig";
 var RelayOption = require("./relayoption.js");
 var net = require("./net");
@@ -9,6 +10,7 @@ var relays = [];
 var relayOpts = [];
 
 var usedRelay = 0;
+var relayEnabled = true;
 var defaultRelays = [
   {
     host: "srb2web-relay1.onrender.com",
@@ -23,16 +25,18 @@ function saveRelays() {
     JSON.stringify({
       relays,
       used: usedRelay,
+      enabled: relayEnabled,
     })
   );
 }
 
+var currentHost = null;
+
 function updateRelayUsed() {
-  net.disable();
   relayOpts.forEach((r, i) => {
     r.setUsed(usedRelay == i);
     if (usedRelay == i) {
-      net.enable(r.relay.host);
+      currentHost = r.relay.host;
     }
   });
 }
@@ -81,7 +85,21 @@ function reloadRelayConfig() {
     updateRelayUsed();
     saveRelays();
   }
+
+  relayServerCheckbox.checked = relayEnabled;
+  if (relayEnabled) {
+    net.disable();
+    net.enable(currentHost);
+  } else {
+    net.disable();
+  }
 }
+
+relayServerCheckbox.onchange = function () {
+  relayEnabled = relayServerCheckbox.checked;
+  saveRelays();
+  reloadRelayConfig();
+};
 
 setInterval(() => {
   relayOpts.forEach((r) => {
@@ -95,6 +113,7 @@ if (storedConfig) {
     var json = JSON.parse(storedConfig);
     usedRelay = json.used;
     relays = json.relays;
+    relayEnabled = json.enabled;
   } catch (e) {
     relays = Array.from(defaultRelays);
     dialog.alert(
