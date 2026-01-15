@@ -42,3 +42,4 @@ build-wasm/Makefile
 node_modules/
 emsdk/
 vcpkg_installed/
+launcher-dist/
