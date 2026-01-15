@@ -1,4 +1,5 @@
 var elements = require("./gp2/elements.js");
+var dialog = require("./dialog.js");
 
 class RelayOption {
   static FETCHING_IMG = "images/gray.png";
@@ -10,16 +11,157 @@ class RelayOption {
   static OFFLINE_IMG = "images/red.png";
   static OFFLINE_TEXT = "Offline.";
 
-  constructor(relay, requestSave, requestSetUsed) {
+  static async relayAddDialog() {
+    var nameInput = null;
+    var hostInput = null;
+    var editDiv = elements.createElementsFromJSON([
+      {
+        element: "div",
+        children: [
+          {
+            element: "span",
+            style: { fontWeight: "bold" },
+            textContent: "Placeholder name: ",
+          },
+          {
+            element: "input",
+            GPWhenCreated: (elm) => (nameInput = elm),
+            placeholder: "Relay server",
+          },
+          {
+            element: "br",
+          },
+          {
+            element: "span",
+            style: { fontWeight: "bold" },
+            textContent: "Host: ",
+          },
+          {
+            element: "input",
+            GPWhenCreated: (elm) => (hostInput = elm),
+            placeholder: "example-relay.com",
+          },
+        ],
+      },
+    ])[0];
+
+    await dialog.alertWithElement(editDiv); //Wait for close.
+    var returned = {
+      name: nameInput.value,
+      host: hostInput.value,
+    };
+    var err = RelayOption.confirmRelayStuff(returned);
+    if (err) {
+      dialog.alert(err);
+      return;
+    }
+    return returned;
+  }
+
+  static confirmRelayStuff({ name, host }) {
+    if (typeof name !== "string") {
+      return "Name is not string.";
+    }
+    if (typeof host !== "string") {
+      return "Host is not string.";
+    }
+
+    var allowedURLChars =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.-";
+
+    for (var char of host) {
+      if (allowedURLChars.indexOf(char) == -1) {
+        return `Character "${char}" is not allowed in host.`;
+      }
+    }
+
+    if (name.length > 150) {
+      return `Name is too long!`;
+    }
+    if (name.length < 1) {
+      return `Name is empty`;
+    }
+
+    if (host.length > 200) {
+      return `Host is too long!`;
+    }
+    if (host.length < 1) {
+      return `Host is empty`;
+    }
+
+    return null; //Nothing means its valid.
+  }
+
+  constructor(relay, requestSave, requestSetUsed, requestDelete) {
     this.relay = relay;
     this.requestSave = requestSave;
     this.requestSetUsed = requestSetUsed;
+    this.requestDelete = requestDelete;
     this.firstFetch = true;
     this.loadOption();
     this.createElements();
     this.updateContents();
     this.fetchStatus();
   }
+
+  async relayEditButtonClicked() {
+    var nameInput = null;
+    var hostInput = null;
+    var editDiv = elements.createElementsFromJSON([
+      {
+        element: "div",
+        children: [
+          {
+            element: "span",
+            style: { fontWeight: "bold" },
+            textContent: "Placeholder name: ",
+          },
+          {
+            element: "input",
+            GPWhenCreated: (elm) => (nameInput = elm),
+            value: this.relay.name,
+          },
+          {
+            element: "br",
+          },
+          {
+            element: "span",
+            style: { fontWeight: "bold" },
+            textContent: "Host: ",
+          },
+          {
+            element: "input",
+            GPWhenCreated: (elm) => (hostInput = elm),
+            value: this.relay.host,
+          },
+        ],
+      },
+    ])[0];
+
+    await dialog.alertWithElement(editDiv); //Wait for close.
+
+    var err = RelayOption.confirmRelayStuff({
+      name: nameInput.value,
+      host: hostInput.value,
+    });
+    if (err) {
+      dialog.alert(err);
+      return;
+    }
+
+    this.relay.name = nameInput.value;
+    this.relay.host = hostInput.value;
+    this.updateContents();
+    this.fetchStatus();
+  }
+
+  async relayDeleteButtonClicked() {
+    var msg = `Remove relay server "${this.relay.host}"?\nYou might not be able to get it back once its removed.`;
+    if (await dialog.confirm(msg)) {
+      this.requestDelete();
+    }
+  }
+
   setUsed(u) {
     var { relayUseButton } = this;
     if (u) {
@@ -100,6 +242,18 @@ class RelayOption {
                 textContent: "Use this server",
                 GPWhenCreated: (elm) => (_this.relayUseButton = elm),
               },
+              {
+                element: "button",
+                className: "button",
+                textContent: "Edit",
+                GPWhenCreated: (elm) => (_this.relayEditButton = elm),
+              },
+              {
+                element: "button",
+                className: "button",
+                textContent: "Remove",
+                GPWhenCreated: (elm) => (_this.relayDeleteButton = elm),
+              },
             ],
           },
         ],
@@ -122,12 +276,14 @@ class RelayOption {
 
     this.relayHostSpan.onclick = copyHostText;
     this.relayUseButton.onclick = this.requestSetUsed;
+    this.relayEditButton.onclick = this.relayEditButtonClicked.bind(this);
+    this.relayDeleteButton.onclick = this.relayDeleteButtonClicked.bind(this);
   }
+
   updateContents() {
-    var { relayNameSpan, relayHostSpan, name, host, relayDescriptionSpan } =
-      this;
-    relayNameSpan.textContent = name;
-    relayHostSpan.textContent = host;
+    var { relayNameSpan, relayHostSpan, relay, relayDescriptionSpan } = this;
+    relayNameSpan.textContent = relay.name;
+    relayHostSpan.textContent = relay.host;
     relayDescriptionSpan.textContent = "";
   }
   save() {

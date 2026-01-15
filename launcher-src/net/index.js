@@ -72,6 +72,9 @@ function messageHandler(e) {
 
     return;
   }
+  if (json.method == "listening") {
+    logInSRB2("[RELAY SERVER]: Now active on: " + json.url);
+  }
 }
 
 SRB2WebNet.SendPacket = function () {
@@ -151,9 +154,12 @@ function connectLoop() {
     } else {
       url += "ws://";
     }
-    url += host + "/";
+    url += host;
+    if (!url.endsWith("/")) {
+      url += "/";
+    }
     url += resumeID; //Allows resuming from the websocket connection.
-    socket = new WebSocket(host);
+    socket = new WebSocket(url);
     socket.onerror = function () {
       console.error("Failed to connect to relay.");
     };
@@ -193,6 +199,7 @@ net.enable = function (h) {
   if (!h) {
     return;
   }
+  net.disable();
   enabled = true;
   host = h;
   if (!host.endsWith("/")) {

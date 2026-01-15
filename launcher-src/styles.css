@@ -142,7 +142,7 @@ a:hover {
 .relayConfig {
   width: calc(100% - 0px);
   height: fit-content;
-  max-height: 400px;
+  max-height: 200px;
   min-height: 100px;
   box-sizing: border-box;
   padding: 2px;
@@ -180,10 +180,12 @@ a:hover {
 }
 
 .relayHost {
+  margin-left: auto;
   font-size: 10px;
   font-style: italic;
   color: rgb(0, 110, 255);
   user-select: none;
+  font-weight: bold;
 }
 
 .relayHost:hover {
@@ -229,6 +231,10 @@ a:hover {
 .relayButtons {
   margin-top: 2px;
   display: block;
+}
+
+.relayButtons > .button {
+  margin: 1px 1px;
 }
 
 :root {

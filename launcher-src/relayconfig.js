@@ -3,6 +3,7 @@ var dialog = require("./dialog.js");
 var relayConfig = elements.getGPId("relayConfig");
 var lstorageName = "SRB2WebRelayConfig";
 var RelayOption = require("./relayoption.js");
+var net = require("./net");
 
 var relays = [];
 var relayOpts = [];
@@ -13,28 +14,40 @@ var defaultRelays = [
     host: "srb2web-relay1.onrender.com",
     name: "Public relay",
   },
-  {
-    host: "rczylh-3000.csb.app",
-    name: "Debug relay server",
-  },
 ];
 
 function saveRelays() {
-  var savedRelays = relayOpts.map((r) => r.save());
+  relays = relayOpts.map((r) => r.save());
   localStorage.setItem(
     lstorageName,
     JSON.stringify({
-      relays: savedRelays,
+      relays,
       used: usedRelay,
     })
   );
 }
 
 function updateRelayUsed() {
+  net.disable();
   relayOpts.forEach((r, i) => {
     r.setUsed(usedRelay == i);
+    if (usedRelay == i) {
+      net.enable(r.relay.host);
+    }
   });
 }
+
+var addRelayButton = elements.getGPId("addRelayButton");
+
+addRelayButton.onclick = async function () {
+  var relay = await RelayOption.relayAddDialog();
+  if (!relay) {
+    return;
+  }
+  relays.push(relay);
+  reloadRelayConfig();
+  saveRelays();
+};
 
 function reloadRelayConfig() {
   relayOpts.forEach((r) => {
@@ -42,15 +55,32 @@ function reloadRelayConfig() {
   });
   relayOpts = [];
   relays.forEach((relay, i) => {
-    var opt = new RelayOption(relay, saveRelays, () => {
-      usedRelay = i;
-      updateRelayUsed();
-      saveRelays();
-    });
+    var opt = new RelayOption(
+      relay,
+      saveRelays,
+      () => {
+        //Use button clicked.
+        usedRelay = i;
+        updateRelayUsed();
+        saveRelays();
+      },
+      () => {
+        //Remove accepted.
+        relayOpts = relayOpts.filter((r) => r.relay.host !== relay.host);
+        opt.dispose();
+        saveRelays();
+        reloadRelayConfig();
+      }
+    );
     relayConfig.append(opt.div);
     relayOpts.push(opt);
   });
   updateRelayUsed();
+  if (usedRelay > relayOpts.length - 1) {
+    usedRelay = relayOpts.length - 1;
+    updateRelayUsed();
+    saveRelays();
+  }
 }
 
 setInterval(() => {

@@ -70,6 +70,12 @@ module.exports = [
         textContent: "Relay server configuration:",
       },
       {
+        element: "button",
+        className: "button",
+        gid: "addRelayButton",
+        textContent: "Add relay server",
+      },
+      {
         element: "div",
         gid: "relayConfig",
         className: "relayConfig",
