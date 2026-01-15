@@ -77,7 +77,7 @@ function messageHandler(e) {
   }
 }
 
-SRB2WebNet.SendPacket = function () {
+SRB2WebNet.SendPacket = function (node_id, data_ptr, length) {
   if (!open) {
     return;
   }
