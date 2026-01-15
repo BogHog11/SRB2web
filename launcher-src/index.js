@@ -20,6 +20,14 @@ playButton.addEventListener("click", function () {
 
 require("./relayconfig.js");
 
+window.requestAnimationFrame = function (r) {
+  return setTimeout(r, 1000 / 60);
+};
+
+window.cancelAnimationFrame = function (r) {
+  return clearTimeout(r);
+};
+
 //var relay = require("./oldnet");
 //var relayURL = "wss://rczylh-3000.csb.app/";
 //var relayConnect = new relay.SRB2Relay(relayURL);
