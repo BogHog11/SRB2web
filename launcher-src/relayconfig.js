@@ -30,17 +30,34 @@ function saveRelays() {
   );
 }
 
+function updateRelayUsed() {
+  relayOpts.forEach((r, i) => {
+    r.setUsed(usedRelay == i);
+  });
+}
+
 function reloadRelayConfig() {
   relayOpts.forEach((r) => {
     r.dispose();
   });
   relayOpts = [];
   relays.forEach((relay, i) => {
-    var opt = new RelayOption(relay, saveRelays, () => {});
+    var opt = new RelayOption(relay, saveRelays, () => {
+      usedRelay = i;
+      updateRelayUsed();
+      saveRelays();
+    });
     relayConfig.append(opt.div);
     relayOpts.push(opt);
   });
+  updateRelayUsed();
 }
+
+setInterval(() => {
+  relayOpts.forEach((r) => {
+    r.fetchStatus();
+  });
+}, 5000);
 
 var storedConfig = localStorage.getItem(lstorageName);
 if (storedConfig) {

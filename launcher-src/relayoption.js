@@ -10,13 +10,25 @@ class RelayOption {
   static OFFLINE_IMG = "images/red.png";
   static OFFLINE_TEXT = "Offline.";
 
-  constructor(relay, requestSave) {
+  constructor(relay, requestSave, requestSetUsed) {
     this.relay = relay;
     this.requestSave = requestSave;
+    this.requestSetUsed = requestSetUsed;
+    this.firstFetch = true;
     this.loadOption();
     this.createElements();
     this.updateContents();
     this.fetchStatus();
+  }
+  setUsed(u) {
+    var { relayUseButton } = this;
+    if (u) {
+      this.div.setAttribute("used", "");
+      relayUseButton.textContent = "Using this server";
+    } else {
+      this.div.removeAttribute("used");
+      relayUseButton.textContent = "Use this server";
+    }
   }
   dispose() {
     this.relay = null;
@@ -25,7 +37,6 @@ class RelayOption {
   loadOption() {
     this.name = this.relay.name ? this.relay.name : "";
     this.host = this.relay.host;
-    this.enabled = this.relay.enabled ? true : false;
   }
   createElements() {
     var _this = this;
@@ -72,15 +83,52 @@ class RelayOption {
               },
             ],
           },
-          //
+          //Description
+          {
+            element: "span",
+            className: "relayDescription",
+            GPWhenCreated: (elm) => (_this.relayDescriptionSpan = elm),
+          },
+          //Buttons
+          {
+            element: "div",
+            className: "relayButtons",
+            children: [
+              {
+                element: "button",
+                className: "button",
+                textContent: "Use this server",
+                GPWhenCreated: (elm) => (_this.relayUseButton = elm),
+              },
+            ],
+          },
         ],
       },
     ])[0];
+
+    function copyHostText() {
+      var elm = this;
+      var previous = elm.textContent;
+      elm.textContent = "Copied!";
+      setTimeout(() => {
+        elm.textContent = previous;
+        elm.onclick = copyHostText;
+      }, 1000);
+      try {
+        navigator.clipboard.writeText(previous);
+      } catch (e) {}
+      elm.onclick = function () {};
+    }
+
+    this.relayHostSpan.onclick = copyHostText;
+    this.relayUseButton.onclick = this.requestSetUsed;
   }
   updateContents() {
-    var { relayNameSpan, relayHostSpan, name, host } = this;
+    var { relayNameSpan, relayHostSpan, name, host, relayDescriptionSpan } =
+      this;
     relayNameSpan.textContent = name;
     relayHostSpan.textContent = host;
+    relayDescriptionSpan.textContent = "";
   }
   save() {
     return {
@@ -102,10 +150,14 @@ class RelayOption {
     return url;
   }
   async fetchStatus() {
-    var { relayNameSpan, statusImg, statusText } = this;
-    statusImg.src = RelayOption.FETCHING_IMG;
-    statusText.textContent = RelayOption.FETCHING_TEXT;
-    statusText.setAttribute("state", "fetch");
+    var { relayNameSpan, relayDescriptionSpan, statusImg, statusText } = this;
+    if (this.firstFetch) {
+      statusImg.src = RelayOption.FETCHING_IMG;
+      statusText.textContent = RelayOption.FETCHING_TEXT;
+      relayDescriptionSpan.textContent = "";
+      statusText.setAttribute("state", "fetch");
+      this.firstFetch = false;
+    }
     var online = false;
     var url = this.getFetchURL();
     try {
@@ -114,6 +166,7 @@ class RelayOption {
         var json = await response.json();
         if (json.status == "online") {
           relayNameSpan.textContent = json.name;
+          relayDescriptionSpan.textContent = json.description;
           online = true;
         }
       }
@@ -132,5 +185,17 @@ class RelayOption {
     statusText.setAttribute("state", "online");
   }
 }
+
+function preloadImage(h) {
+  var link = document.createElement("link");
+  link.rel = "preload";
+  link.href = h;
+  link.as = "image";
+  document.head.append(link);
+}
+
+preloadImage(RelayOption.FETCHING_IMG);
+preloadImage(RelayOption.OFFLINE_IMG);
+preloadImage(RelayOption.ONLINE_IMG);
 
 module.exports = RelayOption;
