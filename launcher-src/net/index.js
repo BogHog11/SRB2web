@@ -14,6 +14,7 @@ var open = false;
 var isListening = false; //Tell game if we're listening.
 var isClosed = true;
 var LZString = require("../lzstring.js");
+var NetBin = require("../netbin/");
 var openIDs = {};
 
 net.getSocket = function () {
@@ -28,35 +29,36 @@ function logInSRB2(msg) {
 
 function messageHandler(e) {
   try {
-    var json = JSON.parse(e.data);
+    var decoded = NetBin.decode(new Uint8Array(e.data));
   } catch (e) {
+    //dialog.alert(e);
     console.error("JSON parse error for websocket: ", e);
     return;
   }
+  //dialog.alert(JSON.stringify(decoded.items));
 
-  if (json.method == "resumable") {
-    resumeID = json.id;
+  if (decoded.items[0] == "resumable") {
+    resumeID = decoded.items[1];
   }
-  if (json.method == "joined") {
-    openIDs[json.id] = { ip: json.ip };
+  if (decoded.items[0] == "joined") {
+    var relayID = decoded.items[1];
+    var ip = decoded.items[2];
+    openIDs[relayID] = { ip: ip };
   }
-  if (json.method == "leave") {
-    openIDs[json.id] = 0;
-    delete openIDs[json.id];
+  if (decoded.items[0] == "leave") {
+    var relayID = decoded.items[1];
+    openIDs[relayID] = 0;
+    delete openIDs[relayID];
 
-    Module.ccall("SRB2_NetworkClosed", "null", ["number"], [json.id || 0]);
+    Module.ccall("SRB2_NetworkClosed", "null", ["number"], [relayID || 0]);
   }
-  if (json.method == "data") {
-    var addr = openIDs[json.id];
-    var binaryString = LZString.decompress(json.data);
-    if (!binaryString) return;
+  if (decoded.items[0] == "data") {
+    var relayID = decoded.items[1];
+    var addr = openIDs[relayID];
 
-    var len = binaryString.length;
+    var len = decoded.bin.length;
 
-    var uint8array = new Uint8Array(len);
-    for (var i = 0; i < len; i++) {
-      uint8array[i] = binaryString.charCodeAt(i);
-    }
+    var uint8array = decoded.bin;
 
     var ip = "0.0.0.0";
     if (addr) {
@@ -69,14 +71,14 @@ function messageHandler(e) {
       "SRB2_NetworkReceive",
       "void",
       ["number", "number", "number", "string"],
-      [dataPtr, len, json.id || 0, ip]
+      [dataPtr, len, relayID || 0, ip]
     );
     Module._free(dataPtr);
 
     return;
   }
-  if (json.method == "listening") {
-    logInSRB2("[RELAY SERVER]: Now active on: " + json.url);
+  if (decoded.items[0] == "listening") {
+    logInSRB2("[RELAY SERVER]: Now active on: " + decoded.items[1]);
   }
 }
 
@@ -85,21 +87,8 @@ SRB2WebNet.SendPacket = function (node_id, data_ptr, length) {
     return;
   }
   var data = new Uint8Array(Module.HEAPU8.buffer, data_ptr, length);
-  var stringData = "";
 
-  var chunk = 4096;
-  for (var i = 0; i < length; i += chunk) {
-    var end = Math.min(i + chunk, length);
-    stringData += String.fromCharCode.apply(null, data.subarray(i, end));
-  }
-
-  socket.send(
-    JSON.stringify({
-      method: "data",
-      id: node_id,
-      data: LZString.compress(stringData),
-    })
-  );
+  socket.send(NetBin.encode(["data", node_id], data));
   return 0;
 };
 
@@ -113,12 +102,7 @@ SRB2WebNet.ConnectTo = function (address, port) {
   if (!open) {
     return 0;
   }
-  socket.send(
-    JSON.stringify({
-      method: "connect",
-      url,
-    })
-  );
+  socket.send(NetBin.encode(["connect", url]));
   isListening = false;
   isClosed = false;
   return 0;
@@ -130,11 +114,7 @@ SRB2WebNet.ListenOn = function () {
   if (!open) {
     return 0;
   }
-  socket.send(
-    JSON.stringify({
-      method: "listen",
-    })
-  );
+  socket.send(NetBin.encode(["listen"]));
   return 0;
 };
 
@@ -144,28 +124,16 @@ SRB2WebNet.CloseSocket = function () {
   if (!open) {
     return 0;
   }
-  socket.send(
-    JSON.stringify({
-      method: "close",
-    })
-  );
+  socket.send(NetBin.encode(["close"]));
   return 0;
 };
 
 function openHandler() {
   if (isListening) {
-    socket.send(
-      JSON.stringify({
-        method: "listen",
-      })
-    );
+    socket.send(NetBin.encode(["listen"]));
   }
   if (isClosed) {
-    socket.send(
-      JSON.stringify({
-        method: "close",
-      })
-    );
+    socket.send(NetBin.encode(["close"]));
   }
 }
 
@@ -183,6 +151,7 @@ function connectLoop() {
     }
     url += resumeID; //Allows resuming from the websocket connection.
     socket = new WebSocket(url);
+    socket.binaryType = "arraybuffer";
     socket.onerror = function () {
       console.error("Failed to connect to relay.");
     };
