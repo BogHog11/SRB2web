@@ -85,13 +85,12 @@ function messageHandler(e) {
   }
 }
 
-SRB2WebNet.SendPacket = function (node_id, data_ptr, length) {
+SRB2WebNet.SendPacket = function (relay_id, data_ptr, length) {
   if (!open) {
     return;
   }
   var data = new Uint8Array(Module.HEAPU8.buffer, data_ptr, length);
-
-  socket.send(NetBin.encode(["data", node_id], zlibSync(data, { level: 2 })));
+  socket.send(NetBin.encode(["data", relay_id], zlibSync(data, { level: 2 })));
   return 0;
 };
 

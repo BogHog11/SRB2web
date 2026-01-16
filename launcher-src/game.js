@@ -41,7 +41,7 @@ async function downloadAndSaveAssets() {
     } else {
       // MISS: We need to download it
       console.log(
-        `[CACHE MISS] Downloading ${asset.filename} from internet...`,
+        `[CACHE MISS] Downloading ${asset.filename} from internet...`
       );
       loaderContent.textContent = `Downloading ${asset.filename}...`;
 
@@ -56,7 +56,7 @@ async function downloadAndSaveAssets() {
         // 2. Check for 404s or Server Errors
         if (!networkResponse.ok) {
           throw new Error(
-            `Server returned ${networkResponse.status} ${networkResponse.statusText} for file: ${asset.url}`,
+            `Server returned ${networkResponse.status} ${networkResponse.statusText} for file: ${asset.url}`
           );
         }
 
@@ -114,7 +114,7 @@ var GetViewportHeight = () => {
 };
 
 window.ChangeResolution = (x, y) => {
-  if (Module["calledRun"]) {
+  if (didStart) {
     if (typeof x === "undefined") x = GetViewportWidth();
     if (typeof y === "undefined") y = GetViewportHeight();
     gameCanvas.width = x;
@@ -148,7 +148,7 @@ async function startGame() {
     await loadScript();
   } catch (e) {
     window.alert(
-      "Error loading the game, look in the console for full error. \n" + e,
+      "Error loading the game, look in the console for full error. \n" + e
     );
     console.error("SRB2 Load error: ", e);
     return;
@@ -175,7 +175,7 @@ window.StartedMainLoopCallback = function () {
         "SRB2_AddMouseDelta",
         "void",
         ["number", "number"],
-        [Math.round(e.movementX), Math.round(e.movementY)],
+        [Math.round(e.movementX), Math.round(e.movementY)]
       );
     }
   });
@@ -279,7 +279,7 @@ Module.fetchServerList = function () {
             server.max_players,
             100,
             server.gametype,
-          ],
+          ]
         );
       });
 
@@ -331,7 +331,7 @@ document.addEventListener(
       e.preventDefault();
     }
   },
-  true,
+  true
 );
 document.addEventListener(
   "mouseup",
@@ -341,7 +341,7 @@ document.addEventListener(
       e.preventDefault();
     }
   },
-  true,
+  true
 );
 document.addEventListener(
   "wheel",
@@ -351,27 +351,27 @@ document.addEventListener(
         "mouse_wheel_xy",
         "void",
         ["number", "number"],
-        [Math.round(e.deltaX), Math.round(e.deltaY)],
+        [Math.round(e.deltaX), Math.round(e.deltaY)]
       );
       e.preventDefault();
     }
   },
-  true,
+  true
 );
 var mouseMoveX = 0;
 var mouseMoveY = 0;
 setInterval(() => {
   if (didStart) {
     Module.ccall(
-        "SRB2_AddMouseDelta",
-        "void",
-        ["number", "number"],
-        [mouseMoveX, mouseMoveY],
-      );
+      "SRB2_AddMouseDelta",
+      "void",
+      ["number", "number"],
+      [mouseMoveX, mouseMoveY]
+    );
     mouseMoveX = 0;
     mouseMoveY = 0;
   }
-},1000/55);
+}, 1000 / 55);
 gameCanvas.addEventListener(
   "mousemove",
   (e) => {
@@ -381,7 +381,7 @@ gameCanvas.addEventListener(
       e.preventDefault();
     }
   },
-  true,
+  true
 );
 window.addEventListener(
   "load",
@@ -390,7 +390,7 @@ window.addEventListener(
     document.addEventListener("keyup", CaptureFullscreenKey, true);
     document.addEventListener("keypress", CaptureFullscreenKey, true);
   },
-  { once: true },
+  { once: true }
 );
 
 module.exports = { startGame };
