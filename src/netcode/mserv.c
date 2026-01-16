@@ -163,8 +163,8 @@ INT32 GetRoomsList(boolean hosting, int id)
 
     // Room 0: All
     room_list[i].id = 1; 
-    strncpy(room_list[i].name, "All Servers", 63);
-    strncpy(room_list[i].motd, "All active games.", 255);
+    strncpy(room_list[i].name, "DON'T USE THIS MENU", 63);
+    strncpy(room_list[i].motd, "Please use the relay server option in the launcher (home page) for hosting and joining public netgames.", 255);
     
     I_lock_mutex(&m_menu_mutex);
     MP_RoomMenu[i+1].text = room_list[i].name;

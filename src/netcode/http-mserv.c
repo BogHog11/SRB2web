@@ -702,7 +702,7 @@ HMS_fetch_servers (msg_server_t *list, int room_number, int query_id)
 	#ifndef EMSCRIPTEN
 	struct HMS_buffer *hms;
 
-	int doing_shit;
+	int doing_stuff;
 
 	char local_version[9];
 
@@ -735,7 +735,7 @@ HMS_fetch_servers (msg_server_t *list, int room_number, int query_id)
 
 	if (HMS_do(hms))
 	{
-		doing_shit = 1;
+		doing_stuff = 1;
 
 		snprintf(local_version, sizeof local_version,
 				"%s",
@@ -770,11 +770,11 @@ HMS_fetch_servers (msg_server_t *list, int room_number, int query_id)
 					I_lock_mutex(&ms_QueryId_mutex);
 					{
 						if (query_id != ms_QueryId)
-							doing_shit = 0;
+							doing_stuff = 0;
 					}
 					I_unlock_mutex(ms_QueryId_mutex);
 
-					if (! doing_shit)
+					if (! doing_stuff)
 						break;
 
 					if (strcmp(version, local_version) == 0)
@@ -803,14 +803,14 @@ HMS_fetch_servers (msg_server_t *list, int room_number, int query_id)
 				}
 			}
 
-			if (! doing_shit)
+			if (! doing_stuff)
 				break;
 
 			p = ( section_end + 2 );
 		}
 		while (section_end) ;
 
-		if (doing_shit)
+		if (doing_stuff)
 			list[i].header.buffer[0] = 0;
 	}
 	else
@@ -821,7 +821,6 @@ HMS_fetch_servers (msg_server_t *list, int room_number, int query_id)
 	return list;
 	#endif
 	#ifdef EMSCRIPTEN
-	list = NULL;
 	return list;
 	#endif
 }
