@@ -498,7 +498,7 @@ void CL_UpdateServerList(boolean internetsearch, INT32 room)
 #if 1
 	if (internetsearch)
 	{
-		if (I_can_thread())
+		if (0)
 		{
 			struct Fetch_servers_ctx *ctx;
 
