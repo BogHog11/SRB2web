@@ -81,7 +81,9 @@ static char hms_useragent[512];
 
 struct HMS_buffer
 {
+	#ifndef EMSCRIPTEN
 	CURL *curl;
+	#endif
 	char *buffer;
 	int   needle;
 	int   end;
@@ -91,9 +93,11 @@ struct HMS_buffer
 static void
 Contact_error (void)
 {
+	#ifndef EMSCRIPTEN
 	CONS_Alert(CONS_ERROR,
 			"There was a problem contacting the master server...\n"
 	);
+	#endif
 }
 
 static void
@@ -152,6 +156,7 @@ static void HMS_check_args_once(void)
 FUNCDEBUG static struct HMS_buffer *
 HMS_connect (int proto, const char *format, ...)
 {
+	#ifndef EMSCRIPTEN
 	va_list ap;
 	CURL *curl;
 	char *url;
@@ -293,11 +298,16 @@ HMS_connect (int proto, const char *format, ...)
 	free(url);
 
 	return buffer;
+	#endif
+	#ifdef EMSCRIPTEN
+	return NULL;
+	#endif
 }
 
 static int
 HMS_do (struct HMS_buffer *buffer)
 {
+	#ifndef EMSCRIPTEN
 	CURLcode cc;
 	long status;
 
@@ -338,12 +348,19 @@ HMS_do (struct HMS_buffer *buffer)
 	}
 	else
 		return 1;
+		#endif
+
+		#ifdef EMSCRIPTEN
+		return 1;
+		#endif
 }
 
 static void
 HMS_end (struct HMS_buffer *buffer)
 {
+	#ifndef EMSCRIPTEN
 	curl_easy_cleanup(buffer->curl);
+	#endif
 	free(buffer->buffer);
 	free(buffer);
 }
@@ -351,6 +368,7 @@ HMS_end (struct HMS_buffer *buffer)
 int
 HMS_fetch_rooms (int joining, int query_id)
 {
+	#ifndef EMSCRIPTEN
 	struct HMS_buffer *hms;
 	int ok;
 
@@ -453,11 +471,16 @@ HMS_fetch_rooms (int joining, int query_id)
 	HMS_end(hms);
 
 	return ok;
+	#endif
+	#ifdef EMSCRIPTEN
+	return 1;
+	#endif
 }
 
 int
 HMS_register (void)
 {
+	#ifndef EMSCRIPTEN
 	struct HMS_buffer *hms;
 	int ok = 0;
 
@@ -524,11 +547,17 @@ HMS_register (void)
 #endif
 
 	return ok;
+	#endif
+
+	#ifdef EMSCRIPTEN
+	return 0;
+	#endif
 }
 
 int
 HMS_unlist (void)
 {
+	#ifndef EMSCRIPTEN
 	struct HMS_buffer *hms;
 	int ok = 0;
 
@@ -569,11 +598,16 @@ HMS_unlist (void)
 #endif
 
 	return ok;
+	#endif
+	#ifdef EMSCRIPEN
+	return 0;
+	#endif
 }
 
 int
 HMS_update (void)
 {
+	#ifndef EMSCRIPTEN
 	struct HMS_buffer *hms;
 	int ok = 0;
 
@@ -620,11 +654,17 @@ HMS_update (void)
 #endif
 
 	return ok;
+	#endif
+
+	#ifdef EMSCRIPTEN
+	return 0;
+	#endif
 }
 
 void
 HMS_list_servers (void)
 {
+	#ifndef EMSCRIPTEN
 	struct HMS_buffer *hms;
 
 	char *list;
@@ -653,11 +693,13 @@ HMS_list_servers (void)
 	}
 
 	HMS_end(hms);
+	#endif
 }
 
 msg_server_t *
 HMS_fetch_servers (msg_server_t *list, int room_number, int query_id)
 {
+	#ifndef EMSCRIPTEN
 	struct HMS_buffer *hms;
 
 	int doing_shit;
@@ -777,6 +819,11 @@ HMS_fetch_servers (msg_server_t *list, int room_number, int query_id)
 	HMS_end(hms);
 
 	return list;
+	#endif
+	#ifdef EMSCRIPTEN
+	list = NULL;
+	return list;
+	#endif
 }
 
 int

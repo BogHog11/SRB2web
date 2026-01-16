@@ -2,6 +2,7 @@ var elements = require("./gp2/elements.js");
 if (window["Module"]) {
   var Module = window["Module"];
 }
+var dialog = require("./dialog.js");
 var IDBFS = null;
 var gameCanvas = elements.getGPId("gameCanvas");
 var didStart = false;
@@ -147,7 +148,7 @@ async function startGame() {
   try {
     await loadScript();
   } catch (e) {
-    window.alert(
+    dialog.alert(
       "Error loading the game, look in the console for full error. \n" + e
     );
     console.error("SRB2 Load error: ", e);
@@ -216,28 +217,12 @@ const GT_CTF = 5;
 async function fetchMS() {
   return [
     {
-      ip: "192.168.1.10:5029",
+      ip: "152.26.89.206:5029",
       name: "Classic Co-op Adventure",
       version: "2.2.13",
       players: 2,
       max_players: 8,
       gametype: GT_COOP,
-    },
-    {
-      ip: "192.168.1.11:5029",
-      name: "Monday Night Race",
-      version: "2.2.13",
-      players: 6,
-      max_players: 12,
-      gametype: GT_RACE,
-    },
-    {
-      ip: "192.168.1.12:5029",
-      name: "CTF Chaos",
-      version: "2.2.13",
-      players: 8,
-      max_players: 16,
-      gametype: GT_CTF,
     },
   ];
 }
@@ -245,8 +230,8 @@ async function fetchMS() {
 // ----------------------------------------------------
 // THE CRITICAL FUNCTION CALLED BY C
 // ----------------------------------------------------
-Module.fetchServerList = function () {
-  window.alert("JS: C code requested server list...");
+window.SRB2RequestServerList = function () {
+  //dialog.alert("JS: C code requested server list...");
 
   // 1. Clear the old list in C
   try {

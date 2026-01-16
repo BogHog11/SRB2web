@@ -3800,7 +3800,7 @@ void M_SetupNextMenu(menu_t *menudef)
 {
 	INT16 i;
 
-#if defined (MASTERSERVER)
+#if 1
 	if (I_can_thread())
 	{
 		if (currentMenu == &MP_RoomDef || currentMenu == &MP_ConnectDef)
@@ -3892,7 +3892,7 @@ void M_Ticker(void)
 	if (currentMenu == &OP_ScreenshotOptionsDef)
 		M_SetupScreenshotMenu();
 
-#if defined (MASTERSERVER)
+#if 1
 	if (!netgame)
 		return;
 
@@ -11379,7 +11379,7 @@ static boolean M_CheckMODVersion(int id)
 }
 #endif/*UPDATE_ALERT*/
 
-#if defined (MASTERSERVER)
+#if 1
 static void
 Check_new_version_thread (int *id)
 {
@@ -11478,7 +11478,7 @@ UINT32 roomIds[NUM_LIST_ROOMS];
 static void M_RoomMenu(INT32 choice)
 {
 	INT32 i;
-#if defined (MASTERSERVER)
+#if 1
 	int *id;
 #endif
 
@@ -11500,7 +11500,7 @@ static void M_RoomMenu(INT32 choice)
 	MP_RoomDef.prevMenu = currentMenu;
 	M_SetupNextMenu(&MP_RoomDef);
 
-#ifdef MASTERSERVER
+#if 1
 	if (I_can_thread())
 	{
 #ifdef UPDATE_ALERT
@@ -11539,7 +11539,7 @@ static void M_RoomMenu(INT32 choice)
 
 static void M_ChooseRoom(INT32 choice)
 {
-#if defined (MASTERSERVER)
+#if 1
 	if (I_can_thread())
 	{
 		I_lock_mutex(&ms_QueryId_mutex);

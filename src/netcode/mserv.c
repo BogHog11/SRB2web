@@ -27,26 +27,13 @@
 // --------------------------------------------------------
 // EMSCRIPTEN INTEGRATION
 // --------------------------------------------------------
-#ifdef __EMSCRIPTEN__
+#ifdef EMSCRIPTEN
 #include <emscripten.h>
 #include <stdlib.h>
 #include <string.h>
 
-// This defines a C function 'JS_RequestServerList' that runs the JavaScript inside the {}
-EM_JS(void, JS_RequestServerList, (void), {
-    var fn = null;
-    if (typeof globalThis !== 'undefined' && typeof globalThis.fetchServerList === 'function') {
-        fn = globalThis.fetchServerList;
-    } else if (typeof Module !== 'undefined' && Module && typeof Module.fetchServerList === 'function') {
-        fn = Module.fetchServerList;
-    }
-    if (fn) {
-        console.log("C: Calling fetchServerList() from C...");
-        try { fn(); } catch (e) { console.error("C: fetchServerList threw:", e); }
-    } else {
-        console.log("C: fetchServerList not found. Ensure it's attached to globalThis or Module.");
-    }
-});
+// This defines a C function 'SRB2_RequestServerList' that runs the JavaScript inside the {}
+extern void SRB2_RequestServerList(void);
 #endif
 // --------------------------------------------------------
 
@@ -138,10 +125,10 @@ msg_server_t *GetShortServersList(INT32 room, int id)
     server_list = malloc(( NUM_LIST_SERVER + 1 ) * sizeof *server_list);
     memset(server_list, 0, (NUM_LIST_SERVER + 1) * sizeof *server_list);
 
-#ifdef __EMSCRIPTEN__
+#ifdef EMSCRIPTEN
     // 1. Trigger the Webpack JS function via the EM_JS bridge
     CONS_Printf(M_GetText("Connecting to relayed master server..."));
-    JS_RequestServerList();
+    SRB2_RequestServerList();
 
     // 2. Return whatever we currently have in memory.
     if (ms_ServerList)
@@ -166,31 +153,24 @@ msg_server_t *GetShortServersList(INT32 room, int id)
 // ==========================================================
 INT32 GetRoomsList(boolean hosting, int id)
 {
-#ifdef __EMSCRIPTEN__
+#ifdef EMSCRIPTEN
+    CONS_Printf("Test");
+
+    int i = 0;
+
     // We hardcode the rooms so the menu allows the user to proceed
     memset(room_list, 0, sizeof(room_list));
 
-    int i = 0;
     // Room 0: All
-    room_list[i].id = 0; 
+    room_list[i].id = 1; 
     strncpy(room_list[i].name, "All Servers", 63);
     strncpy(room_list[i].motd, "All active games.", 255);
-    i++;
-
-    // Room 1: Standard
-    room_list[i].id = 1;
-    strncpy(room_list[i].name, "Standard", 63);
-    strncpy(room_list[i].motd, "Normal gameplay.", 255);
-    i++;
-
-    // Room 2: Casual
-    room_list[i].id = 2;
-    strncpy(room_list[i].name, "Casual", 63);
-    strncpy(room_list[i].motd, "Cheats enabled.", 255);
-    i++;
-
-    // Terminator
-    room_list[i].id = -1;
+    
+    I_lock_mutex(&m_menu_mutex);
+    MP_RoomMenu[i+1].text = room_list[i].name;
+    roomIds[i] = room_list[i].id;
+    MP_RoomMenu[i+1].status = IT_STRING|IT_CALL;
+    I_unlock_mutex(m_menu_mutex);
 
     return 1; // Success
 #else
@@ -230,10 +210,11 @@ void GetMODVersion_Console(void)
 
 static void Command_Listserv_f(void)
 {
-    CONS_Printf(M_GetText("Retrieving server list...\n"));
-#ifdef __EMSCRIPTEN__
-    CONS_Printf(M_GetText("Connecting to relayed master server..."));
-    JS_RequestServerList();
+    CONS_Printf("Retrieving server list...\n");
+#ifdef EMSCRIPTEN
+    CONS_Printf("Connecting to relayed master server...");
+    SRB2_RequestServerList();
+    return;
 #endif
     HMS_list_servers();
 }
@@ -408,7 +389,7 @@ static void MasterServer_OnChange(void) {
 // --------------------------------------------------------------------------
 // WEB BROWSER INTEGRATION (Callbacks)
 // --------------------------------------------------------------------------
-#ifdef __EMSCRIPTEN__
+#ifdef EMSCRIPTEN
 #define MAX_WEB_SERVERS 64
 static msg_server_t web_server_buffer[MAX_WEB_SERVERS];
 static INT32 web_server_count = 0;
@@ -445,7 +426,7 @@ EMSCRIPTEN_KEEPALIVE void SRB2_AddServerToList(const char *address, const char *
 EMSCRIPTEN_KEEPALIVE void SRB2_FinishServerList(void) {
     if (ms_ServerList) { free(ms_ServerList); ms_ServerList = NULL; }
     
-    size_t allocSize = (web_server_count + 1) * sizeof(msg_server_t);
+    size_t allocSize = (NUM_LIST_SERVER + 1) * sizeof(msg_server_t);
     ms_ServerList = (msg_server_t *)malloc(allocSize);
     
     if (ms_ServerList) {

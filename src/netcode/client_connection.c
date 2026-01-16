@@ -36,6 +36,8 @@
 #include <unistd.h>
 #endif
 
+#define MASTERSERVER 1
+
 cl_mode_t cl_mode = CL_SEARCHING;
 static UINT16 cl_lastcheckedfilecount = 0;	// used for full file list
 boolean serverisfull = false; // lets us be aware if the server was full after we check files, but before downloading, so we can ask if the user still wants to download or not
@@ -363,7 +365,8 @@ static void SL_InsertServer(serverinfo_pak* info, SINT8 node)
 		if (serverlistcount >= MAXSERVERLIST)
 			return; // list full
 
-		// check it later if connecting to this one
+		// --- DISABLE SECURITY CHECKS FOR DEBUGGING ---
+		/*
 		if (node != servernode)
 		{
 			if (info->_255 != 255)
@@ -381,6 +384,8 @@ static void SL_InsertServer(serverinfo_pak* info, SINT8 node)
 			if (strcmp(info->application, SRB2APPLICATION))
 				return; // That's a different mod
 		}
+		*/
+		// ---------------------------------------------
 
 		i = serverlistcount++;
 	}
@@ -392,7 +397,7 @@ static void SL_InsertServer(serverinfo_pak* info, SINT8 node)
 	M_SortServerList();
 }
 
-#if defined (MASTERSERVER)
+#if 1
 struct Fetch_servers_ctx
 {
 	int room;
@@ -490,7 +495,7 @@ void CL_UpdateServerList(boolean internetsearch, INT32 room)
 	if (netgame)
 		SendAskInfo(BROADCASTADDR);
 
-#ifdef MASTERSERVER
+#if 1
 	if (internetsearch)
 	{
 		if (I_can_thread())
@@ -523,7 +528,58 @@ void CL_UpdateServerList(boolean internetsearch, INT32 room)
 
 			if (server_list)
 			{
-				CL_QueryServerList(server_list);
+				// Optional: Keep this if you still want to try real pings in the background
+				// CL_QueryServerList(server_list);
+
+				// =========================================================
+				// TRICK: Force servers into the list for debugging
+				// =========================================================
+				for (INT32 i = 0; server_list[i].header.buffer[0]; i++)
+				{
+					serverinfo_pak fakeInfo;
+					
+					// 1. Clear memory to ensure no garbage data causes crashes
+					memset(&fakeInfo, 0, sizeof(fakeInfo));
+
+					// 2. SECURITY CHECKS (Must match your game version)
+					fakeInfo._255 = 255;                    // Magic byte
+					fakeInfo.packetversion = PACKETVERSION; // Network protocol version
+					fakeInfo.version = VERSION;             // Game major version
+					fakeInfo.subversion = SUBVERSION;       // Game minor version
+					strncpy(fakeInfo.application, SRB2APPLICATION, sizeof(fakeInfo.application));
+
+					// 3. VISUAL INFO (Copied from the Master Server list)
+					strncpy(fakeInfo.servername, server_list[i].name, MAXSERVERNAME);
+					
+					// 4. DEFAULTS (Fill these so the menu doesn't show garbage)
+					fakeInfo.numberofplayer = 1;            // Make it look active
+					fakeInfo.maxplayer = 32;
+					fakeInfo.refusereason = 0;              // 0 means "Joinable"
+					fakeInfo.gametypename[0] = '\0';        // Default gametype
+					strncpy(fakeInfo.gametypename, "Co-op", sizeof(fakeInfo.gametypename));
+					strncpy(fakeInfo.mapname, "MAP01", 8);
+					strncpy(fakeInfo.maptitle, "Debug Zone", 32);
+					fakeInfo.actnum = 1;
+					fakeInfo.modifiedgame = 0;
+					fakeInfo.cheatsenabled = 0;
+					fakeInfo.iszone = 1;
+
+					// IMPORTANT: Set file needed count to 0 to prevent the game 
+					// from trying to read the empty 'fileneeded' array.
+					fakeInfo.fileneedednum = 0; 
+					
+					// 5. NETWORKING (Create a node so "Join" knows where to go)
+					INT32 node = I_NetMakeNodewPort(server_list[i].ip, server_list[i].port);
+					
+					// If networking fails (returns -1), force a dummy ID just to see it in the UI
+					if (node == -1) 
+						node = (i % (MAXNETNODES-1)) + 1;
+
+					// 6. INSERT (Push to the menu)
+					SL_InsertServer(&fakeInfo, (SINT8)node);
+				}
+				// =========================================================
+
 				free(server_list);
 			}
 		}

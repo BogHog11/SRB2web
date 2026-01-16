@@ -150,6 +150,7 @@ target_link_options(SRB2SDL2 PRIVATE
     # You must point this to the .js file that contains your 'mergeInto(LibraryManager.library, ...)' code.
     # CHECK THE PATH BELOW: It is likely in 'src/sdl/srb2_web.js' or similar.
     "--js-library=${CMAKE_SOURCE_DIR}/src/sdl/i_net_web.js" 
+	"--js-library=${CMAKE_SOURCE_DIR}/src/netcode/mserv_web.js" 
 
     # 3. MEMORY STABILITY
     "-sINITIAL_MEMORY=268435456"
@@ -504,3 +505,7 @@ endif()
 if(SRB2_CONFIG_ENABLE_CLANG_TIDY_CXX)
 	target_set_default_clang_tidy(SRB2SDL2 CXX "-*,clang-analyzer-*,modernize-*")
 endif()
+
+#ifdef EMSCRIPTEN
+    target_compile_definitions(SRB2SDL2 PRIVATE -DMASTERSERVER)
+#endif
