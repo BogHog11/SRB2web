@@ -15,6 +15,7 @@ var isListening = false; //Tell game if we're listening.
 var isClosed = true;
 var LZString = require("../lzstring.js");
 var NetBin = require("../netbin/");
+const { zlibSync, unzlibSync } = require("fflate");
 var openIDs = {};
 
 net.getSocket = function () {
@@ -56,9 +57,11 @@ function messageHandler(e) {
     var relayID = decoded.items[1];
     var addr = openIDs[relayID];
 
-    var len = decoded.bin.length;
+    var data = unzlibSync(decoded.bin);
 
-    var uint8array = decoded.bin;
+    var len = data.length;
+
+    var uint8array = data;
 
     var ip = "0.0.0.0";
     if (addr) {
@@ -88,7 +91,7 @@ SRB2WebNet.SendPacket = function (node_id, data_ptr, length) {
   }
   var data = new Uint8Array(Module.HEAPU8.buffer, data_ptr, length);
 
-  socket.send(NetBin.encode(["data", node_id], data));
+  socket.send(NetBin.encode(["data", node_id], zlibSync(data, { level: 2 })));
   return 0;
 };
 
