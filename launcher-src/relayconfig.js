@@ -58,6 +58,7 @@ addRelayButton.onclick = async function () {
 };
 
 function reloadRelayConfig() {
+  elements.setInnerJSON(relayConfig, []);
   relayOpts.forEach((r) => {
     r.dispose();
   });

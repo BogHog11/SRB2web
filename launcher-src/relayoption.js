@@ -47,7 +47,7 @@ class RelayOption {
 
     await dialog.alertWithElement(editDiv); //Wait for close.
     var returned = {
-      name: nameInput.value,
+      name: nameInput.value || "Relay server",
       host: hostInput.value,
     };
     var err = RelayOption.confirmRelayStuff(returned);
