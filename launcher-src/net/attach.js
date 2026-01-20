@@ -56,7 +56,9 @@ attach.emitPacket = function (data, id, ip) {
 };
 
 attach.emitClose = function (id) {
-  Module.ccall("SRB2_NetworkClosed", "null", ["number"], [id || 0]);
+  try {
+    Module.ccall("SRB2_NetworkClosed", "null", ["number"], [id || 0]);
+  } catch (e) {}
 };
 
 attach.logInSRB2 = function (msg) {
