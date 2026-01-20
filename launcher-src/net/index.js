@@ -25,6 +25,13 @@ attachSRB2.onlisten = function () {
   curState = new ListenState(host);
 };
 
+attachSRB2.onclose = function () {
+  if (curState) {
+    curState.dispose();
+  }
+  curState = null;
+};
+
 function enable(h) {
   if (curState) {
     curState.dispose();
