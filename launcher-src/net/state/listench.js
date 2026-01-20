@@ -4,6 +4,7 @@ class ListenChannel {
     this.id = id;
     this.ip = ip;
     this.socket = new WebSocket(url);
+    this.socket.binaryType = "arraybuffer";
     this.socket.onopen = this.handleOpen.bind(this);
     this.socket.onmessage = this.handleMessage.bind(this);
     this.socket.onclose = this.handleClose.bind(this);
