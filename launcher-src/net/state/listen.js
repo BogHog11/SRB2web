@@ -32,6 +32,7 @@ class ListenState {
     ch.requestDispose = () => {
       ch.dispose();
       delete _this.connections[id];
+      attachSRB2.emitClose(id);
     };
 
     ch.ondata = (data) => {
