@@ -21,6 +21,7 @@ class ConnectState {
     this.wsHost = wsHost;
     this.disposed = false;
     this.isOpen = false;
+    this.initialQueue = [];
     this.initWebsocket();
   }
 
@@ -50,13 +51,25 @@ class ConnectState {
   }
 
   handleOpen() {
+    var _this = this;
     var { socket } = this;
     this.isOpen = true;
     socket.onmessage = function (event) {
-      try {
+      if (event.data instanceof ArrayBuffer) {
         var uint8array = new Uint8Array(event.data);
-      } catch (e) {
-        return;
+      } else {
+        try {
+          var json = JSON.parse(event.data);
+          if (json.ready) {
+            for (var msg of _this.initialQueue) {
+              socket.send(msg);
+            }
+            _this.initialQueue = [];
+            return;
+          }
+        } catch (e) {
+          var uint8array = new Uint8Array(event.data);
+        }
       }
 
       attachSRB2.emitPacket(uint8array, 0, PLACEHOLDER_IP);
@@ -68,9 +81,11 @@ class ConnectState {
   handleSRB2Packet(data) {
     var { socket } = this;
     if (!socket) {
+      this.initialQueue.push(data);
       return;
     }
     if (!this.isOpen) {
+      this.initialQueue.push(data);
       return;
     }
     socket.send(data);
@@ -83,7 +98,9 @@ class ConnectState {
       this.socket.close();
       this.socket = null;
       this.initWebsocket = () => {};
+      this.initialQueue = null;
     }
+    attachSRB2.onpacket = null;
   }
 }
 

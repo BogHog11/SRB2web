@@ -35,7 +35,7 @@ class ListenState {
     };
 
     ch.ondata = (data) => {
-      attachSRB2.emitPacket(data, id, ip);
+      attachSRB2.emitPacket(new Uint8Array(data), id, ip);
     };
   }
 
@@ -68,6 +68,9 @@ class ListenState {
         _this.attachConnection(json.channel, json.ip);
       }
     };
+    this.socket.onopen = function () {
+      attachSRB2.onpacket = _this.handleSRB2Send.bind(_this);
+    };
   }
 
   handleSRB2Send(data, id) {
@@ -85,6 +88,7 @@ class ListenState {
     }
     this.socket = null;
     this.disconnectAll();
+    attachSRB2.onpacket = null;
   }
 }
 
