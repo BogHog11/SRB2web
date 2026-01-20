@@ -48,6 +48,10 @@ addRelayButton.onclick = async function () {
   if (!relay) {
     return;
   }
+  if (relays.find((r) => r.host == relay.host)) {
+    dialog.alert("This relay server was already added!");
+    return;
+  }
   relays.push(relay);
   reloadRelayConfig();
   saveRelays();
@@ -92,6 +96,22 @@ function reloadRelayConfig() {
     net.enable(currentHost);
   } else {
     net.disable();
+  }
+
+  if (relayOpts.length == 0) {
+    elements.setInnerJSON(relayConfig, [
+      {
+        element: "div",
+        className: "noRelayContainer",
+        children: [
+          {
+            element: "div",
+            className: "noRelayText",
+            textContent: "No relay servers!",
+          },
+        ],
+      },
+    ]);
   }
 }
 
