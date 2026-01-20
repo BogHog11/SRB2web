@@ -80,6 +80,7 @@ class ListenState {
 
   dispose() {
     if (this.socket) {
+      this.socket.onclose = () => {};
       this.socket.close();
     }
     this.socket = null;
