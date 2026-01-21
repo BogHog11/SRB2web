@@ -321,8 +321,26 @@ class RelayOption {
       if (response.ok) {
         var json = await response.json();
         if (json.status == "online") {
-          relayNameSpan.textContent = json.name;
-          relayDescriptionSpan.textContent = json.description;
+          relayNameSpan.innerHTML = "";
+          elements.setInnerJSON(relayNameSpan, [
+            {
+              element: "span",
+              textContent: json.name,
+            },
+            {
+              element: "br",
+            },
+            {
+              element: "span",
+              style: {
+                fontSize: "12px",
+                marginLeft: "8px",
+              },
+              textContent: this.relay.name,
+            },
+          ]);
+
+          relayDescriptionSpan.textContent = `${json.description}`;
           online = true;
         }
       }
