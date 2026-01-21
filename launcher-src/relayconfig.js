@@ -148,7 +148,6 @@ if (storedConfig) {
 
 reloadRelayConfig();
 
-
 var browsePublicGames = elements.getGPId("browsePublicGames");
 
 browsePublicGames.addEventListener("click", () => {
@@ -158,6 +157,6 @@ browsePublicGames.addEventListener("click", () => {
   if (usedRelay < 0) {
     dialog.alert("You don't have a relay server selected");
   }
-
-  
 });
+
+net.enablePublic();
