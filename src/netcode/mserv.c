@@ -78,6 +78,16 @@ consvar_t cv_masterserver_update_rate = CVAR_INIT ("masterserver_update_rate", "
 CV_PossibleValue_t cv_masterserver_room_values[] = {{-1, "MIN"}, {999999999, "MAX"}, {0, NULL}};
 consvar_t cv_masterserver_room_id = CVAR_INIT ("masterserver_room_id", "-1", CV_CALL, cv_masterserver_room_values, RoomId_OnChange);
 
+#ifdef EMSCRIPTEN
+extern void SRB2_ServerInfoResponse(char *name);
+
+EMSCRIPTEN_KEEPALIVE
+void SRB2_GetServerInfo(void)
+{
+    SRB2_ServerInfoResponse(cv_servername.string);
+}
+#endif
+
 static INT16 ms_RoomId = -1;
 
 int           ms_QueryId;

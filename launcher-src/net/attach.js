@@ -67,4 +67,23 @@ attach.logInSRB2 = function (msg) {
   } catch (e) {}
 };
 
+var pendingServerInfoResponses = [];
+
+window.SRB2_ServerInfoResponse = function (name) {
+  for (var func of pendingServerInfoResponses) {
+    func({
+      name,
+    });
+  }
+};
+
+attach.getServerInfo = function () {
+  return new Promise((resolve, reject) => {
+    pendingServerInfoResponses.push(resolve);
+    try {
+      Module.ccall("SRB2_GetServerInfo", "void", [], []);
+    } catch (e) {}
+  });
+};
+
 module.exports = attach;

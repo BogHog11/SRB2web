@@ -15,6 +15,7 @@ class ListenState {
     this.address = PLACEHOLDER_IP + ":5029";
     this.isPublic = isPublic;
     this.openSocket();
+    this.setUpdateInterval();
   }
 
   attachConnection(code, ip) {
@@ -53,8 +54,12 @@ class ListenState {
     this.socket = new WebSocket(
       getWebsocketURL(wsHost) + (isPublic ? "host/public" : "host")
     );
+    this.isOpen = false;
+    this._lastServerInfo = {};
 
     this.socket.onclose = function () {
+      _this._lastServerInfo = {};
+      _this.isOpen = false;
       console.warn(
         `[Relay Connection]: Lost connection, connection might become unstable temporarily. Reconnecting...`
       );
@@ -73,6 +78,7 @@ class ListenState {
       }
     };
     this.socket.onopen = function () {
+      _this.isOpen = true;
       attachSRB2.onpacket = _this.handleSRB2Send.bind(_this);
     };
   }
@@ -85,6 +91,45 @@ class ListenState {
     ch.send(data);
   }
 
+  async handleUpdateInterval() {
+    var { socket } = this;
+    if (!this.isPublic) {
+      return;
+    }
+
+    var info = await attachSRB2.getServerInfo();
+
+    if (!info) {
+      this._lastServerInfo = {};
+      return;
+    }
+    if (!this.isOpen) {
+      this._lastServerInfo = {};
+      return;
+    }
+    var toUpdate = {};
+    var needsUpdate = false;
+    for (var key of Object.keys(info)) {
+      if (this._lastServerInfo[key] !== info[key]) {
+        needsUpdate = true;
+        this._lastServerInfo[key] = info[key];
+        toUpdate[key] = info[key];
+      }
+    }
+
+    if (needsUpdate) {
+      socket.send(JSON.stringify(toUpdate));
+    }
+  }
+
+  setUpdateInterval() {
+    this._lastServerInfo = {};
+    this.updateInterval = setInterval(
+      this.handleUpdateInterval.bind(this),
+      100
+    );
+  }
+
   dispose() {
     if (this.socket) {
       this.socket.onclose = () => {};
@@ -92,6 +137,7 @@ class ListenState {
     }
     this.socket = null;
     this.disconnectAll();
+    clearInterval(this.updateInterval);
     attachSRB2.onpacket = null;
   }
 }

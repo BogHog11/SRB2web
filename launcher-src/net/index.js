@@ -63,5 +63,5 @@ module.exports = {
   enable,
   disable,
   enablePublic,
-  disablePublic
+  disablePublic,
 };
