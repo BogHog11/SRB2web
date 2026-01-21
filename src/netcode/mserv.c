@@ -83,12 +83,12 @@ CV_PossibleValue_t cv_masterserver_room_values[] = {{-1, "MIN"}, {999999999, "MA
 consvar_t cv_masterserver_room_id = CVAR_INIT ("masterserver_room_id", "-1", CV_CALL, cv_masterserver_room_values, RoomId_OnChange);
 
 #ifdef EMSCRIPTEN
-extern void SRB2_ServerInfoResponse(char *name, char *mapname);
+extern void SRB2_ServerInfoResponse(char *name, char *map, char *map_title);
 
 EMSCRIPTEN_KEEPALIVE
 void SRB2_GetServerInfo(void)
 {
-    SRB2_ServerInfoResponse((char *)cv_servername.string, G_BuildMapName(gamemap));
+    SRB2_ServerInfoResponse((char *)cv_servername.string, G_BuildMapName(gamemap), G_BuildMapTitle(gamemap));
 }
 #endif
 
