@@ -4949,12 +4949,16 @@ src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: ../src/doomstat.h
 src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: ../src/doomtype.h
 src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: ../src/endian.h
 src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: ../src/f_finale.h
+src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: ../src/g_demo.h
+src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: ../src/g_game.h
 src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: ../src/g_state.h
 src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: ../src/i_threads.h
 src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: ../src/info.h
 src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: ../src/lua_script.h
 src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: ../src/m_aatree.h
 src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: ../src/m_bbox.h
+src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: ../src/m_cheat.h
+src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: ../src/m_cond.h
 src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: ../src/m_dllist.h
 src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: ../src/m_fixed.h
 src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o: ../src/m_menu.h
