@@ -11,12 +11,12 @@
 
 #ifdef CMAKECONFIG
 
-#define SRB2_COMP_REVISION       "c277768d0"
+#define SRB2_COMP_REVISION       "ee989746e"
 #define SRB2_COMP_BRANCH         "master"
 #define SRB2_COMP_NOTE           "Commit"
 // This is done with configure_file instead of defines in order to avoid
 // recompiling the whole target whenever the working directory state changes
-#define SRB2_COMP_UNCOMMITTED
+/* #undef SRB2_COMP_UNCOMMITTED */
 #ifdef SRB2_COMP_UNCOMMITTED
 #define COMPVERSION_UNCOMMITTED
 #endif
