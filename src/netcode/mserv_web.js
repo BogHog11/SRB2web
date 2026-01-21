@@ -5,10 +5,10 @@ mergeInto(LibraryManager.library, {
     }
     return 1;
   },
-  SRB2_ServerInfoResponse: function (name) {
+  SRB2_ServerInfoResponse: function (serverName) {
     if (window.SRB2_ServerInfoResponse) {
       return window.SRB2_ServerInfoResponse({
-        name,
+        name: UTF8ToString(serverName),
       });
     }
     return 1;
