@@ -8,11 +8,12 @@ class ListenState {
     return getWebsocketURL(wsHost) + "listench/" + code;
   }
 
-  constructor(wsHost) {
+  constructor(wsHost, isPublic = true) {
     this.wsHost = wsHost;
     this.isOpen = false;
     this.connections = {};
     this.address = PLACEHOLDER_IP + ":5029";
+    this.isPublic = isPublic;
     this.openSocket();
   }
 
@@ -48,8 +49,10 @@ class ListenState {
 
   openSocket() {
     var _this = this;
-    var { wsHost } = this;
-    this.socket = new WebSocket(getWebsocketURL(wsHost) + "listen");
+    var { wsHost, isPublic } = this;
+    this.socket = new WebSocket(
+      getWebsocketURL(wsHost) + (isPublic ? "host/public" : "host")
+    );
 
     this.socket.onclose = function () {
       console.warn(

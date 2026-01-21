@@ -2,6 +2,7 @@ var { ConnectState, ListenState } = require("./state");
 var attachSRB2 = require("./attach.js");
 
 var enabled = false;
+var publicEnabled = false;
 var host = "";
 var curState = null;
 
@@ -22,7 +23,7 @@ attachSRB2.onlisten = function () {
   if (curState) {
     curState.dispose();
   }
-  curState = new ListenState(host);
+  curState = new ListenState(host, publicEnabled);
 };
 
 attachSRB2.onclose = function () {
@@ -41,6 +42,10 @@ function enable(h) {
   host = h;
 }
 
+function enablePublic() {
+  publicEnabled = true;
+}
+
 function disable() {
   if (curState) {
     curState.dispose();
@@ -48,6 +53,10 @@ function disable() {
   }
   enabled = false;
   host = null;
+}
+
+function disablePublic() {
+  publicEnabled = false;
 }
 
 module.exports = {
