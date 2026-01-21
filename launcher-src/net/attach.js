@@ -69,11 +69,9 @@ attach.logInSRB2 = function (msg) {
 
 var pendingServerInfoResponses = [];
 
-window.SRB2_ServerInfoResponse = function (name) {
+window.SRB2_ServerInfoResponse = function (info) {
   for (var func of pendingServerInfoResponses) {
-    func({
-      name,
-    });
+    func(info);
   }
 };
 
