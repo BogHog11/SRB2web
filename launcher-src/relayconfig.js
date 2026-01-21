@@ -39,6 +39,12 @@ function updateRelayUsed() {
       currentHost = r.relay.host;
     }
   });
+  if (relayEnabled) {
+    net.disable();
+    net.enable(currentHost);
+  } else {
+    net.disable();
+  }
 }
 
 var addRelayButton = elements.getGPId("addRelayButton");
@@ -92,12 +98,6 @@ function reloadRelayConfig() {
   }
 
   relayServerCheckbox.checked = relayEnabled;
-  if (relayEnabled) {
-    net.disable();
-    net.enable(currentHost);
-  } else {
-    net.disable();
-  }
 
   if (relayOpts.length == 0) {
     elements.setInnerJSON(relayConfig, [

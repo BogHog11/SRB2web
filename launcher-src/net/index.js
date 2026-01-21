@@ -38,9 +38,7 @@ function enable(h) {
     curState = null;
   }
   enabled = true;
-  if (h) {
-    host = h;
-  }
+  host = h;
 }
 
 function disable() {
