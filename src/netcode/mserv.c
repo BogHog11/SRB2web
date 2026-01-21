@@ -24,10 +24,6 @@
 #include "../m_menu.h"
 #include "../z_zone.h"
 
-#ifdef EMSCRIPTEN
-#include "../g_game.h"
-#endif
-
 // --------------------------------------------------------
 // EMSCRIPTEN INTEGRATION
 // --------------------------------------------------------
@@ -81,16 +77,6 @@ consvar_t cv_servername = CVAR_INIT_WITH_CALLBACKS ("servername", "SRB2 server",
 consvar_t cv_masterserver_update_rate = CVAR_INIT ("masterserver_update_rate", "15", CV_SAVE|CV_CALL|CV_NOINIT, masterserver_update_rate_cons_t, Update_parameters);
 CV_PossibleValue_t cv_masterserver_room_values[] = {{-1, "MIN"}, {999999999, "MAX"}, {0, NULL}};
 consvar_t cv_masterserver_room_id = CVAR_INIT ("masterserver_room_id", "-1", CV_CALL, cv_masterserver_room_values, RoomId_OnChange);
-
-#ifdef EMSCRIPTEN
-extern void SRB2_ServerInfoResponse(char *name, char *map, char *map_title);
-
-EMSCRIPTEN_KEEPALIVE
-void SRB2_GetServerInfo(void)
-{
-    SRB2_ServerInfoResponse((char *)cv_servername.string, G_BuildMapName(gamemap), G_BuildMapTitle(gamemap));
-}
-#endif
 
 static INT16 ms_RoomId = -1;
 

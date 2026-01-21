@@ -2881,6 +2881,33 @@ netcode/d_netfil.c.s:
 	cd /project/workspace/build-wasm && $(MAKE) -f src/CMakeFiles/SRB2SDL2.dir/build.make src/CMakeFiles/SRB2SDL2.dir/netcode/d_netfil.c.s
 .PHONY : netcode/d_netfil.c.s
 
+netcode/emscripten_serverinfo.o: netcode/emscripten_serverinfo.c.o
+
+.PHONY : netcode/emscripten_serverinfo.o
+
+# target to build an object file
+netcode/emscripten_serverinfo.c.o:
+	cd /project/workspace/build-wasm && $(MAKE) -f src/CMakeFiles/SRB2SDL2.dir/build.make src/CMakeFiles/SRB2SDL2.dir/netcode/emscripten_serverinfo.c.o
+.PHONY : netcode/emscripten_serverinfo.c.o
+
+netcode/emscripten_serverinfo.i: netcode/emscripten_serverinfo.c.i
+
+.PHONY : netcode/emscripten_serverinfo.i
+
+# target to preprocess a source file
+netcode/emscripten_serverinfo.c.i:
+	cd /project/workspace/build-wasm && $(MAKE) -f src/CMakeFiles/SRB2SDL2.dir/build.make src/CMakeFiles/SRB2SDL2.dir/netcode/emscripten_serverinfo.c.i
+.PHONY : netcode/emscripten_serverinfo.c.i
+
+netcode/emscripten_serverinfo.s: netcode/emscripten_serverinfo.c.s
+
+.PHONY : netcode/emscripten_serverinfo.s
+
+# target to generate assembly for a file
+netcode/emscripten_serverinfo.c.s:
+	cd /project/workspace/build-wasm && $(MAKE) -f src/CMakeFiles/SRB2SDL2.dir/build.make src/CMakeFiles/SRB2SDL2.dir/netcode/emscripten_serverinfo.c.s
+.PHONY : netcode/emscripten_serverinfo.c.s
+
 netcode/gamestate.o: netcode/gamestate.c.o
 
 .PHONY : netcode/gamestate.o
@@ -4949,6 +4976,9 @@ help:
 	@echo "... netcode/d_netfil.o"
 	@echo "... netcode/d_netfil.i"
 	@echo "... netcode/d_netfil.s"
+	@echo "... netcode/emscripten_serverinfo.o"
+	@echo "... netcode/emscripten_serverinfo.i"
+	@echo "... netcode/emscripten_serverinfo.s"
 	@echo "... netcode/gamestate.o"
 	@echo "... netcode/gamestate.i"
 	@echo "... netcode/gamestate.s"

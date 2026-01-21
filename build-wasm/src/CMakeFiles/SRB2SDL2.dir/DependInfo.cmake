@@ -103,6 +103,7 @@ set(CMAKE_DEPENDS_CHECK_C
   "/project/workspace/src/netcode/d_net.c" "/project/workspace/build-wasm/src/CMakeFiles/SRB2SDL2.dir/netcode/d_net.c.o"
   "/project/workspace/src/netcode/d_netcmd.c" "/project/workspace/build-wasm/src/CMakeFiles/SRB2SDL2.dir/netcode/d_netcmd.c.o"
   "/project/workspace/src/netcode/d_netfil.c" "/project/workspace/build-wasm/src/CMakeFiles/SRB2SDL2.dir/netcode/d_netfil.c.o"
+  "/project/workspace/src/netcode/emscripten_serverinfo.c" "/project/workspace/build-wasm/src/CMakeFiles/SRB2SDL2.dir/netcode/emscripten_serverinfo.c.o"
   "/project/workspace/src/netcode/gamestate.c" "/project/workspace/build-wasm/src/CMakeFiles/SRB2SDL2.dir/netcode/gamestate.c.o"
   "/project/workspace/src/netcode/http-mserv.c" "/project/workspace/build-wasm/src/CMakeFiles/SRB2SDL2.dir/netcode/http-mserv.c.o"
   "/project/workspace/src/netcode/i_tcp.c" "/project/workspace/build-wasm/src/CMakeFiles/SRB2SDL2.dir/netcode/i_tcp.c.o"

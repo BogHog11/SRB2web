@@ -2031,10 +2031,24 @@ src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.s"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /project/workspace/src/netcode/mserv.c -o CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.s
 
+src/CMakeFiles/SRB2SDL2.dir/netcode/emscripten_serverinfo.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
+src/CMakeFiles/SRB2SDL2.dir/netcode/emscripten_serverinfo.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
+src/CMakeFiles/SRB2SDL2.dir/netcode/emscripten_serverinfo.c.o: ../src/netcode/emscripten_serverinfo.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_142) "Building C object src/CMakeFiles/SRB2SDL2.dir/netcode/emscripten_serverinfo.c.o"
+	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/netcode/emscripten_serverinfo.c.o   -c /project/workspace/src/netcode/emscripten_serverinfo.c
+
+src/CMakeFiles/SRB2SDL2.dir/netcode/emscripten_serverinfo.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/SRB2SDL2.dir/netcode/emscripten_serverinfo.c.i"
+	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /project/workspace/src/netcode/emscripten_serverinfo.c > CMakeFiles/SRB2SDL2.dir/netcode/emscripten_serverinfo.c.i
+
+src/CMakeFiles/SRB2SDL2.dir/netcode/emscripten_serverinfo.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/SRB2SDL2.dir/netcode/emscripten_serverinfo.c.s"
+	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /project/workspace/src/netcode/emscripten_serverinfo.c -o CMakeFiles/SRB2SDL2.dir/netcode/emscripten_serverinfo.c.s
+
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_bsp.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_bsp.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_bsp.c.o: ../src/hardware/hw_bsp.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_142) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_bsp.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_143) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_bsp.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/hardware/hw_bsp.c.o   -c /project/workspace/src/hardware/hw_bsp.c
 
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_bsp.c.i: cmake_force
@@ -2048,7 +2062,7 @@ src/CMakeFiles/SRB2SDL2.dir/hardware/hw_bsp.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_draw.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_draw.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_draw.c.o: ../src/hardware/hw_draw.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_143) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_draw.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_144) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_draw.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/hardware/hw_draw.c.o   -c /project/workspace/src/hardware/hw_draw.c
 
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_draw.c.i: cmake_force
@@ -2062,7 +2076,7 @@ src/CMakeFiles/SRB2SDL2.dir/hardware/hw_draw.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_light.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_light.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_light.c.o: ../src/hardware/hw_light.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_144) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_light.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_145) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_light.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/hardware/hw_light.c.o   -c /project/workspace/src/hardware/hw_light.c
 
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_light.c.i: cmake_force
@@ -2076,7 +2090,7 @@ src/CMakeFiles/SRB2SDL2.dir/hardware/hw_light.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_main.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_main.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_main.c.o: ../src/hardware/hw_main.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_145) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_main.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_146) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_main.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/hardware/hw_main.c.o   -c /project/workspace/src/hardware/hw_main.c
 
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_main.c.i: cmake_force
@@ -2090,7 +2104,7 @@ src/CMakeFiles/SRB2SDL2.dir/hardware/hw_main.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_clip.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_clip.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_clip.c.o: ../src/hardware/hw_clip.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_146) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_clip.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_147) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_clip.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/hardware/hw_clip.c.o   -c /project/workspace/src/hardware/hw_clip.c
 
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_clip.c.i: cmake_force
@@ -2104,7 +2118,7 @@ src/CMakeFiles/SRB2SDL2.dir/hardware/hw_clip.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md2.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md2.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md2.c.o: ../src/hardware/hw_md2.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_147) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md2.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_148) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md2.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/hardware/hw_md2.c.o   -c /project/workspace/src/hardware/hw_md2.c
 
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md2.c.i: cmake_force
@@ -2118,7 +2132,7 @@ src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md2.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_cache.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_cache.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_cache.c.o: ../src/hardware/hw_cache.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_148) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_cache.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_149) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_cache.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/hardware/hw_cache.c.o   -c /project/workspace/src/hardware/hw_cache.c
 
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_cache.c.i: cmake_force
@@ -2132,7 +2146,7 @@ src/CMakeFiles/SRB2SDL2.dir/hardware/hw_cache.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md2load.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md2load.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md2load.c.o: ../src/hardware/hw_md2load.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_149) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md2load.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_150) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md2load.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/hardware/hw_md2load.c.o   -c /project/workspace/src/hardware/hw_md2load.c
 
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md2load.c.i: cmake_force
@@ -2146,7 +2160,7 @@ src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md2load.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md3load.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md3load.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md3load.c.o: ../src/hardware/hw_md3load.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_150) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md3load.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_151) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md3load.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/hardware/hw_md3load.c.o   -c /project/workspace/src/hardware/hw_md3load.c
 
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md3load.c.i: cmake_force
@@ -2160,7 +2174,7 @@ src/CMakeFiles/SRB2SDL2.dir/hardware/hw_md3load.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_model.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_model.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_model.c.o: ../src/hardware/hw_model.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_151) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_model.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_152) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_model.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/hardware/hw_model.c.o   -c /project/workspace/src/hardware/hw_model.c
 
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_model.c.i: cmake_force
@@ -2174,7 +2188,7 @@ src/CMakeFiles/SRB2SDL2.dir/hardware/hw_model.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_batching.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_batching.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_batching.c.o: ../src/hardware/hw_batching.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_152) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_batching.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_153) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_batching.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/hardware/hw_batching.c.o   -c /project/workspace/src/hardware/hw_batching.c
 
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_batching.c.i: cmake_force
@@ -2188,7 +2202,7 @@ src/CMakeFiles/SRB2SDL2.dir/hardware/hw_batching.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_shaders.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_shaders.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_shaders.c.o: ../src/hardware/hw_shaders.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_153) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_shaders.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_154) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/hw_shaders.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/hardware/hw_shaders.c.o   -c /project/workspace/src/hardware/hw_shaders.c
 
 src/CMakeFiles/SRB2SDL2.dir/hardware/hw_shaders.c.i: cmake_force
@@ -2202,7 +2216,7 @@ src/CMakeFiles/SRB2SDL2.dir/hardware/hw_shaders.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/hardware/r_opengl/r_opengl.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/hardware/r_opengl/r_opengl.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/hardware/r_opengl/r_opengl.c.o: ../src/hardware/r_opengl/r_opengl.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_154) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/r_opengl/r_opengl.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_155) "Building C object src/CMakeFiles/SRB2SDL2.dir/hardware/r_opengl/r_opengl.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/hardware/r_opengl/r_opengl.c.o   -c /project/workspace/src/hardware/r_opengl/r_opengl.c
 
 src/CMakeFiles/SRB2SDL2.dir/hardware/r_opengl/r_opengl.c.i: cmake_force
@@ -2216,7 +2230,7 @@ src/CMakeFiles/SRB2SDL2.dir/hardware/r_opengl/r_opengl.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/sdl/ogl_sdl.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/sdl/ogl_sdl.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/sdl/ogl_sdl.c.o: ../src/sdl/ogl_sdl.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_155) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/ogl_sdl.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_156) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/ogl_sdl.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/sdl/ogl_sdl.c.o   -c /project/workspace/src/sdl/ogl_sdl.c
 
 src/CMakeFiles/SRB2SDL2.dir/sdl/ogl_sdl.c.i: cmake_force
@@ -2230,7 +2244,7 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/ogl_sdl.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_threads.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_threads.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_threads.c.o: ../src/sdl/i_threads.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_156) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/i_threads.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_157) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/i_threads.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/sdl/i_threads.c.o   -c /project/workspace/src/sdl/i_threads.c
 
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_threads.c.i: cmake_force
@@ -2244,7 +2258,7 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/i_threads.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_net.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_net.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_net.c.o: ../src/sdl/i_net.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_157) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/i_net.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_158) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/i_net.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/sdl/i_net.c.o   -c /project/workspace/src/sdl/i_net.c
 
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_net.c.i: cmake_force
@@ -2258,7 +2272,7 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/i_net.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_system.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_system.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_system.c.o: ../src/sdl/i_system.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_158) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/i_system.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_159) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/i_system.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/sdl/i_system.c.o   -c /project/workspace/src/sdl/i_system.c
 
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_system.c.i: cmake_force
@@ -2272,7 +2286,7 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/i_system.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_main.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_main.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_main.c.o: ../src/sdl/i_main.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_159) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/i_main.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_160) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/i_main.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/sdl/i_main.c.o   -c /project/workspace/src/sdl/i_main.c
 
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_main.c.i: cmake_force
@@ -2286,7 +2300,7 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/i_main.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_video.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_video.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_video.c.o: ../src/sdl/i_video.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_160) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/i_video.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_161) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/i_video.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/sdl/i_video.c.o   -c /project/workspace/src/sdl/i_video.c
 
 src/CMakeFiles/SRB2SDL2.dir/sdl/i_video.c.i: cmake_force
@@ -2300,7 +2314,7 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/i_video.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/sdl/dosstr.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/sdl/dosstr.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/sdl/dosstr.c.o: ../src/sdl/dosstr.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_161) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/dosstr.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_162) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/dosstr.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/sdl/dosstr.c.o   -c /project/workspace/src/sdl/dosstr.c
 
 src/CMakeFiles/SRB2SDL2.dir/sdl/dosstr.c.i: cmake_force
@@ -2314,7 +2328,7 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/dosstr.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/sdl/endtxt.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/sdl/endtxt.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/sdl/endtxt.c.o: ../src/sdl/endtxt.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_162) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/endtxt.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_163) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/endtxt.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/sdl/endtxt.c.o   -c /project/workspace/src/sdl/endtxt.c
 
 src/CMakeFiles/SRB2SDL2.dir/sdl/endtxt.c.i: cmake_force
@@ -2328,7 +2342,7 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/endtxt.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/sdl/hwsym_sdl.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/sdl/hwsym_sdl.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/sdl/hwsym_sdl.c.o: ../src/sdl/hwsym_sdl.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_163) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/hwsym_sdl.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_164) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/hwsym_sdl.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/sdl/hwsym_sdl.c.o   -c /project/workspace/src/sdl/hwsym_sdl.c
 
 src/CMakeFiles/SRB2SDL2.dir/sdl/hwsym_sdl.c.i: cmake_force
@@ -2342,7 +2356,7 @@ src/CMakeFiles/SRB2SDL2.dir/sdl/hwsym_sdl.c.s: cmake_force
 src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o: src/CMakeFiles/SRB2SDL2.dir/flags.make
 src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o: src/CMakeFiles/SRB2SDL2.dir/includes_C.rsp
 src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o: ../src/sdl/mixer_sound.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_164) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_165) "Building C object src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o"
 	cd /project/workspace/build-wasm/src && /project/workspace/emsdk/upstream/emscripten/emcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o   -c /project/workspace/src/sdl/mixer_sound.c
 
 src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.i: cmake_force
@@ -2496,6 +2510,7 @@ SRB2SDL2_OBJECTS = \
 "CMakeFiles/SRB2SDL2.dir/netcode/http-mserv.c.o" \
 "CMakeFiles/SRB2SDL2.dir/netcode/i_tcp.c.o" \
 "CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o" \
+"CMakeFiles/SRB2SDL2.dir/netcode/emscripten_serverinfo.c.o" \
 "CMakeFiles/SRB2SDL2.dir/hardware/hw_bsp.c.o" \
 "CMakeFiles/SRB2SDL2.dir/hardware/hw_draw.c.o" \
 "CMakeFiles/SRB2SDL2.dir/hardware/hw_light.c.o" \
@@ -2664,6 +2679,7 @@ bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/netcode/d_netfil.c.o
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/netcode/http-mserv.c.o
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/netcode/i_tcp.c.o
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/netcode/mserv.c.o
+bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/netcode/emscripten_serverinfo.c.o
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/hardware/hw_bsp.c.o
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/hardware/hw_draw.c.o
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/hardware/hw_light.c.o
@@ -2690,7 +2706,7 @@ bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/sdl/mixer_sound.c.o
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/build.make
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/objects1.rsp
 bin/srb2.js: src/CMakeFiles/SRB2SDL2.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_165) "Linking C executable ../bin/srb2.js"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/project/workspace/build-wasm/CMakeFiles --progress-num=$(CMAKE_PROGRESS_166) "Linking C executable ../bin/srb2.js"
 	cd /project/workspace/build-wasm/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/SRB2SDL2.dir/link.txt --verbose=$(VERBOSE)
 	cd /project/workspace/build-wasm/src && /usr/bin/cmake -E touch_nocreate /project/workspace/src/comptime.c
 

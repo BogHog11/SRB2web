@@ -100,6 +100,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/SRB2SDL2.dir/netcode/d_net.c.o"
   "CMakeFiles/SRB2SDL2.dir/netcode/d_netcmd.c.o"
   "CMakeFiles/SRB2SDL2.dir/netcode/d_netfil.c.o"
+  "CMakeFiles/SRB2SDL2.dir/netcode/emscripten_serverinfo.c.o"
   "CMakeFiles/SRB2SDL2.dir/netcode/gamestate.c.o"
   "CMakeFiles/SRB2SDL2.dir/netcode/http-mserv.c.o"
   "CMakeFiles/SRB2SDL2.dir/netcode/i_tcp.c.o"
