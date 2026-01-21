@@ -19,17 +19,41 @@ extern void SRB2_ServerInfoResponse(
     char *name,
     char *map,
     char *map_title,
-    INT32 ingame_players
+    INT32 ingame_players,
+    char *playerNameList
 );
 
 EMSCRIPTEN_KEEPALIVE
 void SRB2_GetServerInfo(void)
 {
+
+    static char playerListBuffer[4000]; 
+    playerListBuffer[0] = '\0';
+
+    int playerCount = 0;
+    int i;
+
+    for (i = 0; i < MAXPLAYERS; i++)
+    {
+        if (playeringame[i])
+        {
+            playerCount++;
+
+            if (playerListBuffer[0] != '\0')
+            {
+                strcat(playerListBuffer, "\n");
+            }
+            
+            strncat(playerListBuffer, player_names[i], 24);
+        }
+    }
+
     SRB2_ServerInfoResponse(
         (char *)cv_servername.string,
         G_BuildMapName(gamemap),
         G_BuildMapTitle(gamemap),
-        D_NumPlayers()
+        D_NumPlayers(),
+        playerListBuffer
     );
 }
 #endif

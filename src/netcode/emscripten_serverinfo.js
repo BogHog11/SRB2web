@@ -3,7 +3,8 @@ mergeInto(LibraryManager.library, {
     serverName,
     map,
     mapTitle,
-    ingame_players
+    ingame_players,
+    playerNameList
   ) {
     if (window.SRB2_ServerInfoResponse) {
       return window.SRB2_ServerInfoResponse({
@@ -11,6 +12,7 @@ mergeInto(LibraryManager.library, {
         map: UTF8ToString(map),
         mapTitle: UTF8ToString(mapTitle),
         ingamePlayers: ingame_players,
+        playerNames: UTF8ToString(playerNameList),
       });
     }
     return 1;
