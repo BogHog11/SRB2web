@@ -21,6 +21,7 @@ class ConnectState {
     this.wsHost = wsHost;
     this.disposed = false;
     this.isOpen = false;
+    this.isReady = false;
     this.initialQueue = [];
     this.initWebsocket();
   }
@@ -32,6 +33,7 @@ class ConnectState {
     var socket = new WebSocket(connectURL);
     var _this = this;
     this.isOpen = false;
+    this.isReady = false;
     socket.onclose = function (event) {
       _this.isOpen = false;
       var code = event.code;
@@ -54,6 +56,7 @@ class ConnectState {
     var _this = this;
     var { socket } = this;
     this.isOpen = true;
+    this.isReady = false;
     socket.onmessage = function (event) {
       if (event.data instanceof ArrayBuffer) {
         var uint8array = new Uint8Array(event.data);
@@ -61,6 +64,7 @@ class ConnectState {
         try {
           var json = JSON.parse(event.data);
           if (json.ready) {
+            _this.isReady = true;
             for (var msg of _this.initialQueue) {
               socket.send(msg);
             }
@@ -85,6 +89,10 @@ class ConnectState {
       return;
     }
     if (!this.isOpen) {
+      this.initialQueue.push(data);
+      return;
+    }
+    if (!this.isReady) {
       this.initialQueue.push(data);
       return;
     }
