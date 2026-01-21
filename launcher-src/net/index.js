@@ -62,4 +62,6 @@ function disablePublic() {
 module.exports = {
   enable,
   disable,
+  enablePublic,
+  disablePublic
 };

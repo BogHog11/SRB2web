@@ -94,6 +94,12 @@ module.exports = [
         textContent: "Add relay server",
       },
       {
+        element: "button",
+        className: "button",
+        gid: "browsePublicGames",
+        textContent: "Browse public netgames",
+      },
+      {
         element: "div",
         gid: "relayConfig",
         className: "relayConfig",
