@@ -84,7 +84,7 @@ extern void SRB2_ServerInfoResponse(char *name);
 EMSCRIPTEN_KEEPALIVE
 void SRB2_GetServerInfo(void)
 {
-    SRB2_ServerInfoResponse(cv_servername.value);
+    SRB2_ServerInfoResponse(cv_servername.string);
 }
 #endif
 

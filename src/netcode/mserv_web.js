@@ -7,7 +7,9 @@ mergeInto(LibraryManager.library, {
   },
   SRB2_ServerInfoResponse: function (name) {
     if (window.SRB2_ServerInfoResponse) {
-      return window.SRB2_ServerInfoResponse(name);
+      return window.SRB2_ServerInfoResponse({
+        name,
+      });
     }
     return 1;
   },
