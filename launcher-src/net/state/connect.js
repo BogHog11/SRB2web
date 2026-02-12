@@ -44,11 +44,13 @@ class ConnectState {
         console.warn(`[Relay Connection]: Connection not found, not retrying.`);
         return;
       }
-      console.warn(
+      if (!_this.webrtc) {
+              console.warn(
         `[Relay Connection]: Disconnected unexpectedly, reconnecting...`
       );
       socket.onmessage = () => {};
       _this.initWebsocket();
+      }
     };
     socket.binaryType = "arraybuffer";
     socket.onopen = this.handleOpen.bind(this);
@@ -77,9 +79,11 @@ class ConnectState {
           if (json.webrtc && !_this.webrtc) {
             _this.webrtc = true;
             _this.initWebrtc();
+            return;
           }
           if (_this.webrtc && json.signal) {
             _this.peer.signal(json.signal);
+            return;
           }
         } catch (e) {
           var uint8array = new Uint8Array(event.data);
@@ -108,7 +112,11 @@ class ConnectState {
     });
 
     this.peer.on('close', () => {
-        this.dispose();
+        
+    });
+
+    this.peer.on('data', (data) => {
+      attachSRB2.emitPacket(data, 0, PLACEHOLDER_IP);
     });
 
     this.socket.send(JSON.stringify({ rtcReady: true }));
@@ -138,8 +146,14 @@ class ConnectState {
   dispose() {
     if (!this.disposed) {
       this.disposed = true;
-      this.socket.onclose = () => {};
-      this.socket.close();
+      if (this.socket) {
+        this.socket.onclose = () => {};
+        this.socket.close();
+      }
+      if (this.peer) {
+        this.peer.destroy();
+        this.peer = null;
+      }
       this.socket = null;
       this.initWebsocket = () => {};
       this.initialQueue = null;
