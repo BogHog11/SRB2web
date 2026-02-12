@@ -1,6 +1,8 @@
 var { getWebsocketURL, PLACEHOLDER_IP } = require("./util.js");
 var ErrorCodes = require("./errors.js");
 var attachSRB2 = require("../attach.js");
+var peer = require("simple-peer");
+var rtcConfig = require("../rtc-config.js");
 
 class ConnectState {
   static createConnectURL(wsHost, { address, port }) {
@@ -23,6 +25,7 @@ class ConnectState {
     this.isOpen = false;
     this.isReady = false;
     this.initialQueue = [];
+    this.webrtc = false;
     this.initWebsocket();
   }
 
@@ -71,6 +74,13 @@ class ConnectState {
             _this.initialQueue = [];
             return;
           }
+          if (json.webrtc && !_this.webrtc) {
+            _this.webrtc = true;
+            _this.initWebrtc();
+          }
+          if (_this.webrtc && json.signal) {
+            _this.peer.signal(json.signal);
+          }
         } catch (e) {
           var uint8array = new Uint8Array(event.data);
         }
@@ -80,6 +90,28 @@ class ConnectState {
     };
 
     attachSRB2.onpacket = this.handleSRB2Packet.bind(this);
+  }
+
+  initWebrtc() {
+    this.peer = new peer({ channelConfig: { ordered: false, maxRetransmits: 0 }, config: rtcConfig });
+    var _this = this;
+    this.peer.on("signal", function (data) {
+      _this.socket.send(JSON.stringify({ signal: data }));
+    });
+    
+    this.peer.on("connect", function () {
+      _this.isReady = true;
+      for (var msg of _this.initialQueue) {
+        _this.peer.send(msg);
+      }
+      _this.initialQueue = [];
+    });
+
+    this.peer.on('close', () => {
+        this.dispose();
+    });
+
+    this.socket.send(JSON.stringify({ rtcReady: true }));
   }
 
   handleSRB2Packet(data) {
@@ -94,6 +126,10 @@ class ConnectState {
     }
     if (!this.isReady) {
       this.initialQueue.push(data);
+      return;
+    }
+    if (this.webrtc) {
+      this.peer.send(data);
       return;
     }
     socket.send(data);

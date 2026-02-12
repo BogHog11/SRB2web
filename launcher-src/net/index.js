@@ -5,6 +5,7 @@ var enabled = false;
 var publicEnabled = false;
 var host = "";
 var curState = null;
+var serverRTCEnabled = true;
 
 attachSRB2.onconnect = function (address, port) {
   if (!enabled) {
@@ -23,7 +24,7 @@ attachSRB2.onlisten = function () {
   if (curState) {
     curState.dispose();
   }
-  curState = new ListenState(host, publicEnabled);
+  curState = new ListenState(host, publicEnabled, serverRTCEnabled);
 };
 
 attachSRB2.onclose = function () {
@@ -59,9 +60,19 @@ function disablePublic() {
   publicEnabled = false;
 }
 
+function enableServerWebRTC() {
+  serverRTCEnabled = true;
+}
+
+function disableServerWebRTC() {
+  serverRTCEnabled = false;
+}
+
 module.exports = {
   enable,
   disable,
   enablePublic,
   disablePublic,
+  enableServerWebRTC,
+  disableServerWebRTC,
 };

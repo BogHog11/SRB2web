@@ -8,12 +8,13 @@ class ListenState {
     return getWebsocketURL(wsHost) + "listench/" + code;
   }
 
-  constructor(wsHost, isPublic = true) {
+  constructor(wsHost, isPublic = true, useRTC = false) {
     this.wsHost = wsHost;
     this.isOpen = false;
     this.connections = {};
     this.address = PLACEHOLDER_IP + ":5029";
     this.isPublic = isPublic;
+    this.useRTC = !!useRTC;
     this.openSocket();
     this.setUpdateInterval();
   }
@@ -26,7 +27,8 @@ class ListenState {
     var ch = new ListenChannel(
       ListenState.getChannelURL(this.wsHost, code),
       id,
-      ip
+      ip,
+      this.useRTC
     );
     this.connections[id] = ch;
     var _this = this;
