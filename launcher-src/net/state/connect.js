@@ -97,7 +97,10 @@ class ConnectState {
   }
 
   initWebrtc() {
-    this.peer = new peer({ channelConfig: { ordered: false, maxRetransmits: 0 }, config: rtcConfig });
+    this.peer = new peer({
+      initiator: false,
+      config: rtcConfig
+    });
     var _this = this;
     this.peer.on("signal", function (data) {
       _this.socket.send(JSON.stringify({ signal: data }));
