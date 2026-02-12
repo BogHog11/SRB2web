@@ -24,7 +24,7 @@ class ListenChannel {
     var { socket } = this;
     this.isOpen = true;
     if (this.useRTC) {
-      this.send(JSON.stringify({ webrtc: true }));
+      this.socket.send(JSON.stringify({ webrtc: true }));
     }
   }
 
@@ -45,7 +45,7 @@ class ListenChannel {
         });
 
         this.peer.on("signal", (data) => {
-          _this.send(JSON.stringify({ signal: data }));
+          _this.socket.send(JSON.stringify({ signal: data }));
         });
         
         this.peer.on("connect", () => {
