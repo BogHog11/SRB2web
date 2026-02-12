@@ -1,25 +1,40 @@
+@font-face {
+  src: url("pixel.ttf");
+  font-family: PixelFont;
+}
+
 body {
-    background: #000000;
-    font-weight: bold;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    /* Use dynamic viewport height for iOS Safari compatibility */
-    height: 100dvh;
-    height: 100vh;
-    width: 100vw;
-    overflow-x: auto;
-    overflow-y: auto;
+  background: #000000;
+  font-weight: bold;
+  font-family: PixelFont, Arial, sans-serif;
+  letter-spacing: 1px;
+  margin: 0;
+  padding: 0;
+  /* Use dynamic viewport height for iOS Safari compatibility */
+  height: 100dvh;
+  height: 100vh;
+  width: 100vw;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.sep {
+  width: 100%;
+  height: 10px;
+  margin-bottom: 10px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: rgb(0, 110, 255);
 }
 
 a {
-    all:unset;
-    color: #00ffff;
-    text-decoration: none;
+  all: unset;
+  color: #00ffff;
+  text-decoration: none;
 }
 a:hover {
-    text-decoration: underline;
-    cursor: pointer;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .srb2BG {
@@ -51,75 +66,246 @@ a:hover {
 }
 
 .button {
-    all: unset;
-    padding: 5px 5px;
-    background: rgba(0, 0, 0, 0.5);
-    color: #ffffff;
-    border-radius: 3px;
+  all: unset;
+  padding: 5px 5px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #ffffff;
+  border-radius: 3px;
 }
 
 .button:hover {
-    background: rgba(117, 117, 117, 0.5);
-    cursor: pointer;
+  background: rgba(117, 117, 117, 0.5);
+  cursor: pointer;
 }
 
 .playButton {
-    font-size: 30px;
-    font-weight: bold;
-    background: rgba(9, 255, 0, 0.5);
-    width: 100%;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10;
+  font-size: 30px;
+  font-weight: bold;
+  background: rgba(9, 255, 0, 0.5);
+  width: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+
+  gap: 10;
 }
 
 .playButton:hover {
-    background: rgba(9, 255, 0, 0.7);
+  background: rgba(9, 255, 0, 0.7);
 }
 
 .fsButton {
-    font-size: 30px;
-    font-weight: bold;
-    background: rgba(255, 157, 0, 0.5);
-    width: 100%;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10;
+  font-size: 30px;
+  font-weight: bold;
+  background: rgba(255, 157, 0, 0.5);
+  width: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  gap: 10;
 }
 
 .fsButton:hover {
-    background: rgba(255, 157, 0, 0.7);
+  background: rgba(255, 157, 0, 0.7);
 }
 
 .gameCanvas {
-    background: black;
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    image-rendering: pixelated;
-    object-fit: fill;
-    z-index: 9999;
+  background: black;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  image-rendering: pixelated;
+  object-fit: fill;
+  z-index: 9999;
+}
+
+.sectionHeader {
+  display: block;
+  font-weight: bold;
+  font-size: 30px;
+  margin-bottom: 10px;
 }
 
 .loaderMain {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .relayConfig {
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.8);
-    color: #ffffff;
-    overflow: auto;
+  width: calc(100% - 0px);
+  height: fit-content;
+  max-height: 200px;
+  min-height: 100px;
+  box-sizing: border-box;
+  padding: 2px;
+  color: #ffffff;
+  border-radius: 0px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: rgba(0, 38, 255, 0.747);
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.noRelayContainer {
+}
+
+.noRelayText {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+
+  color: rgba(255, 255, 255, 1);
+}
+
+.configuredRelay {
+  width: 100%;
+  min-height: 100px;
+  box-sizing: border-box;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  flex-shrink: 0;
+}
+
+.configuredRelay[used] {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.relayName {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.relayHost {
+  margin-left: auto;
+  font-size: 10px;
+  font-style: italic;
+  color: rgb(0, 110, 255);
+  user-select: none;
+  font-weight: bold;
+}
+
+.relayHost:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.relayStatus {
+  display: flex;
+  gap: 3px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+}
+
+.relayStatusText {
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+  font-size: 10px;
+  text-align: center;
+}
+.relayStatusText[state="offline"] {
+  color: rgb(255, 0, 0);
+}
+.relayStatusText[state="online"] {
+  color: rgb(0, 255, 0);
+}
+
+.relayStatusImg {
+  width: 28px;
+  height: 28px;
+  image-rendering: pixelated;
+}
+
+.relayDescription {
+  font-size: 10px;
+  white-space: pre;
+  padding-left: 5px;
+}
+
+.relayButtons {
+  margin-top: 2px;
+  display: block;
+}
+
+.relayButtons > .button {
+  margin: 1px 1px;
+}
+
+:root {
+  --popup-dialog-font: Arial, sans-serif;
+  --popup-dialog-background: #fff;
+  --popup-dialog-border-radius: 10px;
+  --popup-dialog-text-color: #000;
+  --popup-dialog-button-background: #5985ff;
+  --popup-dialog-button-hover-background: #4275ff;
+  --popup-dialog-button-text-color: #fff;
+  --popup-dialog-button-radius: 5px;
+  --popup-dialog-input-background: #fff;
+  --popup-dialog-input-border-width: 1.5px;
+  --popup-dialog-input-border-color: #bababa;
+  --popup-dialog-input-text-color: #000;
+  --popup-dialog-message-size: 16px;
+}
+
+.windowDialogContainer {
+  font-family: var(--popup-dialog-font);
+}
+
+.windowDialogBackground {
+  background-color: black;
+  backdrop-filter: blur(2px);
+}
+
+.windowDialogBox {
+  background: var(--popup-dialog-background);
+  border-radius: var(--popup-dialog-border-radius);
+  color: var(--popup-dialog-text-color);
+}
+
+.windowDialogButton {
+  background: var(--popup-dialog-button-background);
+  color: var(--popup-dialog-button-text-color);
+  border-radius: var(--popup-dialog-button-radius);
+  padding: 4px 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.windowDialogButton:hover {
+  background: var(--popup-dialog-button-hover-background);
+}
+
+.windowDialogInput {
+  background: var(--popup-dialog-input-background);
+  border: var(--popup-dialog-input-border-width) solid
+    var(--popup-dialog-input-border-color);
+  color: var(--popup-dialog-input-text-color);
+  outline: none;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+.windowDialogHeader {
+  font-weight: bold;
+  font-size: var(--popup-dialog-message-size);
 }

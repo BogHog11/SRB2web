@@ -33,13 +33,13 @@ module.exports = [
             element: "img",
             src: "images/play.svg",
             style: {
-              height: "32px"
-            }
+              height: "32px",
+            },
           },
           {
             element: "span",
             textContent: "Play",
-          }
+          },
         ],
         gid: "playButton",
       },
@@ -53,22 +53,74 @@ module.exports = [
             element: "img",
             src: "images/folder.svg",
             style: {
-              height: "32px"
-            }
+              height: "32px",
+            },
           },
           {
             element: "span",
             textContent: "Manage files & addons",
-          }
+          },
         ],
         gid: "fsButton",
       },
+      { element: "div", className: "sep" },
+      {
+        element: "span",
+        className: "sectionHeader",
+        textContent: "Relay server configuration:",
+      },
+      {
+        element: "div",
+        style: {
+          display: "flex",
+        },
+        children: [
+          {
+            element: "span",
+            style: { fontWeight: "bold" },
+            textContent: "Enable relay server:",
+          },
+          {
+            element: "input",
+            type: "checkbox",
+            gid: "relayServerCheckbox",
+          },
+        ],
+      },
+      {
+        element: "button",
+        className: "button",
+        gid: "addRelayButton",
+        textContent: "Add relay server",
+      },
+      {
+        element: "button",
+        className: "button",
+        gid: "browsePublicGames",
+        textContent: "Browse public netgames",
+      },
+      {
+        element: "div",
+        gid: "relayConfig",
+        className: "relayConfig",
+      },
+      {
+        element: "div",
+        children: [
+          "Relay servers allow you to connect to netgames and let you host netgames. (without port forwarding)",
+          {
+            element: "br",
+          },
+          "The connection speed of a netgame depends on the relay server and the host's computer.",
+        ],
+      },
+      { element: "div", className: "sep" },
       {
         element: "div",
         children: [
           "Sonic Robo Blast 2 is a 3D Sonic the Hedgehog fangame built on a heavily modified Doom Legacy engine.",
           {
-            element: "br"
+            element: "br",
           },
           " Visit ",
           {
@@ -79,7 +131,7 @@ module.exports = [
           },
           " for more information.",
           {
-            element: "br"
+            element: "br",
           },
           "SRB2Web is developed by ",
           {
@@ -90,7 +142,7 @@ module.exports = [
           },
           ", with the help of Google Gemini and other AI tools.",
           {
-            element: "br"
+            element: "br",
           },
           {
             element: "a",
@@ -99,17 +151,17 @@ module.exports = [
             textContent: "Click here to view the source code on GitHub.",
           },
           {
-            element: "br"
+            element: "br",
           },
           "Sonic Robo Blast 2, its name, characters, and all related elements are trademarks of their respective owners. This fangame is not affiliated with or endorsed by SEGA Corporation.",
         ],
-          style: {
-            marginTop: "20px",
-            fontSize: "14px",
-            color: "#ffffff",
-          },
-          gid: "launcherInfo"
-      }
+        style: {
+          marginTop: "20px",
+          fontSize: "14px",
+          color: "#ffffff",
+        },
+        gid: "launcherInfo",
+      },
     ],
   },
   {

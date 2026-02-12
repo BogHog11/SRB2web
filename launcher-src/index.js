@@ -18,6 +18,16 @@ playButton.addEventListener("click", function () {
   startGame();
 });
 
-var relay = require("./net");
-var relayURL = "wss://ideal-memory-v6rqr7v9qq6q2x9p-3000.app.github.dev/";
-var relayConnect = new relay.SRB2Relay(relayURL);
+require("./relayconfig.js");
+
+window.requestAnimationFrame = function (r) {
+  return setTimeout(r, 1000 / 60);
+};
+
+window.cancelAnimationFrame = function (r) {
+  return clearTimeout(r);
+};
+
+//var relay = require("./oldnet");
+//var relayURL = "wss://rczylh-3000.csb.app/";
+//var relayConnect = new relay.SRB2Relay(relayURL);

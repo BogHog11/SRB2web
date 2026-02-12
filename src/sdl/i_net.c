@@ -10,6 +10,7 @@
 // of the License, or (at your option) any later version.
 //-----------------------------------------------------------------------------
 
+
 #include "../doomdef.h"
 #include "../i_system.h"
 #include "../d_event.h"
@@ -31,8 +32,8 @@
 #include <emscripten.h>
 #include <stdio.h> 
 
-#define MAX_QUEUED_PACKETS 1000
-#define MAX_PACKET_SIZE 5000
+#define MAX_QUEUED_PACKETS 7000
+#define MAX_PACKET_SIZE 7000
 
 typedef struct {
     unsigned char data[MAX_PACKET_SIZE];
@@ -111,7 +112,7 @@ typedef void* UDPsocket;
 typedef void* SDLNet_SocketSet;
 
 #define INADDR_BROADCAST 0xFFFFFFFF
-#define MAXPACKETLENGTH 1024
+#define MAXPACKETLENGTH 6000
 #define SOCK_PORT 5029
 #else
 #include "SDL_net.h"
@@ -256,6 +257,10 @@ static boolean NET_Get(void)
     int tail = queue_tail;
     ws_packet_t *pkt = (ws_packet_t*)&packet_queue[tail];
     INT32 node = NET_WebToNode(pkt->from_node_id);
+
+    if (!server) {
+        node = 1; //Server is ALWAYS 1 when client connecting.
+    }
 
     if (node != -1)
     {
