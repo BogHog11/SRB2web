@@ -41,7 +41,6 @@ class ListenChannel {
         var _this = this;
         this.peer = new peer({
           initiator: true,
-          trickle: false,
           config: rtcConfig,
         });
 
