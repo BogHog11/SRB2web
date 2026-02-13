@@ -1,8 +1,8 @@
-# Install script for directory: /project/workspace/src
+# Install script for directory: /workspaces/SRB2web/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/project/workspace/emsdk/upstream/emscripten/cache/sysroot")
+  set(CMAKE_INSTALL_PREFIX "/workspaces/SRB2web/emsdk/upstream/emscripten/cache/sysroot")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -32,23 +32,28 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "TRUE")
 endif()
 
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for the subdirectory.
-  include("/project/workspace/build-wasm/src/blua/cmake_install.cmake")
+# Set default install directory permissions.
+if(NOT DEFINED CMAKE_OBJDUMP)
+  set(CMAKE_OBJDUMP "/usr/bin/llvm-objdump")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/project/workspace/build-wasm/src/netcode/cmake_install.cmake")
+  include("/workspaces/SRB2web/build-wasm/src/blua/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/project/workspace/build-wasm/src/hardware/cmake_install.cmake")
+  include("/workspaces/SRB2web/build-wasm/src/netcode/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/project/workspace/build-wasm/src/sdl/cmake_install.cmake")
+  include("/workspaces/SRB2web/build-wasm/src/hardware/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/workspaces/SRB2web/build-wasm/src/sdl/cmake_install.cmake")
 endif()
 

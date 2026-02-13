@@ -154,8 +154,8 @@ target_link_options(SRB2SDL2 PRIVATE
 	"--js-library=${CMAKE_SOURCE_DIR}/src/netcode/emscripten_serverinfo.js" 
 
     # 3. MEMORY STABILITY
-    "-sINITIAL_MEMORY=268435456"
-    "-sALLOW_MEMORY_GROWTH=0"
+    "-sINITIAL_MEMORY=268435456" # Starts at 256MB
+    "-sALLOW_MEMORY_GROWTH=1"
 )
 
 ### target_compile_features(SRB2SDL2 PRIVATE c_std_23 cxx_std_17)
