@@ -68,6 +68,10 @@ function disableServerWebRTC() {
   serverRTCEnabled = false;
 }
 
+async function listPublicGames() {
+
+}
+
 module.exports = {
   enable,
   disable,

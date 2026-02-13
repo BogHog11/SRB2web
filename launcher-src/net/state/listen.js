@@ -101,6 +101,8 @@ class ListenState {
 
     var info = await attachSRB2.getServerInfo();
 
+    info.usesWebRTC = this.useRTC; //Completley separate property from the actual game server info.
+
     if (!info) {
       this._lastServerInfo = {};
       return;
