@@ -95,7 +95,7 @@ class SRB2Relay {
         "SRB2_NetworkReceive",
         "void",
         ["number", "number", "number", "string"],
-        [dataPtr, len, json.id || 0, json.ip]
+        [dataPtr, len, json.id || 0, json.ip],
       );
       Module._free(dataPtr);
 
@@ -112,7 +112,7 @@ class SRB2Relay {
           JSON.stringify({
             method: "connect",
             id: this.currentConnection,
-          })
+          }),
         );
       }
     } else if (json.method == "listening") {
@@ -177,7 +177,7 @@ class SRB2Relay {
             method: "data",
             id: node_id,
             data: LZString.compress(stringData),
-          })
+          }),
         );
         return 0;
       },

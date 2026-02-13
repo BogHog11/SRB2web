@@ -28,7 +28,7 @@ class ListenState {
       ListenState.getChannelURL(this.wsHost, code),
       id,
       ip,
-      this.useRTC
+      this.useRTC,
     );
     this.connections[id] = ch;
     var _this = this;
@@ -54,7 +54,7 @@ class ListenState {
     var _this = this;
     var { wsHost, isPublic } = this;
     this.socket = new WebSocket(
-      getWebsocketURL(wsHost) + (isPublic ? "host/public" : "host")
+      getWebsocketURL(wsHost) + (isPublic ? "host/public" : "host"),
     );
     this.isOpen = false;
     this._lastServerInfo = {};
@@ -63,7 +63,7 @@ class ListenState {
       _this._lastServerInfo = {};
       _this.isOpen = false;
       console.warn(
-        `[Relay Connection]: Lost connection, connection might become unstable temporarily. Reconnecting...`
+        `[Relay Connection]: Lost connection, connection might become unstable temporarily. Reconnecting...`,
       );
       _this.openSocket();
     };
@@ -130,7 +130,7 @@ class ListenState {
     this._lastServerInfo = {};
     this.updateInterval = setInterval(
       this.handleUpdateInterval.bind(this),
-      100
+      100,
     );
   }
 

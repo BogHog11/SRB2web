@@ -115,14 +115,14 @@ function refreshFileList() {
                 }
               },
             };
-          })
+          }),
       )
       .concat([
         {
           element: "div",
           className: "bottomFileMarker",
         },
-      ])
+      ]),
   );
   filePathInput.value = currentPath;
 }
@@ -422,28 +422,27 @@ filePathInput.addEventListener("change", function () {
             currentPath = "/";
             refreshFileList();
             dialog.alert(
-              "To view the addons directory, play SRB2 Web first to create the necessary folders."
+              "To view the addons directory, play SRB2 Web first to create the necessary folders.",
             );
           } catch (e) {
             dialog
               .alert(
                 "Failed to load filesystem: " +
                   e +
-                  "\nReload to try again.\nThis might have happened because you haven't loaded SRB2 Web."
+                  "\nReload to try again.\nThis might have happened because you haven't loaded SRB2 Web.",
               )
               .then(() => {
                 window.location.reload();
               });
           }
         }
-      },500);
+      }, 500);
     });
   } catch (e) {
     dialog.alert("Failed to load filesystem: " + e + "\nReload to try again.");
     window.location.reload();
   }
 })();
-
 
 const RUNNING_CHECK_NAME = "srb2web_running_check";
 var previousRunCheck = localStorage.getItem(RUNNING_CHECK_NAME);
@@ -454,8 +453,11 @@ var checkInterval = setInterval(() => {
     previousRunCheck = current;
     clearInterval(checkInterval);
     (async function () {
-      await dialog.alert("Another instance of SRB2 Web is running. \n" + "Please close other instances and press OK to reload.");
+      await dialog.alert(
+        "Another instance of SRB2 Web is running. \n" +
+          "Please close other instances and press OK to reload.",
+      );
       window.location.reload();
     })();
   }
-},100);
+}, 100);

@@ -74,7 +74,7 @@ function messageHandler(e) {
       "SRB2_NetworkReceive",
       "void",
       ["number", "number", "number", "string"],
-      [dataPtr, len, relayID || 0, ip]
+      [dataPtr, len, relayID || 0, ip],
     );
     Module._free(dataPtr);
 

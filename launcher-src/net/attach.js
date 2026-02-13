@@ -50,7 +50,7 @@ attach.emitPacket = function (data, id, ip) {
     "SRB2_NetworkReceive",
     "void",
     ["number", "number", "number", "string"],
-    [dataPtr, data.length, +id || 0, ip]
+    [dataPtr, data.length, +id || 0, ip],
   );
   Module._free(dataPtr);
 };

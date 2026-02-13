@@ -69,7 +69,38 @@ function disableServerWebRTC() {
 }
 
 async function listPublicGames() {
+  if (!enabled) {
+    return [];
+  }
+  if (!host) {
+    return [];
+  }
+  try {
+    var response = await fetch(`https://${host}/public`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch public games");
+    }
+  } catch (e) {
+    console.warn(
+      "Failed to fetch public games through https, trying http. Error message:",
+      e,
+    );
+    try {
+      var response = await fetch(`http://${host}/public`);
+      if (!response.ok) {
+        console.warn(
+          "Failed to fetch public games, response not ok. Status:",
+          response.status,
+        );
+        return [];
+      }
+    } catch (e) {
+      return [];
+    }
+  }
+  var publicNetgames = await response.json();
 
+  return publicNetgames;
 }
 
 module.exports = {
@@ -79,4 +110,5 @@ module.exports = {
   disablePublic,
   enableServerWebRTC,
   disableServerWebRTC,
+  listPublicGames,
 };

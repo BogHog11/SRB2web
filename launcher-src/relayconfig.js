@@ -29,7 +29,7 @@ function saveRelays() {
       used: usedRelay,
       enabled: relayEnabled,
       webrtc: webrtcHostEnabled,
-    })
+    }),
   );
 }
 
@@ -93,7 +93,7 @@ function reloadRelayConfig() {
         opt.dispose();
         saveRelays();
         reloadRelayConfig();
-      }
+      },
     );
     relayConfig.append(opt.div);
     relayOpts.push(opt);
@@ -131,7 +131,16 @@ relayServerCheckbox.onchange = function () {
   reloadRelayConfig();
 };
 
-webrtcHostCheckbox.onchange = function () {
+webrtcHostCheckbox.onchange = async function () {
+  if (!webrtcHostCheckbox.checked) {
+    var confirm = await dialog.confirm(
+      "Disabling WebRTC hosting will cause your hosted games to have slower connections and more input lag. Are you sure you want to disable it?",
+    );
+    if (!confirm) {
+      webrtcHostCheckbox.checked = true;
+      return;
+    }
+  }
   webrtcHostEnabled = webrtcHostCheckbox.checked;
   saveRelays();
   reloadRelayConfig();
@@ -154,7 +163,7 @@ if (storedConfig) {
   } catch (e) {
     relays = Array.from(defaultRelays);
     dialog.alert(
-      `Unable to load your relay configuration, it may have been corrupted.`
+      `Unable to load your relay configuration, it may have been corrupted.`,
     );
     console.error(e);
   }

@@ -7,6 +7,18 @@ var IDBFS = null;
 var gameCanvas = elements.getGPId("gameCanvas");
 var didStart = false;
 var loaderContent = elements.getGPId("loaderContent");
+var serverOpts = null;
+
+function enableStartServer(dedicated = false) {
+  serverOpts = {
+    dedicated: !!dedicated,
+  };
+}
+
+function disableStartServer() {
+  serverOpts = null;
+}
+
 function loadScript() {
   return new Promise((resolve, reject) => {
     loaderContent.textContent = "Loading game script...";
@@ -42,7 +54,7 @@ async function downloadAndSaveAssets() {
     } else {
       // MISS: We need to download it
       console.log(
-        `[CACHE MISS] Downloading ${asset.filename} from internet...`
+        `[CACHE MISS] Downloading ${asset.filename} from internet...`,
       );
       loaderContent.textContent = `Downloading ${asset.filename}...`;
 
@@ -57,7 +69,7 @@ async function downloadAndSaveAssets() {
         // 2. Check for 404s or Server Errors
         if (!networkResponse.ok) {
           throw new Error(
-            `Server returned ${networkResponse.status} ${networkResponse.statusText} for file: ${asset.url}`
+            `Server returned ${networkResponse.status} ${networkResponse.statusText} for file: ${asset.url}`,
           );
         }
 
@@ -101,7 +113,7 @@ async function initGame() {
   FS.syncfs(true, (err) => {
     console.log("SyncFS done");
     console.log(err);
-    Module.callMain(["-home", "/home/web_user"]);
+    Module.callMain(["-home", "/home/web_user"].concat(Module.arguments));
   });
   setInterval(() => {
     FS.syncfs(false, (err) => {});
@@ -130,14 +142,24 @@ window.ChangeResolution = (x, y) => {
 };
 
 async function startGame() {
-  Module.arguments = [
-    "-mb",
-    "250",
-    "+drawdist",
-    "2048",
-    "+addons_option",
-    "CUSTOM",
-  ];
+  Module.arguments = [];
+  if (serverOpts) {
+    Module.arguments.push("-server");
+    if (serverOpts.dedicated) {
+      Module.arguments.push("-dedicated");
+    }
+  }
+  Module.arguments.push("+addons_option");
+  Module.arguments.push("CUSTOM");
+  Module.arguments.push("+addons_folder");
+  Module.arguments.push("/addons");
+  /*Module.arguments.push("-mb");
+  Module.arguments.push("250");
+  Module.arguments.push("+drawdist");
+  Module.arguments.push("2048");
+  Module.arguments.push("+addons_option");
+  Module.arguments.push("CUSTOM");*/
+
   Module.noInitialRun = true;
   Module.print = console.log;
   Module.printErrr = console.error;
@@ -152,7 +174,7 @@ async function startGame() {
     await loadScript();
   } catch (e) {
     dialog.alert(
-      "Error loading the game, look in the console for full error. \n" + e
+      "Error loading the game, look in the console for full error. \n" + e,
     );
     console.error("SRB2 Load error: ", e);
     return;
@@ -179,7 +201,7 @@ window.StartedMainLoopCallback = function () {
         "SRB2_AddMouseDelta",
         "void",
         ["number", "number"],
-        [Math.round(e.movementX), Math.round(e.movementY)]
+        [Math.round(e.movementX), Math.round(e.movementY)],
       );
     }
   });
@@ -267,7 +289,7 @@ window.SRB2RequestServerList = function () {
             server.max_players,
             100,
             server.gametype,
-          ]
+          ],
         );
       });
 
@@ -319,7 +341,7 @@ document.addEventListener(
       e.preventDefault();
     }
   },
-  true
+  true,
 );
 document.addEventListener(
   "mouseup",
@@ -329,7 +351,7 @@ document.addEventListener(
       e.preventDefault();
     }
   },
-  true
+  true,
 );
 document.addEventListener(
   "wheel",
@@ -339,12 +361,12 @@ document.addEventListener(
         "mouse_wheel_xy",
         "void",
         ["number", "number"],
-        [Math.round(e.deltaX), Math.round(e.deltaY)]
+        [Math.round(e.deltaX), Math.round(e.deltaY)],
       );
       e.preventDefault();
     }
   },
-  true
+  true,
 );
 var mouseMoveX = 0;
 var mouseMoveY = 0;
@@ -354,7 +376,7 @@ setInterval(() => {
       "SRB2_AddMouseDelta",
       "void",
       ["number", "number"],
-      [mouseMoveX, mouseMoveY]
+      [mouseMoveX, mouseMoveY],
     );
     mouseMoveX = 0;
     mouseMoveY = 0;
@@ -369,7 +391,7 @@ gameCanvas.addEventListener(
       e.preventDefault();
     }
   },
-  true
+  true,
 );
 window.addEventListener(
   "load",
@@ -378,7 +400,7 @@ window.addEventListener(
     document.addEventListener("keyup", CaptureFullscreenKey, true);
     document.addEventListener("keypress", CaptureFullscreenKey, true);
   },
-  { once: true }
+  { once: true },
 );
 
-module.exports = { startGame };
+module.exports = { startGame, enableStartServer, disableStartServer };

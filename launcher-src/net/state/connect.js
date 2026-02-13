@@ -45,11 +45,11 @@ class ConnectState {
         return;
       }
       if (!_this.webrtc) {
-              console.warn(
-        `[Relay Connection]: Disconnected unexpectedly, reconnecting...`
-      );
-      socket.onmessage = () => {};
-      _this.initWebsocket();
+        console.warn(
+          `[Relay Connection]: Disconnected unexpectedly, reconnecting...`,
+        );
+        socket.onmessage = () => {};
+        _this.initWebsocket();
       }
     };
     socket.binaryType = "arraybuffer";
@@ -99,27 +99,25 @@ class ConnectState {
   initWebrtc() {
     this.peer = new peer({
       initiator: false,
-      config: rtcConfig
+      config: rtcConfig,
     });
     var _this = this;
 
-    this.peer.on('error', (err) => {
+    this.peer.on("error", (err) => {
       //Shut up about your close locally errors.
     });
     this.peer.on("signal", function (data) {
       _this.socket.send(JSON.stringify({ signal: data }));
     });
-    
+
     this.peer.on("connect", function () {
       _this.isReady = true;
       _this.initialQueue = [];
     });
 
-    this.peer.on('close', () => {
-        
-    });
+    this.peer.on("close", () => {});
 
-    this.peer.on('data', (data) => {
+    this.peer.on("data", (data) => {
       attachSRB2.emitPacket(data, 0, PLACEHOLDER_IP);
     });
 
@@ -128,9 +126,7 @@ class ConnectState {
 
   handleSRB2Packet(data) {
     var { socket } = this;
-
-    // FIX: Check for WebRTC first. 
-    // If WebRTC is active and ready, we send via peer regardless of WebSocket state.
+    // WebRTC checks
     if (this.webrtc && this.isReady) {
       try {
         this.peer.send(data);

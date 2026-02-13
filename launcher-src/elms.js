@@ -209,6 +209,12 @@ module.exports = [
     ],
   },
   {
+    element: "div",
+    className: "logsContainer",
+    gid: "dedicatedServerLogs",
+    hidden: true,
+  },
+  {
     element: "canvas",
     className: "gameCanvas",
     gid: "gameCanvas",

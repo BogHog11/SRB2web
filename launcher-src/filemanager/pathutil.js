@@ -55,8 +55,8 @@ function joinPaths(...paths) {
 }
 
 module.exports = {
-    makePathEasyToProcess,
-    parsePathArray,
-    parsePath,
-    joinPaths
+  makePathEasyToProcess,
+  parsePathArray,
+  parsePath,
+  joinPaths,
 };

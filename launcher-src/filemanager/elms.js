@@ -11,7 +11,7 @@ module.exports = [
     element: "div",
     className: "loadingScreen",
     gid: "loadingScreen",
-    textContent: "File system is loading..."
+    textContent: "File system is loading...",
   },
   {
     element: "div",
@@ -28,11 +28,11 @@ module.exports = [
   {
     element: "div",
     className: "fileList",
-    gid: "fileListContainer"
+    gid: "fileListContainer",
   },
   {
     element: "div",
     className: "clickDropdownMenu",
-    gid: "clickDropdownMenu"
-  }
+    gid: "clickDropdownMenu",
+  },
 ];

@@ -49,14 +49,12 @@ class ListenChannel {
           config: rtcConfig,
         });
 
-        this.peer.on('error', (err) => {
-          
-        });
+        this.peer.on("error", (err) => {});
 
         this.peer.on("signal", (data) => {
           _this.socket.send(JSON.stringify({ signal: data }));
         });
-        
+
         this.peer.on("connect", () => {
           _this.rtcOpen = true;
         });
@@ -85,12 +83,12 @@ class ListenChannel {
     var { socket } = this;
     if (this.useRTC && !this.rtcOpen) {
       if (this.peer) {
-        try{
+        try {
           this.peer.destroy();
-        }catch(e){}
+        } catch (e) {}
         this.peer = null;
       }
-      
+
       this.isOpen = false;
       this.rtcOpen = false;
       if (this.requestDispose) {
@@ -130,14 +128,14 @@ class ListenChannel {
       return;
     }
     if (this.useRTC && this.peer) {
-      try{
-      this.peer.send(data);
-      }catch(e){}
+      try {
+        this.peer.send(data);
+      } catch (e) {}
       return;
     }
     if (this.useRTC) {
       return;
-    } 
+    }
     if (!socket) {
       return;
     }
