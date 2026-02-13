@@ -87,6 +87,8 @@ async function downloadAndSaveAssets() {
   }
 }
 
+const RUNNING_CHECK_NAME = "srb2web_running_check";
+
 async function initGame() {
   IDBFS = FS.filesystems.IDBFS;
 
@@ -103,6 +105,7 @@ async function initGame() {
   });
   setInterval(() => {
     FS.syncfs(false, (err) => {});
+    localStorage.setItem(RUNNING_CHECK_NAME, Date.now());
   }, 100);
 }
 
