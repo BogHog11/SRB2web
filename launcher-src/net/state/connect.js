@@ -102,15 +102,16 @@ class ConnectState {
       config: rtcConfig
     });
     var _this = this;
+
+    this.peer.on('error', (err) => {
+      //Shut up about your close locally errors.
+    });
     this.peer.on("signal", function (data) {
       _this.socket.send(JSON.stringify({ signal: data }));
     });
     
     this.peer.on("connect", function () {
       _this.isReady = true;
-      for (var msg of _this.initialQueue) {
-        _this.peer.send(msg);
-      }
       _this.initialQueue = [];
     });
 
@@ -127,10 +128,22 @@ class ConnectState {
 
   handleSRB2Packet(data) {
     var { socket } = this;
+
+    // FIX: Check for WebRTC first. 
+    // If WebRTC is active and ready, we send via peer regardless of WebSocket state.
+    if (this.webrtc && this.isReady) {
+      try {
+        this.peer.send(data);
+      } catch (e) {}
+      return;
+    }
+
+    // Standard WebSocket checks
     if (!socket) {
       this.initialQueue.push(data);
       return;
     }
+    // If we aren't using WebRTC, we must rely on the socket being open
     if (!this.isOpen) {
       this.initialQueue.push(data);
       return;
@@ -139,10 +152,8 @@ class ConnectState {
       this.initialQueue.push(data);
       return;
     }
-    if (this.webrtc) {
-      this.peer.send(data);
-      return;
-    }
+
+    // Fallback to WebSocket send
     socket.send(data);
   }
 

@@ -33,7 +33,7 @@ module.exports = {
       chunks: "all",
       name: "shared",
     },
-    //minimize: false
+    minimize: false
   },
   output: {
     path: path.resolve(__dirname, "launcher-dist"),
@@ -59,6 +59,9 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+    }),
     new HtmlWebpackPlugin({
       filename: `index.html`,
       title: `Sonic Robo Blast 2 Web`,

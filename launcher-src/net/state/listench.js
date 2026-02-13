@@ -24,7 +24,7 @@ class ListenChannel {
     var { socket } = this;
     this.isOpen = true;
     if (this.useRTC) {
-      this.socket.send(JSON.stringify({ webrtc: true }));
+      socket.send(JSON.stringify({ webrtc: true }));
     }
   }
 
@@ -37,11 +37,20 @@ class ListenChannel {
     } else {
       var json = JSON.parse(event.data);
 
+      if (json.signal && this.peer) {
+        this.peer.signal(json.signal);
+        return;
+      }
+
       if (json.rtcReady) {
         var _this = this;
         this.peer = new peer({
           initiator: true,
           config: rtcConfig,
+        });
+
+        this.peer.on('error', (err) => {
+          
         });
 
         this.peer.on("signal", (data) => {
@@ -62,6 +71,7 @@ class ListenChannel {
             _this.ondata(data);
           }
           if (_this.socket) {
+            _this.rtcOpen = true;
             _this.socket.onclose = () => {};
             _this.socket.close(); //Won't be needing this anymore.
             _this.socket = null;
@@ -75,7 +85,9 @@ class ListenChannel {
     var { socket } = this;
     if (this.useRTC && !this.rtcOpen) {
       if (this.peer) {
-        this.peer.destroy();
+        try{
+          this.peer.destroy();
+        }catch(e){}
         this.peer = null;
       }
       
@@ -104,6 +116,10 @@ class ListenChannel {
       this.isOpen = false;
       this.socket.close();
     }
+    if (this.peer) {
+      this.peer.destroy();
+      this.peer = null;
+    }
     this.socket = null;
     this.requestDispose = null;
   }
@@ -113,10 +129,15 @@ class ListenChannel {
     if (!this.isOpen) {
       return;
     }
-    if (this.useRTC && this.rtcOpen) {
+    if (this.useRTC && this.peer) {
+      try{
       this.peer.send(data);
+      }catch(e){}
       return;
     }
+    if (this.useRTC) {
+      return;
+    } 
     if (!socket) {
       return;
     }
