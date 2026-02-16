@@ -8,6 +8,8 @@ var gameCanvas = elements.getGPId("gameCanvas");
 var didStart = false;
 var loaderContent = elements.getGPId("loaderContent");
 var serverOpts = null;
+var launcherMain = elements.getGPId("launcherMain");
+var loaderMain = elements.getGPId("loaderMain");
 
 function enableStartServer(dedicated = false) {
   serverOpts = {
@@ -141,13 +143,23 @@ window.ChangeResolution = (x, y) => {
   }
 };
 
-async function startGame() {
+async function startGame({joinURL, host = false}) {
+  loaderMain.hidden = false;
+  launcherMain.hidden = true;
+
   Module.arguments = [];
   if (serverOpts) {
     Module.arguments.push("-server");
     if (serverOpts.dedicated) {
       Module.arguments.push("-dedicated");
     }
+  }
+  if (host) {
+    Module.arguments.push("-server");
+  }
+  if (joinURL) {
+    Module.arguments.push("-connect");
+    Module.arguments.push(joinURL);
   }
   Module.arguments.push("+addons_option");
   Module.arguments.push("CUSTOM");

@@ -184,21 +184,226 @@ var publicNetgameBrowser = elements.getGPId("publicNetgameBrowser");
 var publicNetgameBrowserLeft = elements.getGPId("publicNetgameBrowserLeft");
 var publicNetgameBrowserRight = elements.getGPId("publicNetgameBrowserRight");
 
-
-
-function displayPublicGames(games){
-  publicNetgameBrowser.hidden = false;
-  elements.setInnerJSON(publicNetgameBrowserLeft, []);
+function closePublicList() {
+  publicNetgameBrowserContainer.hidden = true;
 }
 
-browsePublicGames.addEventListener("click", async () => {
-  if (!relayEnabled) {
-    dialog.alert("You don't have the relay server enabled!");
+function getCloseButton() {
+  return {
+    element: "div",
+    className: "button publicNetgameBrowserCloseButton",
+    textContent: "Close",
+    onclick: closePublicList
+  };
+}
+
+function getHostButton(hostClicked) {
+  return {
+      element: "div",
+      className: "publicNetgameItem",
+      onclick: hostClicked,
+      children: [
+        {
+          element: "div",
+          style: {display: "flex", fontSize: "32px", alignItems: "center", justifyContent: "center"},
+          children: [
+            {
+              element: "img",
+              src: "images/host.svg",
+              className: "refreshIcon"
+            },
+            "Host public"
+          ]
+        }
+      ]
+    };
+}
+
+function getReloadButton(reload) {
+  return {
+      element: "div",
+      className: "publicNetgameItem",
+      onclick: reload,
+      children: [
+        {
+          element: "div",
+          style: {display: "flex", fontSize: "32px", alignItems: "center", justifyContent: "center"},
+          children: [
+            {
+              element: "img",
+              src: "images/refresh.svg",
+              className: "refreshIcon"
+            },
+            "Refresh"
+          ]
+        }
+      ]
+    };
+}
+
+function gameToButton(game, selectedURL, onClick) {
+  return {
+    element: "div",
+    className: "publicNetgameItem",
+    onclick: onClick,
+    children: [
+      {
+        element: "div",
+        style: {
+          display: "flex",
+          alignItems: "center",
+          gap: "2px"
+        },
+        children: [
+          {
+            element: "img",
+            className: "netgameCommunicationType",
+            src: game.usesWebRTC ? "images/webrtc.svg" : "images/websocket.svg"
+          },
+          {
+            element: "span",
+            className: "netgameServerName",
+            textContent: game.name
+          },
+        ]
+      },
+      {
+        element: "span",
+        className: "netgameServerURL",
+        textContent: game.url
+      },
+    ]
+  };
+}
+
+var { startGame } = require("./game.js");
+
+async function launchToNetgame(game) {
+  var confirmed = await dialog.confirm(`Launch game to join ${game.name}?`);
+  if (!confirmed) return;
+
+  closePublicList();
+  startGame({
+    joinURL: game.url
+  });
+}
+
+async function launchToHost() {
+  var confirmed = await dialog.confirm(`Launch game to host publicly?`);
+  if (!confirmed) return;
+
+  var autoStart = await dialog.confirm(`Skip multiplayer menu?`);
+
+  closePublicList();
+  if (autoStart) {
+    startGame({
+      host: true
+    });
+  } else {
+    startGame();
   }
-  if (usedRelay < 0) {
-    dialog.alert("You don't have a relay server selected");
+}
+
+function displayPublicGames(games, selectedURL){
+  publicNetgameBrowser.hidden = false;
+  elements.setInnerJSON(publicNetgameBrowserLeft, [
+    getReloadButton(loadPublicList),
+    getHostButton(launchToHost),
+    {
+      element: "div",
+      className: "publicGameSeparator",
+    }
+  ].concat(games.map((game) => {
+    return gameToButton(game, selectedURL, () => {
+      displayPublicGames(games, game.url, () => launchToNetgame(game));
+    });
+  })));
+
+
+  var game = games.find((g) => selectedURL == g.url);
+  
+  if (!game) {
+    elements.setInnerJSON(publicNetgameBrowserRight, [
+      {
+        element: "span",
+        className: "viewPublicNetgameDetails",
+        textContent: "Click on a netgame to view it's details"
+      },
+      getCloseButton()
+    ]);
+
+    return;
   }
 
+  elements.setInnerJSON(publicNetgameBrowserRight, [
+    {
+      element: "div",
+      className: "publicNetgameDetails",
+      children: [
+        {
+          element: "span",
+          className: "netgameServerName",
+          textContent: game.name
+        },
+        {
+          element: "br"
+        },
+        {
+          element: "span",
+          className: "netgameServerURL",
+          textContent: game.url
+        },
+        {
+          element: "div",
+          className: "publicGameSeparator"
+        },
+        {
+          element: "br"
+        },
+        {
+          element: "li",
+          children: [
+            {
+              element: "ri",
+              textContent: game.mapTitle ? "Map Title: "+game.mapTitle : "(No map title)"
+            },
+          ]
+        },
+        {
+          element: "li",
+          children: [
+            {
+              element: "ri",
+              textContent: game.map ? "Map: "+game.map : "(No map)"
+            },
+          ]
+        },
+
+        {
+          element: "br"
+        },
+        {
+          element: "div",
+          className: "publicGameSeparator"
+        },
+        {
+          element: "span",
+          textContent: "Players: "+game.ingamePlayers
+        },
+        game.playerNames.map((name) => {
+          return {
+            element: "li",
+            textContent: name
+          };
+        })
+      ]
+    },
+    getCloseButton(),
+  ]);
+
+}
+
+async function loadPublicList() {
   publicNetgameBrowserContainer.hidden = false;
   publicNetgameBrowser.hidden = true;
   try{
@@ -211,4 +416,15 @@ browsePublicGames.addEventListener("click", async () => {
   }
 
   displayPublicGames(games);
+}
+
+browsePublicGames.addEventListener("click", async () => {
+  if (!relayEnabled) {
+    dialog.alert("You don't have the relay server enabled!");
+  }
+  if (usedRelay < 0) {
+    dialog.alert("You don't have a relay server selected");
+  }
+
+  loadPublicList();
 });

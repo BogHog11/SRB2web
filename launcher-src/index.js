@@ -13,8 +13,6 @@ var playButton = elements.getGPId("playButton");
 var { startGame } = require("./game.js");
 
 playButton.addEventListener("click", function () {
-  loaderMain.hidden = false;
-  launcherMain.hidden = true;
   startGame();
 });
 
