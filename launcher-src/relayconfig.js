@@ -172,9 +172,7 @@ if (storedConfig) {
 }
 
 reloadRelayConfig();
-
-net.enablePublic();
-
+net.disablePublic();
 
 
 
@@ -295,6 +293,7 @@ async function launchToHost() {
   var autoStart = await dialog.confirm(`Skip multiplayer menu?`);
 
   closePublicList();
+  net.enablePublic();
   if (autoStart) {
     startGame({
       host: true
@@ -353,6 +352,42 @@ function displayPublicGames(games, selectedURL){
           className: "netgameServerURL",
           textContent: game.url
         },
+        {
+          element: "div",
+          className: "publicGameSeparator"
+        },
+
+        {
+          element: "button",
+          className: "button",
+          children: [
+            {
+              element: "div",
+              style: {
+                display: "flex",
+                alignItems: "center",
+                gap: "2px"
+              },
+              onclick: () => {launchToNetgame(game)},
+              children: [
+                {
+                  element: "img",
+                  style: {
+                    width: "32px",
+                    height: "32px",
+                    objectFit: "contain"
+                  },
+                  src: "images/wifi.svg"
+                },
+                {
+                  element: "span",
+                  textContent: "Connect/Join"
+                },
+              ]
+            },
+          ]
+        },
+
         {
           element: "div",
           className: "publicGameSeparator"
@@ -421,9 +456,11 @@ async function loadPublicList() {
 browsePublicGames.addEventListener("click", async () => {
   if (!relayEnabled) {
     dialog.alert("You don't have the relay server enabled!");
+    return;
   }
   if (usedRelay < 0) {
     dialog.alert("You don't have a relay server selected");
+    return;
   }
 
   loadPublicList();

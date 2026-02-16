@@ -143,7 +143,7 @@ window.ChangeResolution = (x, y) => {
   }
 };
 
-async function startGame({joinURL, host = false}) {
+async function startGame(options = {}) {
   loaderMain.hidden = false;
   launcherMain.hidden = true;
 
@@ -154,12 +154,14 @@ async function startGame({joinURL, host = false}) {
       Module.arguments.push("-dedicated");
     }
   }
-  if (host) {
-    Module.arguments.push("-server");
-  }
-  if (joinURL) {
-    Module.arguments.push("-connect");
-    Module.arguments.push(joinURL);
+  if (options) {
+    if (options.host) {
+      Module.arguments.push("-server");
+    }
+    if (options.joinURL) {
+      Module.arguments.push("-connect");
+      Module.arguments.push(options.joinURL);
+    }
   }
   Module.arguments.push("+addons_option");
   Module.arguments.push("CUSTOM");
