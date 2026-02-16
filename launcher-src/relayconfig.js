@@ -173,15 +173,42 @@ if (storedConfig) {
 
 reloadRelayConfig();
 
-var browsePublicGames = elements.getGPId("browsePublicGames");
+net.enablePublic();
 
-browsePublicGames.addEventListener("click", () => {
+
+
+
+var browsePublicGames = elements.getGPId("browsePublicGames");
+var publicNetgameBrowserContainer = elements.getGPId("publicNetgameBrowserContainer");
+var publicNetgameBrowser = elements.getGPId("publicNetgameBrowser");
+var publicNetgameBrowserLeft = elements.getGPId("publicNetgameBrowserLeft");
+var publicNetgameBrowserRight = elements.getGPId("publicNetgameBrowserRight");
+
+
+
+function displayPublicGames(games){
+  publicNetgameBrowser.hidden = false;
+  elements.setInnerJSON(publicNetgameBrowserLeft, []);
+}
+
+browsePublicGames.addEventListener("click", async () => {
   if (!relayEnabled) {
     dialog.alert("You don't have the relay server enabled!");
   }
   if (usedRelay < 0) {
     dialog.alert("You don't have a relay server selected");
   }
-});
 
-net.enablePublic();
+  publicNetgameBrowserContainer.hidden = false;
+  publicNetgameBrowser.hidden = true;
+  try{
+    var games = await net.listPublicGames();
+  }catch(e){
+    dialog.alert("Failed to fetch public hosted games. Make sure your selected relay server is working and try again.");
+    console.error(e);
+    publicNetgameBrowserContainer.hidden = true;
+    return;
+  }
+
+  displayPublicGames(games);
+});

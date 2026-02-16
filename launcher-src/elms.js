@@ -220,4 +220,32 @@ module.exports = [
     gid: "gameCanvas",
     tabindex: "0",
   },
+
+  {
+    element: "div",
+    gid: "publicNetgameBrowserContainer",
+    className: "publicNetgameBrowserContainer",
+    hidden: true,
+
+    children: [
+      {
+        element: "div",
+        gid: "publicNetgameBrowser",
+        className: "publicNetgameBrowserDialog",
+        hidden: true,
+        children: [
+          {
+            element: "div",
+            gid: "publicNetgameBrowserLeft",
+            className: "publicNetgameBrowserLeft"
+          },
+          {
+            element: "div",
+            gid: "publicNetgameBrowserRight",
+            className: "publicNetgameBrowserRight",
+          }
+        ]
+      }
+    ]
+  }
 ];
