@@ -130,6 +130,15 @@ module.exports = [
             element: "br",
           },
           "The connection speed of a netgame depends on the relay server and the host's computer.",
+          {
+            element: "br",
+          },
+          {
+            element: "a",
+            href: "https://github.com/gvbvdxxalt2/SRB2Web-Relay/",
+            target: "_blank",
+            textContent: "Source code for Relay Server.",
+          },
         ],
       },
       { element: "div", className: "sep" },
@@ -164,7 +173,7 @@ module.exports = [
           },
           {
             element: "a",
-            href: "https://github.com/gvbvdxxalt2/SRB2Web",
+            href: "https://github.com/gvbvdxxalt2/SRB2web",
             target: "_blank",
             textContent: "Click here to view the source code on GitHub.",
           },
