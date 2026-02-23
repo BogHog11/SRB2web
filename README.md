@@ -4,9 +4,15 @@ _**Web Version: 2.2.15**_
 
 [Sonic Robo Blast 2](https://srb2.org/) is a 3D Sonic the Hedgehog fangame based on a modified version of [Doom Legacy](http://doomlegacy.sourceforge.net/).
 
-[See live site here.](https://gvbvdxxalt2.github.io/SRB2web)
-
 A port of the game for WASM (WebAssembly) using Emscripten, fully supporting LAN & online multiplayer through its [Relay Server](https://github.com/gvbvdxxalt2/SRB2Web-Relay).
+
+---
+
+## Live Sites
+
+ - [Vercel](https://gvbvdxx-srb2-web.vercel.app/)
+ - [Github Pages](https://gvbvdxxalt2.github.io/SRB2web/)
+ - [Netlify](https://gvbvdxx-srb2web.netlify.app/)
 
 ---
 
@@ -85,11 +91,3 @@ This should work on both Windows and Linux.
 | [`/static`](./static) | Static assets, icons, and images for the launcher. |
 | `/launcher-dist` | The production-ready web build (generated via `npm run build`). |
 | [`/build-wasm/bin`](./build-wasm/bin) | Where the game's compiled output is (js and wasm files) |
-
----
-
-## Sites
-
- - [Vercel](https://gvbvdxx-srb2-web.vercel.app/)
- - [Github Pages](https://gvbvdxxalt2.github.io/SRB2web/)
- - [Netlify](https://gvbvdxx-srb2web.netlify.app/)
