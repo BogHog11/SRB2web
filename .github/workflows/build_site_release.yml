@@ -1,0 +1,54 @@
+name: Build and Release SRB2Web Launcher
+
+on:
+  push:
+    branches:
+      - main # Triggers the action when you push to the main branch
+  workflow_dispatch: # Allows you to manually click a "Run workflow" button in GitHub
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    # Required permission to allow the action to create a release
+    permissions:
+      contents: write 
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Change this if you require a different Node version
+
+      - name: Install dependencies and build
+        run: |
+          npm install
+          npm run build
+        # This assumes your build script outputs to the 'launcher-dist' folder
+
+      - name: Generate Release Version (Date-based)
+        id: versioning
+        # Creates a tag like v2026.02.23-1 (Date + GitHub Run Number to ensure uniqueness)
+        run: |
+          DATE_TAG="v$(date +'%Y.%m.%d')-${{ github.run_number }}"
+          echo "TAG_NAME=$DATE_TAG" >> $GITHUB_ENV
+
+      - name: Zip the Webpack output
+        run: |
+          # Zips the folder contents so it can be uploaded as a single asset
+          zip -r launcher-build.zip launcher-dist/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG_NAME }}
+          name: Release ${{ env.TAG_NAME }}
+          body: "Automated build of the SRB2Web Launcher."
+          files: launcher-build.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
