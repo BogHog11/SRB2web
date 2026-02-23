@@ -1,20 +1,21 @@
 #!/bin/bash
 set -e
 
-VCPKG_PATH="libs/vcpkg"
-
-# Check if the vcpkg directory exists and actually has a .git folder
-if [ -d "$VCPKG_PATH/.git" ]; then
-    echo "libs/vcpkg is already setup."
+# 1. Setup vcpkg folder
+if [ -d "libs/vcpkg/.git" ]; then
+    echo "vcpkg folder exists."
 else
-    echo "Cloning vcpkg into $VCPKG_PATH..."
-    # No need to cd; git clone can take a target directory
-    git clone https://github.com/microsoft/vcpkg "$VCPKG_PATH"
+    git clone https://github.com/microsoft/vcpkg libs/vcpkg
 fi
 
-# Ensure scripts are executable
-chmod +x ./vcpkg-setup.sh ./build-wasm.sh
-
+# 2. Setup EMSDK
+chmod +x ./load-emsdk.sh
 source ./load-emsdk.sh
+
+# 3. Run the specialized vcpkg setup
+chmod +x ./vcpkg-setup.sh
 ./vcpkg-setup.sh
+
+# 4. Build the game
+chmod +x ./build-wasm.sh
 ./build-wasm.sh
