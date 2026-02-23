@@ -40,15 +40,23 @@ Below are the instructions for compiling the Sonic Robo Blast 2 (SRB2) WASM file
    ```bash
    cd path/to/srb2-source
    ```
-3. Run the setup and build script:
+3. Run the setup script (this handles cloning and builds the engine):
    ```bash
    chmod +x *.sh
-   ./setup-build.sh
+   source ./setup-build.sh
+   ```
+
+4. To rebuild later without running the full setup:
+   ```bash
+   source ./load-emsdk.sh
+   ./build-wasm.sh
    ```
 
 ---
 
 ### 2. Building the Launcher Website
+
+This should work on both Windows and Linux.
 
 1. Install Node.js dependencies:
    ```bash
@@ -63,7 +71,7 @@ Below are the instructions for compiling the Sonic Robo Blast 2 (SRB2) WASM file
    npm run start
    ```
 
-> **Note for Developers:** If you modify the **C source code**, you must re-run `setup-build` to recompile the engine. The Node server only watches frontend files.
+> **Note for Developers:** If you modify the **C source code**, you must re-run `setup-build.sh` (or `build-wasm.sh`) to recompile the engine. The Node server only watches frontend files.
 
 ---
 
@@ -80,5 +88,6 @@ Below are the instructions for compiling the Sonic Robo Blast 2 (SRB2) WASM file
 ---
 
 ## Post-Build Notes
-* **Node.js Path**: If Emscripten uses a different Node version, update the path in your build scripts.
+* **Environment Handling**: The scripts now check if `emsdk` or `libs/vcpkg` directories are empty and will automatically attempt to repair/clone them if needed.
+* **Node.js Path**: If Emscripten uses a different Node version than expected, update the path in your build scripts.
 * **Output**: Compiled `srb2.js` and `srb2.wasm` will be in the `build-wasm` directory.
