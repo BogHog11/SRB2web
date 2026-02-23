@@ -70,15 +70,17 @@ function disableServerWebRTC() {
 
 async function listPublicGames() {
   if (!enabled) {
+    throw new Error(`Relay server is disabled`);
     return [];
   }
   if (!host) {
+    throw new Error(`No host provided`);
     return [];
   }
   try {
     var response = await fetch(`https://${host}/public`);
     if (!response.ok) {
-      throw new Error("Failed to fetch public games");
+      throw new Error(`Got Non-OK response: ${response.status}`);
     }
   } catch (e) {
     console.warn(
@@ -92,9 +94,11 @@ async function listPublicGames() {
           "Failed to fetch public games, response not ok. Status:",
           response.status,
         );
+        throw new Error(`Got Non-OK response: ${response.status}`);
         return [];
       }
     } catch (e) {
+      throw e;
       return [];
     }
   }
