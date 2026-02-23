@@ -1,22 +1,24 @@
 #!/bin/bash
 set -e
 
-# Ensure we are in the root so paths are predictable
-BASE_DIR=$(pwd)
+# Get the absolute path of the project root
+ROOT_DIR=$(pwd)
 
-# 1. Force export EMSDK variables just in case
-export EMSDK="$BASE_DIR/emsdk"
-export EMSDK_NODE="$EMSDK/node/22.16.0_64bit/bin/node"
-export PATH="$EMSDK:$EMSDK/upstream/emscripten:$PATH"
+# Define the path to the Emscripten toolchain file
+# This is the "magic link" vcpkg needs to work in a Codespace
+EMSCRIPTEN_TOOLCHAIN="$ROOT_DIR/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
 
-# 2. Bootstrap vcpkg if not already done
+echo "Setting up vcpkg for WebAssembly..."
+
+# 1. Bootstrap vcpkg if the executable is missing
 if [ ! -f "libs/vcpkg/vcpkg" ]; then
-    echo "Bootstrapping vcpkg..."
     ./libs/vcpkg/bootstrap-vcpkg.sh
 fi
 
-# 3. Install dependencies using the Emscripten triplet
-# We pass the VCPKG_CHAINLOAD_TOOLCHAIN_FILE manually to help vcpkg find Emscripten
+# 2. Install dependencies
+# We explicitly pass the toolchain file to fix the 'Error Code 1' you encountered
 ./libs/vcpkg/vcpkg install \
     --triplet=wasm32-emscripten \
-    --x-cmake-args="-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
+    --x-cmake-args="-DVCPKG_CHAINLOAD_TOOLCHAIN_FILE=$EMSCRIPTEN_TOOLCHAIN"
+
+echo "vcpkg setup complete."
