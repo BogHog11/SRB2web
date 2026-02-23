@@ -84,13 +84,7 @@ This should work on both Windows and Linux.
 | [`/launcher-src`](./launcher-src) | Source code for the web launcher and file manager. |
 | [`/static`](./static) | Static assets, icons, and images for the launcher. |
 | `/launcher-dist` | The production-ready web build (generated via `npm run build`). |
-
----
-
-## Post-Build Notes
-* **Environment Handling**: The scripts now check if `emsdk` or `libs/vcpkg` directories are empty and will automatically attempt to repair/clone them if needed.
-* **Node.js Path**: If Emscripten uses a different Node version than expected, update the path in your build scripts.
-* **Output**: Compiled `srb2.js` and `srb2.wasm` will be in the `build-wasm` directory.
+| [`/build-wasm/bin`](./build-wasm/bin) | Where the game's compiled output is (js and wasm files) |
 
 ---
 
