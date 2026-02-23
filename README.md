@@ -91,3 +91,11 @@ This should work on both Windows and Linux.
 * **Environment Handling**: The scripts now check if `emsdk` or `libs/vcpkg` directories are empty and will automatically attempt to repair/clone them if needed.
 * **Node.js Path**: If Emscripten uses a different Node version than expected, update the path in your build scripts.
 * **Output**: Compiled `srb2.js` and `srb2.wasm` will be in the `build-wasm` directory.
+
+---
+
+## Sites
+
+ - [Vercel](https://gvbvdxx-srb2-web.vercel.app/)
+ - [Github Pages](https://gvbvdxxalt2.github.io/SRB2web/)
+ - [Netlify](https://gvbvdxx-srb2web.netlify.app/)
