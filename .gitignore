@@ -43,3 +43,12 @@ node_modules/
 emsdk/
 vcpkg_installed/
 launcher-dist/
+
+build-wasm/*
+!build-wasm/*.js
+!build-wasm/*.wasm
+!build-wasm/*.data
+!build-wasm/*.worker.js
+!build-wasm/bin
+build-wasm/CMakeFiles/
+build-wasm/testing/
