@@ -32,7 +32,7 @@ Below are the instructions for compiling the Sonic Robo Blast 2 (SRB2) WASM file
 
 #### Executing on Windows
 1. Open the **Command Prompt** (`cmd.exe`). *Do not use PowerShell, as it handles batch file variables differently.*
-2. Navigate to your SRB2 source directory:
+2. Navigate to your SRB2web source directory:
    ```cmd
    cd path\to\srb2-source
    ```
