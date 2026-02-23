@@ -8,13 +8,6 @@ _**Web Version: 2.2.15**_
 
 A port of the game for WASM (WebAssembly) using Emscripten, fully supporting LAN & online multiplayer through its [Relay Server](https://github.com/gvbvdxxalt2/SRB2Web-Relay).
 
-The game can forward data either directly through the relay server or via WebRTC.
-
-[Instructions for setting up the Relay server are here.](https://github.com/gvbvdxxalt2/SRB2Web-Relay)
-
-## Disclaimer
-Sonic Team Junior & Gvbvdxx are in no way affiliated with SEGA or Sonic Team. We do not claim ownership of any of SEGA's intellectual property used in SRB2.
-
 ---
 
 ## Compilation Instructions
@@ -22,55 +15,42 @@ Sonic Team Junior & Gvbvdxx are in no way affiliated with SEGA or Sonic Team. We
 Below are the instructions for compiling the Sonic Robo Blast 2 (SRB2) WASM files and building the launcher website.
 
 ### Prerequisites
-* **Windows**: Git for Windows, CMake, Python 3.x, and a C++ toolchain (Visual Studio Community or MinGW).
+* **Windows**: Git for Windows, CMake, Python 3.x, and a C++ toolchain (Visual Studio).
 * **Linux**: `sudo apt install git cmake build-essential python3`
-* **Node.js**: Required to build the launcher website and serve it locally.
+* **Node.js**: Required for the launcher website.
 
 ---
 
 ### 1. Compiling the WASM Files
 
 #### Executing on Windows
-1. Open the **Command Prompt** (`cmd.exe`). *Do not use PowerShell, as it handles batch file variables differently.*
-2. Navigate to your SRB2web source directory:
+1. Open the **Command Prompt** (`cmd.exe`).
+2. Navigate to your source directory:
    ```cmd
    cd path\to\srb2-source
    ```
-3. Run the vcpkg cloning script:
+3. Run the setup and build script:
    ```cmd
-   call clone-vcpkg.bat
-   ```
-4. Run the build script (this automatically calls `load-emsdk.bat`):
-   ```cmd
-   call build-wasm.bat
+   setup-build.bat
    ```
 
 #### Executing on Linux
 1. Open your terminal.
-2. Navigate to your SRB2 source directory:
+2. Navigate to your source directory:
    ```bash
    cd path/to/srb2-source
    ```
-3. Make the scripts executable:
+3. Run the setup and build script:
    ```bash
    chmod +x *.sh
-   ```
-4. Run the vcpkg cloning script:
-   ```bash
-   ./clone-vcpkg.sh
-   ```
-5. Run the build script (this automatically sources `load-emsdk.sh`):
-   ```bash
-   ./build-wasm.sh
+   ./setup-build.sh
    ```
 
 ---
 
 ### 2. Building the Launcher Website
 
-Once you have compiled the base WASM files, you need to set up the web frontend to actually play the game in your browser.
-
-1. Install the required Node.js dependencies:
+1. Install Node.js dependencies:
    ```bash
    npm install
    ```
@@ -78,15 +58,27 @@ Once you have compiled the base WASM files, you need to set up the web frontend 
    ```bash
    npm run build
    ```
-3. Start the Webpack Development Server (`wp-dev-server`) to test your build locally:
+3. Start the dev server:
    ```bash
    npm run start
    ```
 
-> **Important Note for C Developers:** The Webpack Dev Server will automatically reload if you edit the frontend website files. However, **if you edit the SRB2 C code**, you must manually re-run the `build-wasm` script to recompile the `.wasm` and `.js` engine files. The Node server does not compile the C source code for you.
+> **Note for Developers:** If you modify the **C source code**, you must re-run `setup-build` to recompile the engine. The Node server only watches frontend files.
+
+---
+
+## Directory Structure
+
+| Path | Description |
+| :--- | :--- |
+| [`/src`](./src) | Core C code for **SRB2** and the modified engine. |
+| [`/game-assets`](./game-assets) | Source files for game data (textures, sounds, etc.). |
+| [`/launcher-src`](./launcher-src) | Source code for the web launcher and file manager. |
+| [`/static`](./static) | Static assets, icons, and images for the launcher. |
+| `/launcher-dist` | The production-ready web build (generated via `npm run build`). |
 
 ---
 
 ## Post-Build Notes
-* **Node.js Path Dependency**: The CMake command hardcodes the path to Node.js as `../emsdk/node/22.16.0_64bit/bin/node`. If your Emscripten SDK downloads a different version of Node.js, you will need to update this path in `build-wasm.sh` or `build-wasm.bat`.
-* **Output Files**: Upon successful compilation, your `srb2.js` and `srb2.wasm` files will be located in the `build-wasm` directory. Remember to provide the base SRB2 `.pk3` files when hosting the web build.
+* **Node.js Path**: If Emscripten uses a different Node version, update the path in your build scripts.
+* **Output**: Compiled `srb2.js` and `srb2.wasm` will be in the `build-wasm` directory.
