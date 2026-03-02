@@ -408,39 +408,35 @@ filePathInput.addEventListener("change", function () {
 
 (async function () {
   try {
-    await loadFilesystem();
+    // 1. Wait for everything to be created and synced
+    await loadFilesystem(); 
     loadingScreen.hidden = true;
 
+    // 2. Set the global FS reference from the Module
     FS = Module.FS;
-    //document.body.textContent = (Object.keys(FS));
-    FS.syncfs(true, (err) => {
-      setTimeout(() => {
-        try {
-          refreshFileList();
-        } catch (e) {
-          try {
-            currentPath = "/";
-            refreshFileList();
-            dialog.alert(
-              "To view the addons directory, play SRB2 Web first to create the necessary folders.",
-            );
-          } catch (e) {
-            dialog
-              .alert(
-                "Failed to load filesystem: " +
-                  e +
-                  "\nReload to try again.\nThis might have happened because you haven't loaded SRB2 Web.",
-              )
-              .then(() => {
-                window.location.reload();
-              });
-          }
-        }
-      }, 500);
-    });
+
+    // 3. Set the starting path for your file manager
+    // We use /addons/userdata because that's the symlink we created
+    currentPath = "/addons/userdata";
+
+    // 4. Small delay to ensure Emscripten's internal C structures are ready
+    setTimeout(() => {
+      try {
+        refreshFileList();
+        console.log("File list loaded successfully at " + currentPath);
+      } catch (e) {
+        console.error("Refresh failed:", e);
+        // Fallback to root if the symlink is being stubborn
+        currentPath = "/";
+        refreshFileList();
+        dialog.alert("Navigation failed. Resetting to root directory.");
+      }
+    }, 100);
+
   } catch (e) {
+    console.error("FS Load Error:", e);
     dialog.alert("Failed to load filesystem: " + e + "\nReload to try again.");
-    window.location.reload();
+    // window.location.reload(); // Optional: only reload if it's a fatal error
   }
 })();
 
