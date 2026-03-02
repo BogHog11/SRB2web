@@ -564,19 +564,29 @@ boolean I_InitNetwork(void)
         hardware_MAXPACKETLENGTH = INETPACKETLENGTH;
         ret = true;
     } else if (M_CheckParm("-connect")) {
-        if (M_IsNextParm()) strcpy(serverhostname, M_GetNextParm());
-        else serverhostname[0] = 0; 
-        if (serverhostname[0]) {
-            COM_BufAddText("connect \"");
-            COM_BufAddText(serverhostname);
-            COM_BufAddText("\"\n");
-            hardware_MAXPACKETLENGTH = INETPACKETLENGTH;
-        } else {
-            COM_BufAddText("connect any\n");
-            net_bandwidth = 800000;
-            hardware_MAXPACKETLENGTH = MAXPACKETLENGTH;
-        }
-        ret = true;
+        if (M_IsNextParm())
+			strcpy(serverhostname, M_GetNextParm());
+		else
+			serverhostname[0] = 0; // assuming server in the LAN, use broadcast to detect it
+
+		// server address only in ip
+		if (serverhostname[0])
+		{
+			COM_BufAddText("connect \"");
+			COM_BufAddText(serverhostname);
+			COM_BufAddText("\"\n");
+
+			// probably modem
+			hardware_MAXPACKETLENGTH = INETPACKETLENGTH;
+		}
+		else
+		{
+			// so we're on a LAN
+			COM_BufAddText("connect any\n");
+
+			net_bandwidth = 800000;
+			hardware_MAXPACKETLENGTH = MAXPACKETLENGTH;
+		}
     }
     mypacket.maxlen = hardware_MAXPACKETLENGTH;
     I_NetOpenSocket = NET_OpenSocket;

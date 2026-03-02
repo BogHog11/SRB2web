@@ -283,7 +283,7 @@ function gameToButton(game, selectedURL, onClick) {
   return {
     element: "div",
     className: "publicNetgameItem",
-    onclick: onClick,
+    eventListeners: [{event: "click", func: onClick}],
     children: [
       {
         element: "div",
@@ -378,7 +378,7 @@ function displayPublicGames(games, selectedURL){
     }
   ].concat(games.map((game) => {
     return gameToButton(game, selectedURL, () => {
-      displayPublicGames(games, game.url, () => launchToNetgame(game));
+      displayPublicGames(games, game.url);
     });
   })));
 
@@ -489,13 +489,12 @@ function displayPublicGames(games, selectedURL){
           element: "span",
           textContent: "Players: "+game.ingamePlayers
         },
-        game.playerNames.map((name) => {
+      ].concat(game.playerNames.map((name) => {
           return {
             element: "li",
             textContent: name
           };
-        })
-      ]
+        }))
     },
     getCloseButton(),
   ]);

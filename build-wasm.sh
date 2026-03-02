@@ -13,10 +13,10 @@ mkdir -p build-wasm
 cd build-wasm
 
 emcmake cmake .. -DCMAKE_BUILD_TYPE=Release \
-    -DUSE_GME=1 -DUSE_OPENMPT=1 -DUSE_UPNP=0 -DUSE_SDL2_NET=0 -DUSE_PHYSFS=0 -DUSE_ZLIB=1 -DUSE_LIBPNG=1 -DUSE_CURL=0 \
+    -DUSE_GME=1 -DUSE_OPENMPT=1 -DUSE_UPNP=0 -DUSE_SDL2_NET=1 -DUSE_PHYSFS=0 -DUSE_ZLIB=1 -DUSE_LIBPNG=1 -DUSE_CURL=0 \
     "-DCMAKE_C_FLAGS=-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_MIXER=2 -s USE_SDL_TTF=2 -s USE_ZLIB=1 -s USE_LIBPNG=1 -s ASYNCIFY=1 -I$VCPKG_INC" \
     "-DCMAKE_CXX_FLAGS=-I$VCPKG_INC" \
-    "-DCMAKE_EXE_LINKER_FLAGS=-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_MIXER=2 -s USE_SDL_TTF=2 -s USE_ZLIB=1 -s USE_LIBPNG=1 -s ASYNCIFY=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_RUNTIME_METHODS=['ccall','cwrap','UTF8ToString','stringToUTF8','lengthBytesUTF8','allocate','intArrayFromString'] -L$VCPKG_LIB -lopenmpt -lmpg123 -lgme -lvorbisfile -lvorbis -logg" \
+    "-DCMAKE_EXE_LINKER_FLAGS=-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_MIXER=2 -s USE_SDL_TTF=2 -s USE_ZLIB=1 -s USE_LIBPNG=1 -s ASYNCIFY=1 -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_RUNTIME_METHODS=['ccall','cwrap','UTF8ToString','stringToUTF8','lengthBytesUTF8','allocate','intArrayFromString'] -L$VCPKG_LIB -lopenmpt -lmpg123 -lgme -lvorbisfile -lvorbis -logg -timidity" \
     -DZLIB_FOUND=TRUE -DZLIB_INCLUDE_DIR="$ROOT_DIR/emsdk/upstream/emscripten/cache/sysroot/include" -DZLIB_LIBRARY=zlib \
     -DPNG_FOUND=TRUE -DPNG_PNG_INCLUDE_DIR="$ROOT_DIR/emsdk/upstream/emscripten/cache/sysroot/include" -DPNG_LIBRARY=png \
     -DSDL2_FOUND=TRUE -DSDL2_LIBRARIES=SDL2 -DSDL2_DIR="$ROOT_DIR/emsdk/upstream/emscripten/cache/sysroot/lib/cmake/SDL2" \
