@@ -555,16 +555,43 @@ boolean I_InitNetwork(void)
         if (M_IsNextParm()) sock_port = (UINT16)atoi(M_GetNextParm());
         else sock_port = 0;
     }
-    if (M_CheckParm("-server") || dedicated) {
-        server = true;
-        doomcom->numnodes = dedicated ? 0 : 1;
-        if (doomcom->numnodes > MAXNETNODES) doomcom->numnodes = MAXNETNODES;
-        servernode = 0;
-        net_bandwidth = 16000;
-        hardware_MAXPACKETLENGTH = INETPACKETLENGTH;
-        ret = true;
-    } else if (M_CheckParm("-connect")) {
-        if (M_IsNextParm())
+    // parse network game options,
+	if (M_CheckParm("-server") || dedicated)
+	{
+		server = true;
+
+		// If a number of clients (i.e. nodes) is specified, the server will wait for the clients
+		// to connect before starting.
+		// If no number is specified here, the server starts with 1 client, and others can join
+		// in-game.
+		// Since Boris has implemented join in-game, there is no actual need for specifying a
+		// particular number here.
+		// FIXME: for dedicated server, numnodes needs to be set to 0 upon start
+/*		if (M_IsNextParm())
+			doomcom->numnodes = (INT16)atoi(M_GetNextParm());
+		else */if (dedicated)
+			doomcom->numnodes = 0;
+		else
+			doomcom->numnodes = 1;
+
+		if (doomcom->numnodes < 0)
+			doomcom->numnodes = 0;
+		if (doomcom->numnodes > MAXNETNODES)
+			doomcom->numnodes = MAXNETNODES;
+
+		// server
+		servernode = 0;
+		// FIXME:
+		// ??? and now ?
+		// server on a big modem ??? 4*isdn
+		net_bandwidth = 16000;
+		hardware_MAXPACKETLENGTH = INETPACKETLENGTH;
+
+		ret = true;
+	}
+	else if (M_CheckParm("-connect"))
+	{
+		if (M_IsNextParm())
 			strcpy(serverhostname, M_GetNextParm());
 		else
 			serverhostname[0] = 0; // assuming server in the LAN, use broadcast to detect it
@@ -587,7 +614,7 @@ boolean I_InitNetwork(void)
 			net_bandwidth = 800000;
 			hardware_MAXPACKETLENGTH = MAXPACKETLENGTH;
 		}
-    }
+	}
     mypacket.maxlen = hardware_MAXPACKETLENGTH;
     I_NetOpenSocket = NET_OpenSocket;
     I_Ban = NET_Ban;
