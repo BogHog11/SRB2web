@@ -183,6 +183,8 @@ a:hover {
   flex-direction: column;
   padding: 5px;
   flex-shrink: 0;
+  overflow: wrap;
+  text-wrap: wrap;
 }
 
 .configuredRelay[used] {
@@ -192,6 +194,8 @@ a:hover {
 .relayName {
   font-size: 20px;
   font-weight: bold;
+  overflow: wrap;
+  text-wrap: wrap;
 }
 
 .relayHost {
@@ -241,6 +245,8 @@ a:hover {
   font-size: 10px;
   white-space: pre;
   padding-left: 5px;
+  overflow: wrap;
+  text-wrap: wrap;
 }
 
 .relayButtons {
