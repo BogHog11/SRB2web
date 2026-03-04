@@ -1851,24 +1851,24 @@ void I_StartupGraphics(void)
 	// Create window
 	//Impl_CreateWindow(USE_FULLSCREEN);
 	//Impl_SetWindowName("SRB2 "VERSIONSTRING);
-	VID_SetMode(VID_GetModeForSize(BASEVIDWIDTH, BASEVIDHEIGHT));
-
-	vid.width = BASEVIDWIDTH; // Default size for startup
-	vid.height = BASEVIDHEIGHT; // BitsPerPixel is the SDL interface's
-	vid.recalc = true; // Set up the console stufff
-	vid.direct = NULL; // Maybe direct access?
-	vid.bpp = 1; // This is the game engine's Bpp
-	vid.WndParent = NULL; //For the window?
 
 #ifdef HAVE_TTF
 	I_ShutdownTTF();
 #endif
 
+	// Set the initial video mode. VID_SetMode will update vid.width/height
+	// On Emscripten, use 2x scale; on other platforms use 1x
 #ifdef __EMSCRIPTEN__
 	VID_SetMode(VID_GetModeForSize(BASEVIDWIDTH*2, BASEVIDHEIGHT*2));
 #else
 	VID_SetMode(VID_GetModeForSize(BASEVIDWIDTH, BASEVIDHEIGHT));
 #endif
+
+	// These must be set AFTER VID_SetMode to match the actual video mode
+	vid.recalc = true; // Set up the console stufff
+	vid.direct = NULL; // Maybe direct access?
+	vid.bpp = 1; // This is the game engine's Bpp
+	vid.WndParent = NULL; //For the window?
 
 	if (M_CheckParm("-nomousegrab"))
 		mousegrabok = SDL_FALSE;
@@ -2021,6 +2021,31 @@ extern Uint8 *screens[5];
 
 int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
 {
+
+	//Original stuff, so that its safer to resize the window without breaking things, and to avoid buffer overflows.:
+
+	int newmode = -1;
+
+	if ( x < BASEVIDWIDTH*1 && y < BASEVIDHEIGHT*1)
+		newmode = VID_GetModeForSize(BASEVIDWIDTH*1, BASEVIDHEIGHT*1);
+	else if (x < BASEVIDWIDTH*2 && y < BASEVIDHEIGHT*2)
+		newmode = VID_GetModeForSize(BASEVIDWIDTH*1, BASEVIDHEIGHT*1);
+	else if (x < BASEVIDWIDTH*3 && y < BASEVIDHEIGHT*3)
+		newmode = VID_GetModeForSize(BASEVIDWIDTH*2, BASEVIDHEIGHT*2);
+#if 0
+	else if (x < BASEVIDWIDTH*4 && y < BASEVIDHEIGHT*4)
+		newmode = VID_GetModeForSize(BASEVIDWIDTH*3, BASEVIDHEIGHT*3);
+	else if (x < BASEVIDWIDTH*5 && y < BASEVIDHEIGHT*5)
+		newmode = VID_GetModeForSize(BASEVIDWIDTH*4, BASEVIDHEIGHT*4);
+	else if (x < BASEVIDWIDTH*6 && y < BASEVIDHEIGHT*6)
+		newmode = VID_GetModeForSize(BASEVIDWIDTH*5, BASEVIDHEIGHT*5);
+	else
+		newmode = VID_GetModeForSize(BASEVIDWIDTH*6, BASEVIDHEIGHT*6);
+#else
+	else
+		newmode = VID_GetModeForSize(BASEVIDWIDTH*2, BASEVIDHEIGHT*2);
+#endif
+
     // Safety Limits
     if (x < 320) x = 320;
     if (y < 200) y = 200;
@@ -2034,28 +2059,32 @@ int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
     vid.bpp = 1;
     vid.recalc = 1; 
 
-    // 2. Resize the SDL Window
+    // 2. Reallocate video buffer for new resolution
+    // This must be done BEFORE V_Init() to avoid buffer overflow
+    Impl_VideoSetupBuffer();
+
+    // 3. Resize the SDL Window
     // This triggers SDL to resize its internal buffers safely
     if (window) {
         SDL_SetWindowSize(window, x, y);
     }
 
-    // 3. Get the new Surface pointer from SDL
+    // 4. Get the new Surface pointer from SDL
     // Instead of malloc/free, we let SDL give us the valid pointer
     SDL_Surface *surface = SDL_GetWindowSurface(window);
     if (surface) {
         screens[0] = (Uint8 *)surface->pixels;
     }
 
-    // 4. Update the Rects
+    // 5. Update the Rects
     src_rect.w = vid.width;
     src_rect.h = vid.height;
 
-    // 5. Restart Rendering logic
+    // 6. Restart Rendering logic
     VID_CheckRenderer();
     refresh_rate = VID_GetRefreshRate();
     
-    // Recalculate lookups (V_Init is safe now that we capped resolution to 1920)
+    // 7. Recalculate lookups (V_Init is now safe with proper buffer allocation)
     V_Init(); 
 
     return 1;

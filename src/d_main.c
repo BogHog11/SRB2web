@@ -1538,6 +1538,15 @@ void D_SRB2Main(void)
 	//--------------------------------------------------------- CONFIG.CFG
 	M_FirstLoadConfig(); // WARNING : this do a "COM_BufExecute()"
 
+#ifdef __EMSCRIPTEN__
+	// Force 2x scale resolution on Emscripten for proper display
+	// This ensures the game displays at readable size in browsers
+	CV_StealthSetValue(&cv_scr_width, BASEVIDWIDTH*2);
+	CV_StealthSetValue(&cv_scr_height, BASEVIDHEIGHT*2);
+	CV_StealthSetValue(&cv_scr_width_w, BASEVIDWIDTH*2);
+	CV_StealthSetValue(&cv_scr_height_w, BASEVIDHEIGHT*2);
+#endif
+
 	if (M_CheckParm("-gamedata") && M_IsNextParm())
 	{
 		// Moved from G_LoadGameData itself, as it would cause some crazy
