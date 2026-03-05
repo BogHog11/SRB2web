@@ -22,6 +22,7 @@
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
+#include <GLES2/gl2.h>
 #endif
 
 #include <stdlib.h>
@@ -1671,6 +1672,18 @@ static SDL_bool Impl_CreateWindow(SDL_bool fullscreen)
 	// Some GPU drivers may give us a 16-bit depth buffer since the
 	// default value for SDL_GL_DEPTH_SIZE is 16.
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	
+	// For Emscripten/WebGL, ensure we have a proper context
+#ifdef __EMSCRIPTEN__
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+	// Ensure color buffer is configured
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+#endif
 #endif
 
 	// Create a window
@@ -2019,11 +2032,85 @@ extern SDL_Window *window;
 extern SDL_Renderer *renderer;
 extern Uint8 *screens[5]; 
 
+//Using this to resize whenever the resize event is called.
 int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
 {
+    // 1. Force alignment and Safety Limits
+    x = (x + 3) & ~3; 
+    if (x < 320) x = 320;
+    if (y < 200) y = 200;
 
-	//Original stuff, so that its safer to resize the window without breaking things, and to avoid buffer overflows.:
+    // 2. Update SRB2 Global Video State
+    vid.width = x;
+    vid.height = y;
+    vid.recalc = 1; 
 
+    // 3. Resize the SDL Window
+    if (window) {
+        SDL_SetWindowSize(window, x, y);
+        // On some browsers, we need to pump events to let the context settle
+        SDL_PumpEvents();
+    }
+
+    // 4. Ensure the renderer is actually ready
+    // This handles the internal hand-off between Soft and OpenGL
+    VID_CheckRenderer();
+
+    // 5. Branching Logic based on Renderer
+    if (rendermode == render_soft) {
+        // --- SOFTWARE RENDERER PATH ---
+        vid.rowbytes = x; 
+        
+        SDL_Surface *surface = SDL_GetWindowSurface(window);
+        if (surface) {
+            screens[0] = (Uint8 *)surface->pixels;
+            if (screens[0]) {
+                // Clear to black (0) to avoid "garbage" or blue/green tints from old memory
+                memset(screens[0], 0, vid.width * vid.height);
+            }
+        }
+        
+        // Refresh the palette. If we don't do this, the screen often turns green
+        // because the color lookup table is pointing to the wrong memory.
+        if (W_CheckNumForName("PLAYPAL") != -1)
+            V_SetPalette(0);
+    } 
+    else if (rendermode == render_opengl) {
+        // --- OPENGL RENDERER PATH ---
+        vid.rowbytes = x;
+
+        // GL Error 1282 (Invalid Operation) often means no context is bound.
+        // We check if the window exists before calling GL functions.
+        if (window) {
+            // Sync WebGL Viewport
+            glViewport(0, 0, x, y);
+
+            // Clear the GL buffer immediately to prevent the "dark" frozen screen
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+#ifdef HWRENDER
+            // Only call hardware updates if the hardware init was successful
+            HWR_SetViewSize();
+#endif
+        }
+    }
+
+    // 6. Update UI/Scaling Rects
+    src_rect.w = vid.width;
+    src_rect.h = vid.height;
+
+    // 7. Recalculate all engine constants
+    // This is vital for HUD alignment and fixing the "green" console tint
+    V_Init(); 
+
+    return 1;
+}
+
+/*
+//original logic in case i need it
+int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
+{
 	int newmode = -1;
 
 	if ( x < BASEVIDWIDTH*1 && y < BASEVIDHEIGHT*1)
@@ -2046,49 +2133,14 @@ int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
 		newmode = VID_GetModeForSize(BASEVIDWIDTH*2, BASEVIDHEIGHT*2);
 #endif
 
-    // Safety Limits
-    if (x < 320) x = 320;
-    if (y < 200) y = 200;
+	if (newmode != -1)
+		setmodeneeded = newmode;
 
-    SDLdoUngrabMouse();
+	if (setmodeneeded)
+		return 1;
 
-    // 1. Update SRB2 Global Video State
-    vid.width = x;
-    vid.height = y;
-    vid.rowbytes = x; 
-    vid.bpp = 1;
-    vid.recalc = 1; 
-
-    // 2. Reallocate video buffer for new resolution
-    // This must be done BEFORE V_Init() to avoid buffer overflow
-    Impl_VideoSetupBuffer();
-
-    // 3. Resize the SDL Window
-    // This triggers SDL to resize its internal buffers safely
-    if (window) {
-        SDL_SetWindowSize(window, x, y);
-    }
-
-    // 4. Get the new Surface pointer from SDL
-    // Instead of malloc/free, we let SDL give us the valid pointer
-    SDL_Surface *surface = SDL_GetWindowSurface(window);
-    if (surface) {
-        screens[0] = (Uint8 *)surface->pixels;
-    }
-
-    // 5. Update the Rects
-    src_rect.w = vid.width;
-    src_rect.h = vid.height;
-
-    // 6. Restart Rendering logic
-    VID_CheckRenderer();
-    refresh_rate = VID_GetRefreshRate();
-    
-    // 7. Recalculate lookups (V_Init is now safe with proper buffer allocation)
-    V_Init(); 
-
-    return 1;
-}
+	return 0;
+}*/
 
 void EMSCRIPTEN_KEEPALIVE inject_text(const char *text)
 {

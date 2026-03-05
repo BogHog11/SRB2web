@@ -11,6 +11,30 @@ var serverOpts = null;
 var launcherMain = elements.getGPId("launcherMain");
 var loaderMain = elements.getGPId("loaderMain");
 
+async function keepAlive() {
+  if (navigator.requestWakeLock) {
+    await navigator.requestWakeLock('screen');
+  }
+  
+  if (navigator.locks) {
+    navigator.locks.request('srb2_game_running', { mode: 'exclusive' }, async () => {
+      await new Promise(resolve => {}); 
+    });
+  }
+
+  startAudioKeepAlive();
+}
+
+function startAudioKeepAlive() {
+  const context = new AudioContext();
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+  gain.gain.value = 0.0001; // Inaudible
+  oscillator.connect(gain);
+  gain.connect(context.destination);
+  oscillator.start();
+}
+
 function enableStartServer(dedicated = false) {
   serverOpts = {
     dedicated: !!dedicated,
@@ -108,6 +132,10 @@ async function initGame() {
 
   await downloadAndSaveAssets();
 
+  loaderContent.textContent = "SRB2 is starting...";
+
+  keepAlive(); // Try to keep the screen awake while playing
+
   FS.mkdirTree("/addons");
   FS.symlink("/home/web_user/.srb2", "/addons/.srb2");
   FS.symlink("/home/web_user/.srb2", "/addons/userdata");
@@ -133,13 +161,21 @@ var GetViewportHeight = () => {
 
 window.ChangeResolution = (x, y) => {
   if (didStart) {
-    if (typeof x === "undefined") x = GetViewportWidth();
-    if (typeof y === "undefined") y = GetViewportHeight();
-    gameCanvas.width = x;
-    gameCanvas.height = y;
-    gameCanvas.style.width = x + "px";
-    gameCanvas.style.height = y + "px";
-    Module.ccall("change_resolution", "number", ["number", "number"], [x, y]);
+    // Use devicePixelRatio to fix the "tiny box in the corner" issue
+    const dpr = window.devicePixelRatio || 1;
+    const targetX = Math.floor((x || GetViewportWidth()) * dpr);
+    const targetY = Math.floor((y || GetViewportHeight()) * dpr);
+
+    gameCanvas.width = targetX;
+    gameCanvas.height = targetY;
+    
+    // Match the CSS size to the viewport size
+    gameCanvas.style.width = (targetX / dpr) + "px";
+    gameCanvas.style.height = (targetY / dpr) + "px";
+
+    setTimeout(() => {
+      Module.ccall("change_resolution", "number", ["number", "number"], [targetX, targetY]);
+    }, 100);
   }
 };
 
@@ -412,5 +448,25 @@ window.addEventListener(
   },
   { once: true },
 );
+
+const wakeupWorker = new Worker(URL.createObjectURL(new Blob([`
+  setInterval(() => {
+    self.postMessage('ping');
+  }, 15); // Send a message every 15ms
+`], {type: 'text/javascript'})));
+
+wakeupWorker.onmessage = () => {
+  //Empty so it keeps tab alive.
+};
+
+//Intentional debug logic, keep the if so it can be turned on and off.
+if (false) {
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "q") {
+      var gl = gameCanvas.getContext('webgl2') || gameCanvas.getContext('webgl');
+      window.alert(gl.getError());
+    }
+  });
+}
 
 module.exports = { startGame, enableStartServer, disableStartServer };

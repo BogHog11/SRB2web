@@ -158,6 +158,9 @@ boolean OglSdlSurface(INT32 w, INT32 h)
 
 	SetModelView(w, h);
 	SetStates();
+	
+	// Set clear color to black before clearing
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	pglClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
 	HWR_Startup();

@@ -929,8 +929,18 @@ static menuitem_t MP_MainMenu[] =
 {
 	{IT_HEADER, NULL, "Join a game", NULL, 0},
 	{IT_STRING|IT_CALL,       NULL, "Server browser...",     M_ConnectMenuModChecks,          12},
+	#ifndef EMSCRIPTEN
 	{IT_STRING|IT_KEYHANDLER, NULL, "Specify server address:", M_HandleConnectIP,    22},
+	#endif
+	#ifdef EMSCRIPTEN
+	{IT_STRING|IT_KEYHANDLER, NULL, "Specify netgame IP:", M_HandleConnectIP,    22},
+	#endif
+	#ifndef EMSCRIPTEN
 	{IT_HEADER, NULL, "Host a game", NULL, 54},
+	#endif
+	#ifdef EMSCRIPTEN
+	{IT_HEADER, NULL, "Host a unlisted netgame", NULL, 54},
+	#endif
 	{IT_STRING|IT_CALL,       NULL, "Internet/LAN...",       M_StartServerMenu,      66},
 	{IT_STRING|IT_CALL,       NULL, "Splitscreen...",        M_StartSplitServerMenu, 76},
 	{IT_HEADER, NULL, "Player setup", NULL, 94},
@@ -1295,10 +1305,9 @@ static menuitem_t OP_VideoOptionsMenu[] =
 {
 	{IT_HEADER, NULL, "Screen", NULL, 0},
 	{IT_STRING | IT_CALL,  NULL, "Set Resolution...",       M_VideoModeMenu,          6},
-
 #if defined (__unix__) || defined (UNIXCOMMON) || defined (HAVE_SDL)
 	{IT_STRING|IT_CVAR,      NULL, "Fullscreen (F11)",          &cv_fullscreen,      11},
-#endif
+	#endif
 	{IT_STRING | IT_CVAR, NULL, "Vertical Sync",                &cv_vidwait,         16},
 #ifdef HWRENDER
 	{IT_STRING | IT_CVAR, NULL, "Renderer (F10)",               &cv_renderer,        21},
@@ -11463,6 +11472,11 @@ static void M_ConnectMenuModChecks(INT32 choice)
 {
 	(void)choice;
 	// okay never mind we want to COMMUNICATE to the player pre-emptively instead of letting them try and then get confused when it doesn't work
+
+	#ifdef EMSCRIPTEN
+		M_StartMessage(M_GetText("Public netgames are available in the SRB2 web launcher.\n\nTo access them, please refresh this page or select 'Quit Game' from the main menu,\nthen use the 'Join/host a public netgame' button."),NULL,MM_NOTHING);
+		return;
+	#endif
 
 	if (modifiedgame)
 	{

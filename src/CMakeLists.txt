@@ -224,7 +224,10 @@ if("${SRB2_CONFIG_HWRENDER}")
 	target_compile_definitions(SRB2SDL2 PRIVATE -DHWRENDER)
 	add_subdirectory(hardware)
 
-	if("${SRB2_CONFIG_STATIC_OPENGL}" AND NOT EMSCRIPTEN) # <-- FIX: Skip OpenGL check for Emscripten
+	# For Emscripten, always use STATIC_OPENGL since WebGL functions are available at compile-time
+	if(EMSCRIPTEN)
+		target_compile_definitions(SRB2SDL2 PRIVATE -DSTATIC_OPENGL)
+	elseif("${SRB2_CONFIG_STATIC_OPENGL}")
 		find_package(OpenGL)
 		if(${OPENGL_FOUND})
 			target_compile_definitions(SRB2SDL2 PRIVATE -DSTATIC_OPENGL)
