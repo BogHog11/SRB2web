@@ -2048,7 +2048,7 @@ int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
     // 3. Resize the SDL Window
     if (window) {
         SDL_SetWindowSize(window, x, y);
-        // On some browsers, we need to pump events to let the context settle
+        // Pumping events helps the browser context catch up
         SDL_PumpEvents();
     }
 
@@ -2065,34 +2065,35 @@ int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
         if (surface) {
             screens[0] = (Uint8 *)surface->pixels;
             if (screens[0]) {
-                // Clear to black (0) to avoid "garbage" or blue/green tints from old memory
+                // Clear to black (0) to avoid "garbage" or blue/green tints
                 memset(screens[0], 0, vid.width * vid.height);
             }
         }
         
-        // Refresh the palette. If we don't do this, the screen often turns green
-        // because the color lookup table is pointing to the wrong memory.
+        // Force a palette reload. The "greenish" or "blue" tint happens because 
+        // the software renderer lost its color lookup table during the GL switch.
         if (W_CheckNumForName("PLAYPAL") != -1)
+        {
             V_SetPalette(0);
+        }
     } 
     else if (rendermode == render_opengl) {
         // --- OPENGL RENDERER PATH ---
         vid.rowbytes = x;
 
-        // GL Error 1282 (Invalid Operation) often means no context is bound.
-        // We check if the window exists before calling GL functions.
         if (window) {
-            // Sync WebGL Viewport
+            // Fix for GL Error 1280: Ensure we reset the viewport correctly
             glViewport(0, 0, x, y);
 
-            // Clear the GL buffer immediately to prevent the "dark" frozen screen
+            // Clear the GL buffer immediately
             glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 #ifdef HWRENDER
-            // Only call hardware updates if the hardware init was successful
             HWR_SetViewSize();
 #endif
+            // Ensure commands are sent to the GPU to prevent a black/frozen screen
+            glFlush();
         }
     }
 
@@ -2101,8 +2102,16 @@ int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
     src_rect.h = vid.height;
 
     // 7. Recalculate all engine constants
-    // This is vital for HUD alignment and fixing the "green" console tint
+    // V_Init is what actually aligns the "green terminal" (console) and HUD
     V_Init(); 
+
+    // Message for netgames (Updated for clarity)
+    /*
+    M_StartMessage(M_GetText("Public netgames are available in the SRB2 web launcher.\n\n"
+                             "To access them, please refresh this page or select 'Quit Game' "
+                             "from the main menu, then use the 'Join/host a public netgame' button."), 
+                             NULL, MM_NOTHING);
+    */
 
     return 1;
 }

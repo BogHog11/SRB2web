@@ -5605,7 +5605,12 @@ void HWR_RenderPlayerView(INT32 viewnumber, player_t *player)
 // Can't have palette rendering if shaders are disabled.
 boolean HWR_ShouldUsePaletteRendering(void)
 {
+#ifdef __EMSCRIPTEN__
+	// WebGL does not properly support 3D textures required for palette rendering
+	return false;
+#else
 	return (pMasterPalette != NULL && cv_glpaletterendering.value && HWR_UseShader());
+#endif
 }
 
 // enable or disable palette rendering state depending on settings and availability

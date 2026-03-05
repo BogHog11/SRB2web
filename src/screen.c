@@ -75,7 +75,7 @@ consvar_t cv_scr_depth = CVAR_INIT ("scr_depth", "16 bits", CV_SAVE, scr_depth_c
 CV_PossibleValue_t cv_renderer_t[] = {
 	{1, "Software"},
 #ifdef HWRENDER
-#if 1
+#ifndef EMSCRIPTEN
 	{2, "OpenGL"},
 #endif
 #endif

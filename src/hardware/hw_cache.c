@@ -1246,7 +1246,8 @@ void HWR_SetMapPalette(void)
 		memcpy(mapPalette, palette, sizeof(mapPalette));
 		// in palette rendering mode, this means that all rgba textures now have wrong colors
 		// and the lookup table is outdated
-		HWR_SetPaletteLookup(mapPalette);
+		if (HWR_ShouldUsePaletteRendering())
+			HWR_SetPaletteLookup(mapPalette);
 		HWD.pfnSetTexturePalette(mapPalette);
 		if (patchformat == GL_TEXFMT_RGBA || textureformat == GL_TEXFMT_RGBA)
 		{
