@@ -510,7 +510,7 @@ function displayPublicGames(games, selectedURL){
         },
         {
           element: "span",
-          textContent: "Players: "+game.ingamePlayers
+          textContent: `Players: ${game.ingamePlayers} / ${game.maxPlayers || "(Unknown)"}`
         },
       ].concat(game.playerNames.map((name) => {
           return {

@@ -13,10 +13,12 @@
 #include "../z_zone.h"
 #include "mserv.h"
 #include "client_connection.h"
+#include "server_connection.h"
 #include "d_clisrv.h"
 
 extern void SRB2_ServerInfoResponse(
     char *name,
+    int *maxPlayers,
     char *map,
     char *map_title,
     INT32 ingame_players,
@@ -50,6 +52,7 @@ void SRB2_GetServerInfo(void)
 
     SRB2_ServerInfoResponse(
         (char *)cv_servername.string,
+        (int *)cv_maxplayers.value,
         G_BuildMapName(gamemap),
         G_BuildMapTitle(gamemap),
         D_NumPlayers(),
