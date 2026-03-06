@@ -232,6 +232,12 @@ class RelayOption {
             className: "relayDescription",
             GPWhenCreated: (elm) => (_this.relayDescriptionSpan = elm),
           },
+          //Public count
+          {
+            element: "span",
+            className: "relayPublicCount",
+            GPWhenCreated: (elm) => (_this.relayPublicCountSpan = elm),
+          },
           //Buttons
           {
             element: "div",
@@ -306,6 +312,39 @@ class RelayOption {
     }
     return url;
   }
+
+  setPublicCount(count) {
+    var {relayPublicCountSpan} = this;
+    if (count == "requesting") {
+      relayPublicCountSpan.textContent = "Loading public netgames...";
+      return;
+    }
+    if (count == "error") {
+      relayPublicCountSpan.textContent = "Error loading public netgames";
+      return;
+    }
+    if (!count) {
+      relayPublicCountSpan.textContent = "No public netgames available";
+      return;
+    }
+    relayPublicCountSpan.textContent = `${count} public netgames available`;
+  }
+
+  async fetchPublicCount() {
+    var url = this.getFetchURL();
+    this.setPublicCount("loading");
+    try{
+      var response = await fetch(url + "public");
+      if (response.ok) {
+        var json = await response.json();
+        this.setPublicCount(json.length);
+      } else {
+        this.setPublicCount("error");
+      }
+    }catch(e){
+      this.setPublicCount("error");
+    }
+  }
   async fetchStatus() {
     var { relayNameSpan, relayDescriptionSpan, statusImg, statusText } = this;
     if (this.firstFetch) {
@@ -314,6 +353,7 @@ class RelayOption {
       relayDescriptionSpan.textContent = "";
       statusText.setAttribute("state", "fetch");
       this.firstFetch = false;
+      this.setPublicCount("loading");
     }
     var online = false;
     var url = this.getFetchURL();
@@ -343,6 +383,7 @@ class RelayOption {
 
           relayDescriptionSpan.textContent = `${json.description}`;
           online = true;
+          this.fetchPublicCount();
         }
       }
     } catch (e) {
@@ -353,6 +394,7 @@ class RelayOption {
       statusImg.src = RelayOption.OFFLINE_IMG;
       statusText.textContent = RelayOption.OFFLINE_TEXT;
       statusText.setAttribute("state", "offline");
+      this.setPublicCount("error");
       return;
     }
     statusImg.src = RelayOption.ONLINE_IMG;

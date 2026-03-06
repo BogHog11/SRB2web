@@ -221,7 +221,7 @@ setInterval(() => {
   relayOpts.forEach((r) => {
     r.fetchStatus();
   });
-}, 5000);
+}, 1000*60*1);
 
 var storedConfig = localStorage.getItem(lstorageName);
 if (storedConfig) {

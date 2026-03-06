@@ -251,6 +251,15 @@ a:hover {
   text-wrap: wrap;
 }
 
+.relayPublicCount {
+  font-size: 14px;
+  white-space: pre;
+  padding-left: 5px;
+  overflow: wrap;
+  text-wrap: wrap;
+  font-weight: bold;
+}
+
 .relayButtons {
   margin-top: 2px;
   display: block;
