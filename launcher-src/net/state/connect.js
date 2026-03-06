@@ -90,7 +90,11 @@ class ConnectState {
         }
       }
 
-      attachSRB2.emitPacket(uint8array, 0, PLACEHOLDER_IP);
+      if (uint8array && typeof uint8array.length !== 'undefined') {
+        try{
+          attachSRB2.emitPacket(uint8array, 0, PLACEHOLDER_IP);
+        }catch(e){}
+      }
     };
 
     attachSRB2.onpacket = this.handleSRB2Packet.bind(this);

@@ -30,6 +30,10 @@ function getPublicHosts() {
 		  host: "srb2web-lan2.onrender.com",
 		  name: "Public server 2",
 	  },	
+    {
+      host: "srb2web-udp-relay.onrender.com",
+      name: "SRB2 UDP to SRB2web Relay (Experimental)",
+    }
 	];
 }
 
