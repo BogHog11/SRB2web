@@ -2154,6 +2154,9 @@ int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
 	if (x < 320) x = 320;
 	if (y < 200) y = 200;
 
+	if (x > 1600) x = 1600;
+	if (y > 900) y = 900;
+
     SDLdoUngrabMouse();
 
     // 1. Update SRB2 Global Video State
@@ -2162,6 +2165,12 @@ int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
     vid.rowbytes = x; 
     vid.bpp = 1;
     vid.recalc = 1; 
+
+    // 2. Resize the SDL Window
+    // This triggers SDL to resize its internal buffers safely
+    if (window) {
+        SDL_SetWindowSize(window, x, y);
+    }
 
     // 3. Get the new Surface pointer from SDL
     // Instead of malloc/free, we let SDL give us the valid pointer
