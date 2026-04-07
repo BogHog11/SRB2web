@@ -203,6 +203,7 @@ static void SDLSetMode(INT32 width, INT32 height, SDL_bool fullscreen, SDL_bool 
 
 	if (window)
 	{
+		#ifndef EMSCRIPTEN
 		if (fullscreen)
 		{
 			wasfullscreen = SDL_TRUE;
@@ -225,6 +226,7 @@ static void SDLSetMode(INT32 width, INT32 height, SDL_bool fullscreen, SDL_bool 
 				);
 			}
 		}
+		#endif
 	}
 	else
 	{
@@ -2149,8 +2151,6 @@ int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
 int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
 {
     // Safety Limits
-    if (x < 320) x = 320;
-    if (y < 200) y = 200;
 
     SDLdoUngrabMouse();
 

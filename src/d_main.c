@@ -1801,8 +1801,9 @@ void D_SRB2Main(void)
 		F_InitMenuPresValues();
 		F_StartTitleScreen();
 	}
-	else
+	else {
 		F_StartIntro(); // Tails 03-03-2002
+	}
 
 	CON_ToggleOff();
 
@@ -1813,6 +1814,16 @@ void D_SRB2Main(void)
 		if (!P_LoadLevel(false, false))
 			I_Quit(); // fail so reset game stuff
 	}
+
+	#ifdef __EMSCRIPTEN__
+			EM_ASM(
+				try {
+					SRB2ReadyToResizeHandler();
+				} catch (err) {
+					console.log('Faild to execute SRB2ReadyToResizeHandler()');
+				}
+			);
+		#endif
 }
 
 const char *D_Home(void)
