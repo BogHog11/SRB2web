@@ -2106,14 +2106,6 @@ extern Uint8 *screens[5];
     // V_Init is what actually aligns the "green terminal" (console) and HUD
     V_Init(); 
 
-    // Message for netgames (Updated for clarity)
-    /*
-    M_StartMessage(M_GetText("Public netgames are available in the SRB2 web launcher.\n\n"
-                             "To access them, please refresh this page or select 'Quit Game' "
-                             "from the main menu, then use the 'Join/host a public netgame' button."), 
-                             NULL, MM_NOTHING);
-    */
-
     return 1;
 }*/
 
