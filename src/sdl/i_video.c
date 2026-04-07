@@ -2033,7 +2033,8 @@ extern SDL_Renderer *renderer;
 extern Uint8 *screens[5]; 
 
 //Using this to resize whenever the resize event is called.
-int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
+//DANGER! THIS IS WHAT WAS CAUSING THE CRASH
+/*int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
 {
     // 1. Force alignment and Safety Limits
     x = (x + 3) & ~3; 
@@ -2114,10 +2115,11 @@ int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
     */
 
     return 1;
-}
+}*/
 
-/*
+
 //original logic in case i need it
+/*
 int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
 {
 	int newmode = -1;
@@ -2150,6 +2152,49 @@ int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
 
 	return 0;
 }*/
+
+//Older version of resizer that doesn't crash
+int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
+{
+    // Safety Limits
+    if (x < 320) x = 320;
+    if (y < 200) y = 200;
+
+    SDLdoUngrabMouse();
+
+    // 1. Update SRB2 Global Video State
+    vid.width = x;
+    vid.height = y;
+    vid.rowbytes = x; 
+    vid.bpp = 1;
+    vid.recalc = 1; 
+
+    // 2. Resize the SDL Window
+    // This triggers SDL to resize its internal buffers safely
+    if (window) {
+        SDL_SetWindowSize(window, x, y);
+    }
+
+    // 3. Get the new Surface pointer from SDL
+    // Instead of malloc/free, we let SDL give us the valid pointer
+    SDL_Surface *surface = SDL_GetWindowSurface(window);
+    if (surface) {
+        screens[0] = (Uint8 *)surface->pixels;
+    }
+
+    // 4. Update the Rects
+    src_rect.w = vid.width;
+    src_rect.h = vid.height;
+
+    // 5. Restart Rendering logic
+    VID_CheckRenderer();
+    refresh_rate = VID_GetRefreshRate();
+    
+    // Recalculate lookups (V_Init is safe now that we capped resolution to 1920)
+    V_Init(); 
+
+    return 1;
+}
 
 void EMSCRIPTEN_KEEPALIVE inject_text(const char *text)
 {
