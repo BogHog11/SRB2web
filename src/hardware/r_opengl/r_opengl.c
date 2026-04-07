@@ -974,20 +974,22 @@ void SetModelView(GLint w, GLint h)
 // -----------------+
 void SetStates(void)
 {
-	// Hurdler: not necessary, is it?
-#ifndef __EMSCRIPTEN__
-	pglShadeModel(GL_SMOOTH);      // iterate vertice colors
+#ifdef GL_LIGHT_MODEL_AMBIENT
+	GLfloat LightDiffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
 #endif
+
+//	GL_DBG_Printf("SetStates()\n");
+
+	// Hurdler: not necessary, is it?
+	pglShadeModel(GL_SMOOTH);      // iterate vertice colors
 	//pglShadeModel(GL_FLAT);
 
 	pglEnable(GL_TEXTURE_2D);      // two-dimensional texturing
 
 	pglTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-#ifndef __EMSCRIPTEN__
 	pglEnable(GL_ALPHA_TEST);
 	pglAlphaFunc(GL_NOTEQUAL, 0.0f);
-#endif
 
 	//pglBlendFunc(GL_ONE, GL_ZERO); // copy pixel to frame buffer (opaque)
 	pglEnable(GL_BLEND);           // enable color blending
@@ -1014,17 +1016,12 @@ void SetStates(void)
 	//pglEnable(GL_CULL_FACE);
 	//pglCullFace(GL_FRONT);
 
-#ifndef __EMSCRIPTEN__
 	pglDisable(GL_FOG);
-#endif
 
 	// Lighting for models
 #ifdef GL_LIGHT_MODEL_AMBIENT
-#ifndef __EMSCRIPTEN__
-	GLfloat LightDiffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
 	pglLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightDiffuse);
 	pglEnable(GL_LIGHT0);
-#endif
 #endif
 
 	// bp : when no t&l :)
@@ -1353,7 +1350,6 @@ static void SetBlendMode(FBITFIELD flags)
 	}
 
 	// Alpha test
-#ifndef __EMSCRIPTEN__
 	switch (flags)
 	{
 		case PF_Masked & PF_Blending:
@@ -1374,7 +1370,6 @@ static void SetBlendMode(FBITFIELD flags)
 			pglAlphaFunc(GL_GREATER, 0.5f);
 			break;
 	}
-#endif
 }
 
 EXPORT void HWRAPI(SetBlend) (FBITFIELD PolyFlags)
@@ -2519,7 +2514,6 @@ static void DrawModelEx(model_t *model, INT32 frameIndex, float duration, float 
 	{
 		if (!gl_shadersenabled)
 		{
-#ifndef __EMSCRIPTEN__
 			ambient[0] = poly.red;
 			ambient[1] = poly.green;
 			ambient[2] = poly.blue;
@@ -2542,11 +2536,8 @@ static void DrawModelEx(model_t *model, INT32 frameIndex, float duration, float 
 			pglEnable(GL_LIGHTING);
 			pglMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
 			pglMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
-#endif
 		}
-#ifndef __EMSCRIPTEN__
 		pglShadeModel(GL_SMOOTH);
-#endif
 	}
 #endif
 	else
@@ -2755,14 +2746,8 @@ static void DrawModelEx(model_t *model, INT32 frameIndex, float duration, float 
 	if (model_lighting)
 	{
 		if (!gl_shadersenabled)
-		{
-#ifndef __EMSCRIPTEN__
 			pglDisable(GL_LIGHTING);
-#endif
-		}
-#ifndef __EMSCRIPTEN__
 		pglShadeModel(GL_FLAT);
-#endif
 	}
 #endif
 }
