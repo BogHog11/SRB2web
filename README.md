@@ -16,6 +16,10 @@ A port of the game for WASM (WebAssembly) using Emscripten, fully supporting LAN
 
 ---
 
+> [!NOTE]
+> This README was heavily generated/edited by Google Gemini AI, also the game woudln't have been ported thanks to it, I really don't know enough of C or C++ to actually make this work,
+> or the perfect commands to compile, if there is an issue you can report it on the issues tab, but expect a lot of AI to be used here.
+
 ## Compilation Instructions
 
 Below are the instructions for compiling the Sonic Robo Blast 2 (SRB2) WASM files and building the launcher website.
