@@ -1851,9 +1851,7 @@ void I_StartupGraphics(void)
 	// Create window
 	//Impl_CreateWindow(USE_FULLSCREEN);
 	//Impl_SetWindowName("SRB2 "VERSIONSTRING);
-	#ifndef EMSCRIPTEN
 	VID_SetMode(VID_GetModeForSize(BASEVIDWIDTH, BASEVIDHEIGHT));
-	#endif
 
 	vid.width = BASEVIDWIDTH; // Default size for startup
 	vid.height = BASEVIDHEIGHT; // BitsPerPixel is the SDL interface's

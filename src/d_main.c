@@ -1786,14 +1786,17 @@ void D_SRB2Main(void)
 				D_MapChange(pstartmap, gametype, ultimatemode, true, 0, false, false);
 			}
 		}
+
 	}
 	else if (M_CheckParm("-skipintro"))
 	{
 		F_InitMenuPresValues();
 		F_StartTitleScreen();
 	}
-	else
+	else {
 		F_StartIntro(); // Tails 03-03-2002
+	}
+
 
 	CON_ToggleOff();
 
@@ -1804,6 +1807,11 @@ void D_SRB2Main(void)
 		if (!P_LoadLevel(false, false))
 			I_Quit(); // fail so reset game stuff
 	}
+
+	if (M_CheckParm("-connect"))
+    {
+        VID_SetMode(VID_GetModeForSize(BASEVIDWIDTH*2, BASEVIDHEIGHT*2));
+    }
 }
 
 const char *D_Home(void)
@@ -1938,3 +1946,9 @@ boolean D_CheckPathAllowed(const char *path, const char *why)
 
 	return true;
 }
+
+#ifdef EMSCRIPTEN
+void EMSCRIPTEN_KEEPALIVE SRB2_SendGreenTerminal(const char *message) {
+	COM_BufAddText(message);
+}
+#endif
