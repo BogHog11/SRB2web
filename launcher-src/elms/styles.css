@@ -1,9 +1,3 @@
-@font-face {
-  src: url("pixel3.ttf");
-  font-family: PixelFont;
-  font-size: 20px;
-}
-
 body {
   background: #000000;
   font-weight: bold;

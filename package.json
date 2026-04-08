@@ -7,7 +7,8 @@
     "watch": "webpack --watch",
     "format": "prettier --write \"launcher-src/**/*.js\"",
     "relay": "node relay-src/index.js",
-    "watchrelay": "node --watch relay-src/index.js"
+    "watchrelay": "node --watch relay-src/index.js",
+    "build-single-html": "webpack && node single-html-gen.js"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^12.0.2",
