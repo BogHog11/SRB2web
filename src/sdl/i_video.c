@@ -22,7 +22,6 @@
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
-#include <GLES2/gl2.h>
 #endif
 
 #include <stdlib.h>
@@ -203,7 +202,6 @@ static void SDLSetMode(INT32 width, INT32 height, SDL_bool fullscreen, SDL_bool 
 
 	if (window)
 	{
-		#ifndef EMSCRIPTEN
 		if (fullscreen)
 		{
 			wasfullscreen = SDL_TRUE;
@@ -226,7 +224,6 @@ static void SDLSetMode(INT32 width, INT32 height, SDL_bool fullscreen, SDL_bool 
 				);
 			}
 		}
-		#endif
 	}
 	else
 	{
@@ -1674,18 +1671,6 @@ static SDL_bool Impl_CreateWindow(SDL_bool fullscreen)
 	// Some GPU drivers may give us a 16-bit depth buffer since the
 	// default value for SDL_GL_DEPTH_SIZE is 16.
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	
-	// For Emscripten/WebGL, ensure we have a proper context
-#ifdef __EMSCRIPTEN__
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-	// Ensure color buffer is configured
-	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-#endif
 #endif
 
 	// Create a window
@@ -1866,24 +1851,24 @@ void I_StartupGraphics(void)
 	// Create window
 	//Impl_CreateWindow(USE_FULLSCREEN);
 	//Impl_SetWindowName("SRB2 "VERSIONSTRING);
+	VID_SetMode(VID_GetModeForSize(BASEVIDWIDTH, BASEVIDHEIGHT));
+
+	vid.width = BASEVIDWIDTH; // Default size for startup
+	vid.height = BASEVIDHEIGHT; // BitsPerPixel is the SDL interface's
+	vid.recalc = true; // Set up the console stufff
+	vid.direct = NULL; // Maybe direct access?
+	vid.bpp = 1; // This is the game engine's Bpp
+	vid.WndParent = NULL; //For the window?
 
 #ifdef HAVE_TTF
 	I_ShutdownTTF();
 #endif
 
-	// Set the initial video mode. VID_SetMode will update vid.width/height
-	// On Emscripten, use 2x scale; on other platforms use 1x
 #ifdef __EMSCRIPTEN__
 	VID_SetMode(VID_GetModeForSize(BASEVIDWIDTH*2, BASEVIDHEIGHT*2));
 #else
 	VID_SetMode(VID_GetModeForSize(BASEVIDWIDTH, BASEVIDHEIGHT));
 #endif
-
-	// These must be set AFTER VID_SetMode to match the actual video mode
-	vid.recalc = true; // Set up the console stufff
-	vid.direct = NULL; // Maybe direct access?
-	vid.bpp = 1; // This is the game engine's Bpp
-	vid.WndParent = NULL; //For the window?
 
 	if (M_CheckParm("-nomousegrab"))
 		mousegrabok = SDL_FALSE;
@@ -2034,128 +2019,11 @@ extern SDL_Window *window;
 extern SDL_Renderer *renderer;
 extern Uint8 *screens[5]; 
 
-//Using this to resize whenever the resize event is called.
-//DANGER! THIS IS WHAT WAS CAUSING THE CRASH
-/*int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
-{
-    // 1. Force alignment and Safety Limits
-    x = (x + 3) & ~3; 
-    if (x < 320) x = 320;
-    if (y < 200) y = 200;
-
-    // 2. Update SRB2 Global Video State
-    vid.width = x;
-    vid.height = y;
-    vid.recalc = 1; 
-
-    // 3. Resize the SDL Window
-    if (window) {
-        SDL_SetWindowSize(window, x, y);
-        // Pumping events helps the browser context catch up
-        SDL_PumpEvents();
-    }
-
-    // 4. Ensure the renderer is actually ready
-    // This handles the internal hand-off between Soft and OpenGL
-    VID_CheckRenderer();
-
-    // 5. Branching Logic based on Renderer
-    if (rendermode == render_soft) {
-        // --- SOFTWARE RENDERER PATH ---
-        vid.rowbytes = x; 
-        
-        SDL_Surface *surface = SDL_GetWindowSurface(window);
-        if (surface) {
-            screens[0] = (Uint8 *)surface->pixels;
-            if (screens[0]) {
-                // Clear to black (0) to avoid "garbage" or blue/green tints
-                memset(screens[0], 0, vid.width * vid.height);
-            }
-        }
-        
-        // Force a palette reload. The "greenish" or "blue" tint happens because 
-        // the software renderer lost its color lookup table during the GL switch.
-        if (W_CheckNumForName("PLAYPAL") != -1)
-        {
-            V_SetPalette(0);
-        }
-    } 
-    else if (rendermode == render_opengl) {
-        // --- OPENGL RENDERER PATH ---
-        vid.rowbytes = x;
-
-        if (window) {
-            // Fix for GL Error 1280: Ensure we reset the viewport correctly
-            glViewport(0, 0, x, y);
-
-            // Clear the GL buffer immediately
-            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-#ifdef HWRENDER
-            HWR_SetViewSize();
-#endif
-            // Ensure commands are sent to the GPU to prevent a black/frozen screen
-            glFlush();
-        }
-    }
-
-    // 6. Update UI/Scaling Rects
-    src_rect.w = vid.width;
-    src_rect.h = vid.height;
-
-    // 7. Recalculate all engine constants
-    // V_Init is what actually aligns the "green terminal" (console) and HUD
-    V_Init(); 
-
-    return 1;
-}*/
-
-
-//original logic in case i need it
-/*
-int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
-{
-	int newmode = -1;
-
-	if ( x < BASEVIDWIDTH*1 && y < BASEVIDHEIGHT*1)
-		newmode = VID_GetModeForSize(BASEVIDWIDTH*1, BASEVIDHEIGHT*1);
-	else if (x < BASEVIDWIDTH*2 && y < BASEVIDHEIGHT*2)
-		newmode = VID_GetModeForSize(BASEVIDWIDTH*1, BASEVIDHEIGHT*1);
-	else if (x < BASEVIDWIDTH*3 && y < BASEVIDHEIGHT*3)
-		newmode = VID_GetModeForSize(BASEVIDWIDTH*2, BASEVIDHEIGHT*2);
-#if 0
-	else if (x < BASEVIDWIDTH*4 && y < BASEVIDHEIGHT*4)
-		newmode = VID_GetModeForSize(BASEVIDWIDTH*3, BASEVIDHEIGHT*3);
-	else if (x < BASEVIDWIDTH*5 && y < BASEVIDHEIGHT*5)
-		newmode = VID_GetModeForSize(BASEVIDWIDTH*4, BASEVIDHEIGHT*4);
-	else if (x < BASEVIDWIDTH*6 && y < BASEVIDHEIGHT*6)
-		newmode = VID_GetModeForSize(BASEVIDWIDTH*5, BASEVIDHEIGHT*5);
-	else
-		newmode = VID_GetModeForSize(BASEVIDWIDTH*6, BASEVIDHEIGHT*6);
-#else
-	else
-		newmode = VID_GetModeForSize(BASEVIDWIDTH*2, BASEVIDHEIGHT*2);
-#endif
-
-	if (newmode != -1)
-		setmodeneeded = newmode;
-
-	if (setmodeneeded)
-		return 1;
-
-	return 0;
-}*/
-
-//Older version of resizer that doesn't crash
 int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
 {
     // Safety Limits
-	if (x < 320) x = 320;
-	if (y < 200) y = 200;
-
-	if (x > 1600) x = 1600;
-	if (y > 900) y = 900;
+    if (x < 320) x = 320;
+    if (y < 200) y = 200;
 
     SDLdoUngrabMouse();
 

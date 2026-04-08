@@ -1538,15 +1538,6 @@ void D_SRB2Main(void)
 	//--------------------------------------------------------- CONFIG.CFG
 	M_FirstLoadConfig(); // WARNING : this do a "COM_BufExecute()"
 
-#ifdef __EMSCRIPTEN__
-	// Force 2x scale resolution on Emscripten for proper display
-	// This ensures the game displays at readable size in browsers
-	CV_StealthSetValue(&cv_scr_width, BASEVIDWIDTH*2);
-	CV_StealthSetValue(&cv_scr_height, BASEVIDHEIGHT*2);
-	CV_StealthSetValue(&cv_scr_width_w, BASEVIDWIDTH*2);
-	CV_StealthSetValue(&cv_scr_height_w, BASEVIDHEIGHT*2);
-#endif
-
 	if (M_CheckParm("-gamedata") && M_IsNextParm())
 	{
 		// Moved from G_LoadGameData itself, as it would cause some crazy
@@ -1801,9 +1792,8 @@ void D_SRB2Main(void)
 		F_InitMenuPresValues();
 		F_StartTitleScreen();
 	}
-	else {
+	else
 		F_StartIntro(); // Tails 03-03-2002
-	}
 
 	CON_ToggleOff();
 
@@ -1814,16 +1804,6 @@ void D_SRB2Main(void)
 		if (!P_LoadLevel(false, false))
 			I_Quit(); // fail so reset game stuff
 	}
-
-	#ifdef __EMSCRIPTEN__
-			EM_ASM(
-				try {
-					SRB2ReadyToResizeHandler();
-				} catch (err) {
-					console.log('Faild to execute SRB2ReadyToResizeHandler()');
-				}
-			);
-		#endif
 }
 
 const char *D_Home(void)
