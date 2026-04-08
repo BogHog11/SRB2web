@@ -1,5 +1,5 @@
 var elements = require("./gp2/elements.js");
-elements.appendElementsFromJSON(document.body, require("./elms.js"));
+elements.appendElementsFromJSON(document.body, require("./elms"));
 
 var gameCanvas = elements.getGPId("gameCanvas");
 var launcherMain = elements.getGPId("launcherMain");

@@ -314,7 +314,7 @@ class RelayOption {
   }
 
   setPublicCount(count) {
-    var {relayPublicCountSpan} = this;
+    var { relayPublicCountSpan } = this;
     if (count == "requesting") {
       relayPublicCountSpan.textContent = "Loading public netgames...";
       return;
@@ -333,7 +333,7 @@ class RelayOption {
   async fetchPublicCount() {
     var url = this.getFetchURL();
     this.setPublicCount("loading");
-    try{
+    try {
       var response = await fetch(url + "public");
       if (response.ok) {
         var json = await response.json();
@@ -341,7 +341,7 @@ class RelayOption {
       } else {
         this.setPublicCount("error");
       }
-    }catch(e){
+    } catch (e) {
       this.setPublicCount("error");
     }
   }

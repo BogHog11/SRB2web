@@ -409,7 +409,7 @@ filePathInput.addEventListener("change", function () {
 (async function () {
   try {
     // 1. Wait for everything to be created and synced
-    await loadFilesystem(); 
+    await loadFilesystem();
     loadingScreen.hidden = true;
 
     // 2. Set the global FS reference from the Module
@@ -432,7 +432,6 @@ filePathInput.addEventListener("change", function () {
         dialog.alert("Navigation failed. Resetting to root directory.");
       }
     }, 100);
-
   } catch (e) {
     console.error("FS Load Error:", e);
     dialog.alert("Failed to load filesystem: " + e + "\nReload to try again.");

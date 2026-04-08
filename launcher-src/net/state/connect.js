@@ -90,10 +90,10 @@ class ConnectState {
         }
       }
 
-      if (uint8array && typeof uint8array.length !== 'undefined') {
-        try{
+      if (uint8array && typeof uint8array.length !== "undefined") {
+        try {
           attachSRB2.emitPacket(uint8array, 0, PLACEHOLDER_IP);
-        }catch(e){}
+        } catch (e) {}
       }
     };
 

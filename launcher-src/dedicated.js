@@ -18,18 +18,18 @@ function addLine(txt) {
   var text = "";
   for (var i = 0; i < txt.length; i++) {
     if (txt[i] == "\n") {
-        curSpan.textContent = text;
-        dedicatedServerLogs.appendChild(curSpan);
-        dedicatedServerLogs.appendChild(document.createElement("br"));
-        scrollToBottom();
-        text = "";
-        curSpan = document.createElement("span");
+      curSpan.textContent = text;
+      dedicatedServerLogs.appendChild(curSpan);
+      dedicatedServerLogs.appendChild(document.createElement("br"));
+      scrollToBottom();
+      text = "";
+      curSpan = document.createElement("span");
     } else {
-        text += txt[i];
+      text += txt[i];
     }
   }
-    curSpan.textContent = text;
-    dedicatedServerLogs.appendChild(curSpan);
+  curSpan.textContent = text;
+  dedicatedServerLogs.appendChild(curSpan);
 }
 
 class DedicatedServerLogs {

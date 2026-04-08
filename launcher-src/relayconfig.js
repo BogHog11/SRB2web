@@ -8,7 +8,9 @@ var RelayOption = require("./relayoption.js");
 var net = require("./net");
 
 var browsePublicGames = elements.getGPId("browsePublicGames");
-var publicNetgameBrowserContainer = elements.getGPId("publicNetgameBrowserContainer");
+var publicNetgameBrowserContainer = elements.getGPId(
+  "publicNetgameBrowserContainer",
+);
 var publicNetgameBrowser = elements.getGPId("publicNetgameBrowser");
 var publicNetgameBrowserLeft = elements.getGPId("publicNetgameBrowserLeft");
 var publicNetgameBrowserRight = elements.getGPId("publicNetgameBrowserRight");
@@ -21,34 +23,34 @@ var relayEnabled = true;
 var webrtcHostEnabled = true;
 
 function getPublicHosts() {
-	return [
-		{
-			host: "srb2web-lan.onrender.com",
-			name: "Public server 1",
-		},
-	];
+  return [
+    {
+      host: "srb2web-lan.onrender.com",
+      name: "Public server 1",
+    },
+  ];
 }
 
 var defaultRelays = getPublicHosts();
 
-
 async function setBrowsePublicGamesText(count) {
   if (count == 0) {
-    browsePublicGames.textContent = "Join/host a public netgame (none active yet)";
+    browsePublicGames.textContent =
+      "Join/host a public netgame (none active yet)";
     return;
   }
   browsePublicGames.textContent = `Join/host a public netgame (${count} netgames active)`;
 }
 async function updatePublicNetgameCount() {
-  try{
+  try {
     var games = await net.listPublicGames();
     setBrowsePublicGamesText(games.length);
-  }catch(e){
+  } catch (e) {
     setBrowsePublicGamesText(0);
   }
 }
 
-setInterval(updatePublicNetgameCount,1000*60*1);
+setInterval(updatePublicNetgameCount, 1000 * 60 * 1);
 
 function saveRelays() {
   relays = relayOpts.map((r) => r.save());
@@ -101,7 +103,7 @@ function addRelayIfNotExist(relay, useThisOne) {
     return false;
   }
   relays.push(relay);
-  usedRelay = relays.length-1;
+  usedRelay = relays.length - 1;
   reloadRelayConfig();
   saveRelays();
   return true;
@@ -117,7 +119,7 @@ addRelayButton.onclick = async function () {
     return;
   }
   relays.push(relay);
-  usedRelay = relays.length-1;
+  usedRelay = relays.length - 1;
   reloadRelayConfig();
   saveRelays();
 };
@@ -128,7 +130,7 @@ addDefaultServers.onclick = async function () {
     for (var relay of defaults) {
       addRelayIfNotExist(relay);
     }
-    usedRelay = relays.length-defaults.length;
+    usedRelay = relays.length - defaults.length;
     reloadRelayConfig();
     saveRelays();
   }
@@ -209,11 +211,14 @@ webrtcHostCheckbox.onchange = async function () {
   reloadRelayConfig();
 };
 
-setInterval(() => {
-  relayOpts.forEach((r) => {
-    r.fetchStatus();
-  });
-}, 1000*60*1);
+setInterval(
+  () => {
+    relayOpts.forEach((r) => {
+      r.fetchStatus();
+    });
+  },
+  1000 * 60 * 1,
+);
 
 var storedConfig = localStorage.getItem(lstorageName);
 if (storedConfig) {
@@ -237,7 +242,6 @@ if (storedConfig) {
 reloadRelayConfig();
 net.disablePublic();
 
-
 //Browser for public games.
 
 function closePublicList() {
@@ -249,86 +253,96 @@ function getCloseButton() {
     element: "div",
     className: "button publicNetgameBrowserCloseButton",
     textContent: "Close",
-    onclick: closePublicList
+    onclick: closePublicList,
   };
 }
 
 function getHostButton(hostClicked) {
   return {
-      element: "div",
-      className: "publicNetgameItem",
-      onclick: hostClicked,
-      children: [
-        {
-          element: "div",
-          style: {display: "flex", fontSize: "32px", alignItems: "center", justifyContent: "center"},
-          children: [
-            {
-              element: "img",
-              src: "images/host.svg",
-              className: "refreshIcon"
-            },
-            "Host public netgame"
-          ]
-        }
-      ]
-    };
+    element: "div",
+    className: "publicNetgameItem",
+    onclick: hostClicked,
+    children: [
+      {
+        element: "div",
+        style: {
+          display: "flex",
+          fontSize: "32px",
+          alignItems: "center",
+          justifyContent: "center",
+        },
+        children: [
+          {
+            element: "img",
+            src: "images/host.svg",
+            className: "refreshIcon",
+          },
+          "Host public netgame",
+        ],
+      },
+    ],
+  };
 }
 
 function getReloadButton(reload) {
   return {
-      element: "div",
-      className: "publicNetgameItem",
-      onclick: reload,
-      children: [
-        {
-          element: "div",
-          style: {display: "flex", fontSize: "32px", alignItems: "center", justifyContent: "center"},
-          children: [
-            {
-              element: "img",
-              src: "images/refresh.svg",
-              className: "refreshIcon"
-            },
-            "Refresh"
-          ]
-        }
-      ]
-    };
+    element: "div",
+    className: "publicNetgameItem",
+    onclick: reload,
+    children: [
+      {
+        element: "div",
+        style: {
+          display: "flex",
+          fontSize: "32px",
+          alignItems: "center",
+          justifyContent: "center",
+        },
+        children: [
+          {
+            element: "img",
+            src: "images/refresh.svg",
+            className: "refreshIcon",
+          },
+          "Refresh",
+        ],
+      },
+    ],
+  };
 }
 
 function gameToButton(game, selectedURL, onClick) {
   return {
     element: "div",
     className: "publicNetgameItem",
-    eventListeners: [{event: "click", func: onClick}],
+    eventListeners: [{ event: "click", func: onClick }],
     children: [
       {
         element: "div",
         style: {
           display: "flex",
           alignItems: "center",
-          gap: "2px"
+          gap: "2px",
         },
         children: [
           {
             element: "img",
             className: "netgameCommunicationType",
-            src: game.usesWebRTC ? "images/webrtc.svg" : "images/websocket.svg"
+            src: game.usesWebRTC ? "images/webrtc.svg" : "images/websocket.svg",
           },
           {
             element: "span",
             className: "netgameServerName",
-            textContent: game.name
+            textContent: game.name,
           },
-        ]
+        ],
       },
       {
         element: "span",
         className: "netgameServerURL",
-        textContent: game.url
+        textContent: game.url,
       },
-    ]
+    ],
   };
 }
 
@@ -340,7 +354,7 @@ async function launchToNetgame(game) {
 
   closePublicList();
   startGame({
-    joinURL: game.url
+    joinURL: game.url,
   });
 }
 
@@ -354,64 +368,68 @@ async function launchToHost() {
   net.enablePublic();
   if (autoStart) {
     startGame({
-      host: true
+      host: true,
     });
   } else {
     startGame();
   }
 }
 
-function displayPublicGames(games, selectedURL){
+function displayPublicGames(games, selectedURL) {
   setBrowsePublicGamesText(games.length);
   publicNetgameBrowser.hidden = false;
-  elements.setInnerJSON(publicNetgameBrowserLeft, [
-    {
-      element: "span",
-      style: {
-        fontWeight: "bold"
-      },
-      children: [
-        "Now viewing on server: ",
-        {
-          element: "br"
+  elements.setInnerJSON(
+    publicNetgameBrowserLeft,
+    [
+      {
+        element: "span",
+        style: {
+          fontWeight: "bold",
         },
-        {
-          element: "span",
-          className: "relayHost",
-          textContent: currentHost,
-          style: {
-            fontSize: "20px"
-          }
-        }
-      ]
-    },
-    {
-      element: "div",
-      className: "publicGameSeparator",
-    },
-    getReloadButton(loadPublicList),
-    getHostButton(launchToHost),
-    {
-      element: "div",
-      className: "publicGameSeparator",
-    }
-  ].concat(games.map((game) => {
-    return gameToButton(game, selectedURL, () => {
-      displayPublicGames(games, game.url);
-    });
-  })));
-
+        children: [
+          "Now viewing on server: ",
+          {
+            element: "br",
+          },
+          {
+            element: "span",
+            className: "relayHost",
+            textContent: currentHost,
+            style: {
+              fontSize: "20px",
+            },
+          },
+        ],
+      },
+      {
+        element: "div",
+        className: "publicGameSeparator",
+      },
+      getReloadButton(loadPublicList),
+      getHostButton(launchToHost),
+      {
+        element: "div",
+        className: "publicGameSeparator",
+      },
+    ].concat(
+      games.map((game) => {
+        return gameToButton(game, selectedURL, () => {
+          displayPublicGames(games, game.url);
+        });
+      }),
+    ),
+  );
 
   var game = games.find((g) => selectedURL == g.url);
-  
+
   if (!game) {
     elements.setInnerJSON(publicNetgameBrowserRight, [
       {
         element: "span",
         className: "viewPublicNetgameDetails",
-        textContent: "Click on a netgame to view it's details"
+        textContent: "Click on a netgame to view it's details",
       },
-      getCloseButton()
+      getCloseButton(),
     ]);
 
     return;
@@ -425,19 +443,19 @@ function displayPublicGames(games, selectedURL){
         {
           element: "span",
           className: "netgameServerName",
-          textContent: game.name
+          textContent: game.name,
         },
         {
-          element: "br"
+          element: "br",
         },
         {
           element: "span",
           className: "netgameServerURL",
-          textContent: game.url
+          textContent: game.url,
         },
         {
           element: "div",
-          className: "publicGameSeparator"
+          className: "publicGameSeparator",
         },
 
         {
@@ -449,84 +467,92 @@ function displayPublicGames(games, selectedURL){
               style: {
                 display: "flex",
                 alignItems: "center",
-                gap: "2px"
+                gap: "2px",
               },
-              onclick: () => {launchToNetgame(game)},
+              onclick: () => {
+                launchToNetgame(game);
+              },
               children: [
                 {
                   element: "img",
                   style: {
                     width: "32px",
                     height: "32px",
-                    objectFit: "contain"
+                    objectFit: "contain",
                   },
-                  src: "images/wifi.svg"
+                  src: "images/wifi.svg",
                 },
                 {
                   element: "span",
-                  textContent: "Connect/Join"
+                  textContent: "Connect/Join",
                 },
-              ]
+              ],
             },
-          ]
+          ],
         },
 
         {
           element: "div",
-          className: "publicGameSeparator"
+          className: "publicGameSeparator",
         },
         {
-          element: "br"
+          element: "br",
         },
         {
           element: "li",
           children: [
             {
               element: "ri",
-              textContent: game.mapTitle ? "Map Title: "+game.mapTitle : "(No map title)"
+              textContent: game.mapTitle
+                ? "Map Title: " + game.mapTitle
+                : "(No map title)",
             },
-          ]
+          ],
         },
         {
           element: "li",
           children: [
             {
               element: "ri",
-              textContent: game.map ? "Map: "+game.map : "(No map)"
+              textContent: game.map ? "Map: " + game.map : "(No map)",
             },
-          ]
+          ],
         },
 
         {
-          element: "br"
+          element: "br",
         },
         {
           element: "div",
-          className: "publicGameSeparator"
+          className: "publicGameSeparator",
         },
         {
           element: "span",
-          textContent: `Players: ${game.ingamePlayers} / ${game.maxPlayers || "(Unknown)"}`
+          textContent: `Players: ${game.ingamePlayers} / ${game.maxPlayers || "(Unknown)"}`,
         },
-      ].concat(game.playerNames.map((name) => {
+      ].concat(
+        game.playerNames.map((name) => {
           return {
             element: "li",
-            textContent: name
+            textContent: name,
           };
-        }))
+        }),
+      ),
     },
     getCloseButton(),
   ]);
-
 }
 
 async function loadPublicList() {
   publicNetgameBrowserContainer.hidden = false;
   publicNetgameBrowser.hidden = true;
-  try{
+  try {
     var games = await net.listPublicGames();
-  }catch(e){
-    dialog.alert("Failed to fetch public hosted games. Make sure your selected relay server is working and try again.\nError: "+e);
+  } catch (e) {
+    dialog.alert(
+      "Failed to fetch public hosted games. Make sure your selected relay server is working and try again.\nError: " +
+        e,
+    );
     console.error(e);
     publicNetgameBrowserContainer.hidden = true;
     return;

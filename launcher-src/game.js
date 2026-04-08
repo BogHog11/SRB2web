@@ -13,13 +13,17 @@ var loaderMain = elements.getGPId("loaderMain");
 
 async function keepAlive() {
   if (navigator.requestWakeLock) {
-    await navigator.requestWakeLock('screen');
+    await navigator.requestWakeLock("screen");
   }
-  
+
   if (navigator.locks) {
-    navigator.locks.request('srb2_game_running', { mode: 'exclusive' }, async () => {
-      await new Promise(resolve => {}); 
-    });
+    navigator.locks.request(
+      "srb2_game_running",
+      { mode: "exclusive" },
+      async () => {
+        await new Promise((resolve) => {});
+      },
+    );
   }
 
   startAudioKeepAlive();
@@ -82,7 +86,7 @@ async function downloadAndSaveAssets() {
       //console.log(
       //  `[CACHE MISS] Downloading ${asset.filename} from internet...`,
       //);
-      loaderContent.textContent = `Downloading ${asset.filename}...`;
+      loaderContent.textContent = `Downloading ${asset.filename}... (This may take a few minutes on first load!)`;
 
       try {
         // --- NEW CODE START ---
@@ -165,20 +169,20 @@ var GetViewportHeight = () => {
   return Math.round(document.documentElement.clientHeight);
 };
 
-function getTargetSize(x,y) {
+function getTargetSize(x, y) {
   // Use devicePixelRatio to fix the "tiny box in the corner" issue
-    const dpr = window.devicePixelRatio || 1;
-    const targetX = Math.floor((x || GetViewportWidth()) * dpr);
-    const targetY = Math.floor((y || GetViewportHeight()) * dpr);
+  const dpr = window.devicePixelRatio || 1;
+  const targetX = Math.floor((x || GetViewportWidth()) * dpr);
+  const targetY = Math.floor((y || GetViewportHeight()) * dpr);
 
-    gameCanvas.width = targetX;
-    gameCanvas.height = targetY;
-    
-    // Match the CSS size to the viewport size
-    gameCanvas.style.width = (targetX / dpr) + "px";
-    gameCanvas.style.height = (targetY / dpr) + "px";
+  gameCanvas.width = targetX;
+  gameCanvas.height = targetY;
 
-    return {targetX, targetY};
+  // Match the CSS size to the viewport size
+  gameCanvas.style.width = targetX / dpr + "px";
+  gameCanvas.style.height = targetY / dpr + "px";
+
+  return { targetX, targetY };
 }
 
 window.ChangeResolution = (x, y) => {
@@ -196,7 +200,7 @@ window.ChangeResolution = (x, y) => {
 async function startGame(options = {}) {
   loaderMain.hidden = false;
   launcherMain.hidden = true;
-  var {targetX, targetY} = getTargetSize();
+  var { targetX, targetY } = getTargetSize();
 
   Module.arguments = [
     /*'-width',
@@ -467,11 +471,20 @@ window.addEventListener(
   { once: true },
 );
 
-const wakeupWorker = new Worker(URL.createObjectURL(new Blob([`
+const wakeupWorker = new Worker(
+  URL.createObjectURL(
+    new Blob(
+      [
+        `
   setInterval(() => {
     self.postMessage('ping');
   }, 15); // Send a message every 15ms
-`], {type: 'text/javascript'})));
+`,
+      ],
+      { type: "text/javascript" },
+    ),
+  ),
+);
 
 wakeupWorker.onmessage = () => {
   //Empty so it keeps tab alive.
@@ -481,7 +494,8 @@ wakeupWorker.onmessage = () => {
 if (false) {
   window.addEventListener("keydown", (e) => {
     if (e.key === "q") {
-      var gl = gameCanvas.getContext('webgl2') || gameCanvas.getContext('webgl');
+      var gl =
+        gameCanvas.getContext("webgl2") || gameCanvas.getContext("webgl");
       window.alert(gl.getError());
     }
   });
