@@ -10,8 +10,8 @@ A port of the game for WASM (WebAssembly) using Emscripten, fully supporting LAN
 
 ## Live Sites
 
+ - [Gvbvdxx.me (My own domain)](https://srb2web.gvbvdxx.me)
  - [Vercel](https://gvbvdxx-srb2-web.vercel.app/)
- - [Github Pages](https://gvbvdxxalt2.github.io/SRB2web/)
  - [Netlify](https://gvbvdxx-srb2web.netlify.app/)
 
 ---
