@@ -12,8 +12,10 @@ launcherMain.hidden = false;
 var playButton = elements.getGPId("playButton");
 var { startGame } = require("./game.js");
 
+var { getDisplayOptions } = require("./display-settings.js");
+
 playButton.addEventListener("click", function () {
-  startGame();
+  startGame(getDisplayOptions());
 });
 
 require("./relayconfig.js");

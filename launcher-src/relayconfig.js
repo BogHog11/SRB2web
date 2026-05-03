@@ -346,6 +346,7 @@ function gameToButton(game, selectedURL, onClick) {
   };
 }
 
+var { getDisplayOptions } = require("./display-settings.js");
 var { startGame } = require("./game.js");
 
 async function launchToNetgame(game) {
@@ -354,6 +355,7 @@ async function launchToNetgame(game) {
 
   closePublicList();
   startGame({
+    ...getDisplayOptions(),
     joinURL: game.url,
   });
 }
@@ -368,10 +370,11 @@ async function launchToHost() {
   net.enablePublic();
   if (autoStart) {
     startGame({
+      ...getDisplayOptions(),
       host: true,
     });
   } else {
-    startGame();
+    startGame(getDisplayOptions());
   }
 }
 

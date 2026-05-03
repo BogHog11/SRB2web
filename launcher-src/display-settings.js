@@ -32,7 +32,7 @@ function addLocalStorageHandler(elm, id) {
     }
 
     elm.addEventListener("change", () => {
-        localStorage.writeItem(""+id, elm.value);
+        localStorage.setItem(""+id, elm.value);
     });
 }
 
