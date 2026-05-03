@@ -506,3 +506,20 @@ a:hover {
   font-weight: bold;
   font-size: 35px;
 }
+
+.displayOption {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.selectOptions {
+  all: unset;
+  display: block;
+  box-sizing: border-box;
+  padding: 4px 4px;
+  color: black;
+  background: rgba(255,255,255,0.7);
+  appearance: auto;
+  border-radius: 5px;
+}

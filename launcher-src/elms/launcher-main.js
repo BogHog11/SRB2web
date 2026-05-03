@@ -26,6 +26,12 @@ module.exports = [
 
       { element: "div", className: "sep" },
 
+      ...require("./display-options.js"),
+
+      ////////////////////////////////////////////
+
+      { element: "div", className: "sep" },
+
       {
         element: "div",
         children: require("./launcher-details.js"),

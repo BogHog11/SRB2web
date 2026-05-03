@@ -10,6 +10,7 @@ var loaderContent = elements.getGPId("loaderContent");
 var serverOpts = null;
 var launcherMain = elements.getGPId("launcherMain");
 var loaderMain = elements.getGPId("loaderMain");
+var resolutionChangeMethod = "safe";
 
 var connectAddr = null;
 
@@ -107,7 +108,11 @@ async function downloadAndSaveAssets() {
 
         // 3. Put the successful response into the cache
         // We must clone() it because the response body can only be read once
-        await cache.put(request, networkResponse.clone());
+        try{
+          await cache.put(request, networkResponse.clone());
+        }catch(e){
+          console.warn(`Unable to put in cache, it won't load fast next time. ${e}`);
+        }
 
         // 4. Use the network response immediately so we don't have to look it up again
         response = networkResponse;
@@ -195,7 +200,7 @@ window.ChangeResolution = (x, y) => {
     gameCanvas.height = y;
     gameCanvas.style.width = x + "px";
     gameCanvas.style.height = y + "px";
-    Module.ccall("change_resolution", "number", ["number", "number"], [x, y]);
+    Module.ccall("change_resolution_"+resolutionChangeMethod, "number", ["number", "number"], [x, y]);
   }
 };
 
@@ -224,6 +229,9 @@ async function startGame(options = {}) {
     }
     if (options.joinURL) {
       connectAddr = options.joinURL;
+    }
+    if (options.resolutionChangeMethod) {
+      resolutionChangeMethod = options.resolutionChangeMethod;
     }
   }
 
@@ -487,25 +495,6 @@ window.addEventListener(
   },
   { once: true },
 );
-
-const wakeupWorker = new Worker(
-  URL.createObjectURL(
-    new Blob(
-      [
-        `
-  setInterval(() => {
-    self.postMessage('ping');
-  }, 15); // Send a message every 15ms
-`,
-      ],
-      { type: "text/javascript" },
-    ),
-  ),
-);
-
-wakeupWorker.onmessage = () => {
-  //Empty so it keeps tab alive.
-};
 
 //Intentional debug logic, keep the if so it can be turned on and off.
 if (false) {

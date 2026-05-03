@@ -2020,7 +2020,15 @@ extern SDL_Window *window;
 extern SDL_Renderer *renderer;
 extern Uint8 *screens[5]; 
 
-int EMSCRIPTEN_KEEPALIVE change_resolution(int x, int y)
+int EMSCRIPTEN_KEEPALIVE change_resolution_safe(int x, int y)
+{
+	if (x < 320) x = 320;
+    if (y < 200) y = 200;
+	if (window) {
+        SDL_SetWindowSize(window, x, y);
+    }
+}
+int EMSCRIPTEN_KEEPALIVE change_resolution_force(int x, int y)
 {
     // Safety Limits
     if (x < 320) x = 320;
