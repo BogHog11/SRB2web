@@ -534,7 +534,7 @@ a:hover {
   color: rgba(0,0,0,0.6);
   border-radius: 0.5vmin;
   cursor: not-allowed;
-  font-size: 7vmin;
+  font-size: 4vmin;
   box-sizing: border-box;
   padding: 3vmin 3vmin;
   /* The actual touch events are handled by the JavaScript collision tests */
@@ -575,13 +575,7 @@ a:hover {
 }
 .touchControlsDialogTitle {
   font-size: 7vmin;
-  position: fixed;
-  top: 0;
-  left: 50%;
-  user-select: none;
-  pointer-events: none;
   color: rgba(255,255,255,1);
-  transform: translate(-50%, 0);
 }
 
 .touchControlsDialogButton {
@@ -609,18 +603,12 @@ a:hover {
 }
 
 .touchControlDialogEditButtons {
+  position: relative;
   display: flex;
-  position: fixed;
   flex-direction: row;
-  top: 15vmin;
-  left: 50%;
-  transform: translate(-50%, 0);
 }
+
 .touchControlsDialogTip {
-  position: fixed;
-  top: 6vmin;
-  left: 50%;
-  transform: translate(-50%, 0);
   color: rgb(255, 0, 0);
   font-size: 4vmin;
   user-select: none;
@@ -628,12 +616,7 @@ a:hover {
 }
 
 .touchControlsDialogTip2 {
-  position: fixed;
-  top: 11vmin;
-  left: 50%;
-  text-wrap: nowrap;
   color: rgba(255,255,255,1);
-  transform: translate(-50%, 0);
   font-size: 3.5vmin;
   user-select: none;
   pointer-events: none;
@@ -659,14 +642,42 @@ a:hover {
   top: 0;
   left: 0;
   transform: translate(0, 6vmin);
-  width: fit-content;
-  max-height: 50vmin;
+  width: 50vmin;
+  max-height: 40vmin;
   z-index: 99999;
   background: rgba(255,255,255,0.9);
   border-radius: 0.5vmin;
   display: flex;
   flex-direction: column;
-  gap: 3vmin;
-  padding: 2vmin 2vmin;
+  gap: 0.2vmin;
+  padding: 0.2vmin 0.2vmin;
   overflow: auto;
+}
+
+.touchControlsAddDropdown > .option {
+  all: unset;
+  padding: 1vmin 1vmin;
+  background: rgba(0,0,0,0.5);
+  color: rgba(255,255,255,1);
+  border-radius: 0.5vmin;
+  font-size: 3vmin;
+}
+.touchControlsAddDropdown > .option:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.touchControlsEditButtonsSpacing {
+  all: unset;
+  margin-left: 0.5vmin;
+}
+
+.touchControlsContent {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
 }

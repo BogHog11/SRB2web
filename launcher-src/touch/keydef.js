@@ -89,5 +89,6 @@ function getButtonLabels() {
 
 module.exports = {
     KeyNum,
-    KeyName
+    KeyName,
+	getButtonLabels
 };

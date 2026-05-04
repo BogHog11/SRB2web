@@ -1,6 +1,10 @@
-module.exports = [
-    ///////////////////////////////////////
+var editSpacing = {element: "div",className: "touchControlsEditButtonsSpacing"};
 
+////////////////////////////////////////////////////////////////////////////////
+
+var content = [
+    ///////////////////////////////////////
+    //Title and tips.
     {
         element: "span",
         className: "touchControlsDialogTitle",
@@ -19,7 +23,6 @@ module.exports = [
 
     ///////////////////////////////////////
     //Buttons to customize touch controls.
-
     {
         element: "div",
         className: "touchControlDialogEditButtons",
@@ -32,8 +35,7 @@ module.exports = [
                 className: "touchControlsDialogButton touchControlsDialogRedButton",
                 textContent: "Close",
                 gid: "touchControlsClose",
-                hidden: true,
-            },
+            },editSpacing,
             ////////////////////
             //Add button and dropdown.
             {
@@ -44,6 +46,7 @@ module.exports = [
                         element: "div",
                         className: "touchControlsAddDropdown",
                         gid: "touchControlsAddDropdown",
+                        hidden: true,
                     },
                 ]
             },
@@ -57,7 +60,7 @@ module.exports = [
                         textContent: "Add control"
                     }
                 ]
-            },
+            },editSpacing,
             ////////////////////
             //Reset button.
             {
@@ -65,10 +68,18 @@ module.exports = [
                 className: "touchControlsDialogButton touchControlsDialogRedButton",
                 textContent: "Reset",
                 gid: "touchControlsReset"
-            },
+            },editSpacing,
             ////////////////////
         ]
     },
 
     ///////////////////////////////////////
+];
+
+module.exports = [
+    {
+        element: "div",
+        className: "touchControlsContent",
+        children: content,
+    }
 ];
