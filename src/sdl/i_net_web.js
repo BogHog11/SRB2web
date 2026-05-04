@@ -1,15 +1,12 @@
 mergeInto(LibraryManager.library, {
   SRB2_InitNetwork: function () {
-    // If Module.WebNet exists and has Init, call it. Otherwise return 1 (Success)
     if (window.SRB2WebNet && window.SRB2WebNet.InitNetwork) {
       return window.SRB2WebNet.InitNetwork();
     }
     return 1;
   },
-  ////////////////////////////////
   SRB2_NetworkSend: function (node_id, data_ptr, len) {
     if (window.SRB2WebNet && window.SRB2WebNet.SendPacket) {
-      // For now, ignore node_id, assume single connection
       return window.SRB2WebNet.SendPacket(node_id, data_ptr, len);
     }
     return 1;
@@ -39,4 +36,11 @@ mergeInto(LibraryManager.library, {
     return 5029; // Default port
   },
 
+
+  //This is a bit off topic to this file, but it works here anyways.
+  SRB2_VideoResolutionInfo: function (width,height) {
+    if (window.SRB2HandleVideoResolution) {
+      window.SRB2HandleVideoResolution(width,height);
+    }
+  }
 });

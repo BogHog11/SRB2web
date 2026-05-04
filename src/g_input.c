@@ -18,8 +18,14 @@
 #include "hu_stuff.h" // need HUFONT start & end
 #include "netcode/d_net.h"
 #include "console.h"
+#include "d_main.h"
 #include "lua_script.h"
 #include "lua_libs.h"
+#include "d_event.h"
+
+#ifdef EMSCRIPTEN
+#include <emscripten.h>
+#endif
 
 #define MAXMOUSESENSITIVITY 100 // sensitivity steps
 
@@ -41,6 +47,10 @@ INT32 joyxmove[JOYAXISSET], joyymove[JOYAXISSET], joy2xmove[JOYAXISSET], joy2ymo
 
 // current state of the keys: true if pushed
 UINT8 gamekeydown[NUMINPUTS];
+
+// direct control state (independent of key bindings) for Emscripten/web input
+UINT8 directcontrol[NUM_GAMECONTROLS];
+UINT8 directcontrolbis[NUM_GAMECONTROLS];
 
 // two key codes (or virtual key) per game control
 INT32 gamecontrol[NUM_GAMECONTROLS][2];
@@ -627,6 +637,19 @@ void G_ClearAllControlKeys(void)
 }
 
 //
+// Clear all direct control states
+// Used to reset web input
+//
+void G_ClearDirectControls(void)
+{
+	INT32 i;
+	for (i = 0; i < NUM_GAMECONTROLS; i++)
+	{
+		directcontrol[i] = 0;
+		directcontrolbis[i] = 0;
+	}
+}
+//
 // Returns the name of a key (or virtual key for mouse and joy)
 // the input value being an keynum
 //
@@ -1094,3 +1117,109 @@ void G_SetMouseDeltas(INT32 dx, INT32 dy, UINT8 ssplayer)
 	m->dy = (INT32)(m->rdy*((cvsens->value*cvsens->value)/110.0f + 0.1f));
 	m->mlookdy = (INT32)(m->rdy*((cvysens->value*cvsens->value)/110.0f + 0.1f));
 }
+
+boolean G_PlayerInputDown(UINT8 ssplayer, INT32 gc)
+{
+	if (menuactive || CON_Ready() || chat_on)
+		return false;
+
+	if (ssplayer == 2)
+		return directcontrolbis[gc] || gamekeydown[gamecontrolbis[gc][0]] || gamekeydown[gamecontrolbis[gc][1]];
+
+	return directcontrol[gc] || gamekeydown[gamecontrol[gc][0]] || gamekeydown[gamecontrol[gc][1]];
+}
+
+
+#ifdef EMSCRIPTEN
+static INT32 G_DirectActionToMenuKey(INT32 control_index)
+{
+	switch (control_index)
+	{
+		case GC_FORWARD:
+			return KEY_UPARROW;
+		case GC_LOOKUP:
+			return KEY_UPARROW;
+		case GC_BACKWARD:
+			return KEY_DOWNARROW;
+		case GC_LOOKDOWN:
+			return KEY_DOWNARROW;
+		case GC_STRAFELEFT:
+			return KEY_LEFTARROW;
+		case GC_TURNLEFT:
+			return KEY_LEFTARROW;
+		case GC_STRAFERIGHT:
+			return KEY_RIGHTARROW;
+		case GC_TURNRIGHT:
+			return KEY_RIGHTARROW;
+		case GC_JUMP:
+			return KEY_ENTER;
+		case GC_FIRE:
+			return KEY_ENTER;
+		case GC_SPIN:
+			return KEY_ESCAPE;
+		case GC_PAUSE:
+			return KEY_ESCAPE;
+		default:
+			return KEY_NULL;
+	}
+}
+
+// We don't need 'extern' if we are already inside g_input.c, 
+// but we must use the correct array syntax.
+void EMSCRIPTEN_KEEPALIVE SRB2_SetDirectAction(int control_index, int is_down)
+{
+	event_t ev;
+	INT32 menukey;
+
+	if (control_index < 0 || control_index >= NUM_GAMECONTROLS)
+		return;
+
+	if (CON_Ready() || chat_on)
+		return;
+
+	menukey = G_DirectActionToMenuKey(control_index);
+
+	if (menuactive || gamestate == GS_TITLESCREEN) 
+	{
+		if (is_down && menukey == KEY_NULL)
+			menukey = KEY_SPACE;
+
+		if (menukey == KEY_NULL)
+			return;
+
+		ev.type = is_down ? ev_keydown : ev_keyup;
+		ev.key = menukey;
+		ev.x = 0;
+		ev.y = 0;
+		ev.repeated = 0;
+
+		D_PostEvent(&ev);
+		return;
+	}
+
+	directcontrol[control_index] = is_down ? 1 : 0;
+}
+
+void EMSCRIPTEN_KEEPALIVE SRB2_SetDirectAction2(int control_index, int is_down)
+{
+	if (control_index < 0 || control_index >= NUM_GAMECONTROLS)
+		return;
+
+	if (CON_Ready() || chat_on)
+		return;
+
+	if (menuactive || gamestate == GS_TITLESCREEN || gamestate == GS_CREDITS || gamestate == GS_DEMOSCREEN)
+		return;
+
+	//directcontrolbis[control_index] = is_down ? 1 : 0;
+}
+
+
+void EMSCRIPTEN_KEEPALIVE SRB2_SetAnalogStick(int x, int y)
+{
+    // joyxmove and joyymove are arrays (usually size 4).
+    // We target index 0 which is the primary axis set.
+    joyxmove[0] = (INT32)x;
+    joyymove[0] = (INT32)y;
+}
+#endif

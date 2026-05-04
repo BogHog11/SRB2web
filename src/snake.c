@@ -172,14 +172,14 @@ void Snake_Update(void *opaque)
 	snake_t *snake = opaque;
 
 	// Handle retry
-	if (snake->gameover && (PLAYER1INPUTDOWN(GC_JUMP) || gamekeydown[KEY_ENTER]))
+	if (snake->gameover && (directcontrol[GC_JUMP] || gamekeydown[KEY_ENTER]))
 	{
 		Initialise(snake);
 		snake->pausepressed = true; // Avoid accidental pause on respawn
 	}
 
 	// Handle pause
-	if (PLAYER1INPUTDOWN(GC_PAUSE) || gamekeydown[KEY_ENTER])
+	if (directcontrol[GC_PAUSE] || gamekeydown[KEY_ENTER])
 	{
 		if (!snake->pausepressed)
 			snake->paused = !snake->paused;
@@ -234,22 +234,22 @@ void Snake_Update(void *opaque)
 	snake->joyeventcount = 0;
 
 	// Update direction
-	if (PLAYER1INPUTDOWN(GC_STRAFELEFT) || gamekeydown[KEY_LEFTARROW] || joystate == 3)
+	if (directcontrol[GC_STRAFELEFT] || gamekeydown[KEY_LEFTARROW] || joystate == 3)
 	{
 		if (snake->snakelength < 2 || x <= oldx)
 			snake->snakedir[0] = 1;
 	}
-	else if (PLAYER1INPUTDOWN(GC_STRAFERIGHT) || gamekeydown[KEY_RIGHTARROW] || joystate == 4)
+	else if (directcontrol[GC_STRAFERIGHT] || gamekeydown[KEY_RIGHTARROW] || joystate == 4)
 	{
 		if (snake->snakelength < 2 || x >= oldx)
 			snake->snakedir[0] = 2;
 	}
-	else if (PLAYER1INPUTDOWN(GC_FORWARD) || gamekeydown[KEY_UPARROW] || joystate == 1)
+	else if (directcontrol[GC_FORWARD] || gamekeydown[KEY_UPARROW] || joystate == 1)
 	{
 		if (snake->snakelength < 2 || y <= oldy)
 			snake->snakedir[0] = 3;
 	}
-	else if (PLAYER1INPUTDOWN(GC_BACKWARD) || gamekeydown[KEY_DOWNARROW] || joystate == 2)
+	else if (directcontrol[GC_BACKWARD] || gamekeydown[KEY_DOWNARROW] || joystate == 2)
 	{
 		if (snake->snakelength < 2 || y >= oldy)
 			snake->snakedir[0] = 4;

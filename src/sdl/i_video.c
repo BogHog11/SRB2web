@@ -187,6 +187,10 @@ static SDL_bool Impl_CreateWindow(SDL_bool fullscreen);
 //static void Impl_SetWindowName(const char *title);
 static void Impl_SetWindowIcon(void);
 
+#ifdef EMSCRIPTEN
+extern int SRB2_VideoResolutionInfo(INT32 width, INT32 height);
+#endif
+
 static void SDLSetMode(INT32 width, INT32 height, SDL_bool fullscreen, SDL_bool reposition)
 {
 	static SDL_bool wasfullscreen = SDL_FALSE;
@@ -280,6 +284,10 @@ static void SDLSetMode(INT32 width, INT32 height, SDL_bool fullscreen, SDL_bool 
 		SDL_PixelFormatEnumToMasks(sw_texture_format, &bpp, &rmask, &gmask, &bmask, &amask);
 		vidSurface = SDL_CreateRGBSurface(0, width, height, bpp, rmask, gmask, bmask, amask);
 	}
+
+	#ifdef EMSCRIPTEN
+	SRB2_VideoResolutionInfo(width, height);
+	#endif
 }
 
 static void VidWaitChanged(void)

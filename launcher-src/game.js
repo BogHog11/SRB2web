@@ -12,7 +12,12 @@ var launcherMain = elements.getGPId("launcherMain");
 var loaderMain = elements.getGPId("loaderMain");
 var resolutionChangeMethod = "safe";
 
+var gameResolutionWidth = 0;
+var gameResolutionHeight = 0;
+
 var connectAddr = null;
+
+var {startupTouchControls} = require("./touch");
 
 async function keepAlive() {
   if (navigator.requestWakeLock) {
@@ -263,6 +268,12 @@ async function startGame(options = {}) {
   }
 }
 
+window.SRB2HandleVideoResolution = function (width,height) {
+  //We pass the resolution into variables because we need this to accurately calculate mouse movements.
+  gameResolutionWidth = width;
+  gameResolutionHeight = height;
+};
+
 window.StartedMainLoopCallback = function () {
   didStart = true;
   gameCanvas.hidden = false;
@@ -279,7 +290,7 @@ window.StartedMainLoopCallback = function () {
     requestAnimationFrame(() => {
       sendConnectCommand();
     });
-  }, 90);
+  }, 500);
 
   // Add click listener after canvas is shown
   gameCanvas.addEventListener("click", () => {
@@ -298,6 +309,8 @@ window.StartedMainLoopCallback = function () {
       );
     }
   });
+
+  startupTouchControls();
 
   function resumeAudio() {
     // SDL2 creates an AudioContext on the Module
@@ -465,14 +478,20 @@ var mouseMoveX = 0;
 var mouseMoveY = 0;
 setInterval(() => {
   if (didStart) {
-    Module.ccall(
-      "SRB2_AddMouseDelta",
-      "void",
-      ["number", "number"],
-      [mouseMoveX, mouseMoveY],
-    );
-    mouseMoveX = 0;
-    mouseMoveY = 0;
+    if (gameResolutionWidth > 0 && gameResolutionHeight > 0) {
+      var scaleX = gameResolutionWidth / gameCanvas.clientWidth;
+      var scaleY = gameResolutionHeight / gameCanvas.clientHeight;
+      var finalX = mouseMoveX * scaleX;
+      var finalY = mouseMoveY * scaleY;
+      Module.ccall(
+        "SRB2_AddMouseDelta",
+        "void",
+        ["number", "number"],
+        [finalX, finalY],
+      );
+      mouseMoveX = 0;
+      mouseMoveY = 0;
+    }
   }
 }, 1000 / 55);
 gameCanvas.addEventListener(
@@ -481,7 +500,6 @@ gameCanvas.addEventListener(
     if (document.pointerLockElement === gameCanvas) {
       mouseMoveX += e.movementX;
       mouseMoveY += e.movementY;
-      e.preventDefault();
     }
   },
   true,

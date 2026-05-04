@@ -146,14 +146,19 @@ extern INT32 joyxmove[JOYAXISSET], joyymove[JOYAXISSET], joy2xmove[JOYAXISSET], 
 // current state of the keys: true if pushed
 extern UINT8 gamekeydown[NUMINPUTS];
 
+// direct control state (independent of key bindings) for Emscripten/web input
+extern UINT8 directcontrol[NUM_GAMECONTROLS];
+extern UINT8 directcontrolbis[NUM_GAMECONTROLS];
+
 // two key codes (or virtual key) per game control
 extern INT32 gamecontrol[NUM_GAMECONTROLS][2];
 extern INT32 gamecontrolbis[NUM_GAMECONTROLS][2]; // secondary splitscreen player
 extern INT32 gamecontroldefault[num_gamecontrolschemes][NUM_GAMECONTROLS][2]; // default control storage, use 0 (gcs_custom) for memory retention
 extern INT32 gamecontrolbisdefault[num_gamecontrolschemes][NUM_GAMECONTROLS][2];
-#define PLAYER1INPUTDOWN(gc) (gamekeydown[gamecontrol[gc][0]] || gamekeydown[gamecontrol[gc][1]])
-#define PLAYER2INPUTDOWN(gc) (gamekeydown[gamecontrolbis[gc][0]] || gamekeydown[gamecontrolbis[gc][1]])
-#define PLAYERINPUTDOWN(p, gc) ((p) == 2 ? PLAYER2INPUTDOWN(gc) : PLAYER1INPUTDOWN(gc))
+boolean G_PlayerInputDown(UINT8 ssplayer, INT32 gc);
+#define PLAYER1INPUTDOWN(gc) G_PlayerInputDown(1, (gc))
+#define PLAYER2INPUTDOWN(gc) G_PlayerInputDown(2, (gc))
+#define PLAYERINPUTDOWN(p, gc) G_PlayerInputDown((p), (gc))
 
 #define num_gcl_tutorial_check 6
 #define num_gcl_tutorial_used 8
@@ -188,6 +193,7 @@ INT32 G_KeyNameToNum(const char *keystr);
 // detach any keys associated to the given game control
 void G_ClearControlKeys(INT32 (*setupcontrols)[2], INT32 control);
 void G_ClearAllControlKeys(void);
+void G_ClearDirectControls(void);
 void Command_Setcontrol_f(void);
 void Command_Setcontrol2_f(void);
 void G_DefineDefaultControls(void);

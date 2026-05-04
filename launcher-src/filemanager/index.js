@@ -1,9 +1,12 @@
+if (!window["Module"]) {
+  window["Module"] = {};
+}
+
 var elements = require("../gp2/elements.js");
 elements.appendElementsFromJSON(document.body, require("./elms.js"));
 var { loadFilesystem } = require("./load.js");
 var { joinPaths } = require("./pathutil.js");
 var dialog = require("../dialog.js");
-var Module = {};
 if (window["Module"]) {
   var Module = window["Module"];
 }

@@ -47,7 +47,17 @@ module.exports = [
                         ]
                     }
                 ]
-            }
+            },
+
+            /////////////////////////////////////
+            //Button to open touch controls to move and customize them.
+
+            {
+                element: "button",
+                className: "button",
+                gid: "configureTouchControlsButton",
+                textContent: "Customize touch controls",
+            },
 
             /////////////////////////////////////
         ]

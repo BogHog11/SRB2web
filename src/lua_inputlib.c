@@ -31,7 +31,7 @@ static int lib_gameControlDown(lua_State *L)
 	int i = luaL_checkinteger(L, 1);
 	if (i < 0 || i >= NUM_GAMECONTROLS)
 		return luaL_error(L, "GC_* constant %d out of range (0 - %d)", i, NUM_GAMECONTROLS-1);
-	lua_pushinteger(L, PLAYER1INPUTDOWN(i));
+	lua_pushinteger(L, directcontrol[i]);
 	return 1;
 }
 
@@ -40,7 +40,7 @@ static int lib_gameControl2Down(lua_State *L)
 	int i = luaL_checkinteger(L, 1);
 	if (i < 0 || i >= NUM_GAMECONTROLS)
 		return luaL_error(L, "GC_* constant %d out of range (0 - %d)", i, NUM_GAMECONTROLS-1);
-	lua_pushinteger(L, PLAYER2INPUTDOWN(i));
+	lua_pushinteger(L, directcontrolbis[i]);
 	return 1;
 }
 

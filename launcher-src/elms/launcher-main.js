@@ -17,16 +17,16 @@ module.exports = [
 
       { element: "div", className: "sep" },
 
-      {
-        element: "div",
-        children: require("./relay-config.js"),
-      },
+      ...require("./display-options.js"),
 
       ////////////////////////////////////////////
 
       { element: "div", className: "sep" },
 
-      ...require("./display-options.js"),
+      {
+        element: "div",
+        children: require("./relay-config.js"),
+      },
 
       ////////////////////////////////////////////
 

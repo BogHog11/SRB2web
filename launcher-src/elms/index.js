@@ -18,6 +18,7 @@ module.exports = [
     gid: "gameCanvas",
     tabindex: "0",
   },
+  ...require("./touch-controls.js"),
 
   ...require("./netgame-browser.js"),
 ];

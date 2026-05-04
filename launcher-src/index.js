@@ -1,3 +1,7 @@
+if (!window["Module"]) {
+  window["Module"] = {};
+}
+
 var elements = require("./gp2/elements.js");
 elements.appendElementsFromJSON(document.body, require("./elms"));
 
@@ -10,12 +14,17 @@ loaderMain.hidden = true;
 launcherMain.hidden = false;
 
 var playButton = elements.getGPId("playButton");
+var touchConfigureButton = elements.getGPId("configureTouchControlsButton");
+var { startTouchCustomization } = require("./touch");
 var { startGame } = require("./game.js");
 
 var { getDisplayOptions } = require("./display-settings.js");
 
 playButton.addEventListener("click", function () {
   startGame(getDisplayOptions());
+});
+touchConfigureButton.addEventListener("click", function () {
+  startTouchCustomization();
 });
 
 require("./relayconfig.js");
