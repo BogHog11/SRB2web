@@ -1217,6 +1217,19 @@ void EMSCRIPTEN_KEEPALIVE SRB2_SetDirectAction(int control_index, int is_down)
 			return;
 		}
 
+		// Handle team talk key: toggle team chat on press only (mobile-friendly)
+		if (control_index == GC_TEAMKEY)
+		{
+			if (is_down) {
+				if (chat_on) {
+					HU_EndChat();
+				} else {
+					HU_StartChat(true);
+				}
+			}
+			return;
+		}
+
 		// Map other controls to menu keys (movement, selection, etc.)
 		if (is_down && menukey == KEY_NULL)
 			menukey = KEY_SPACE;
@@ -1252,6 +1265,20 @@ void EMSCRIPTEN_KEEPALIVE SRB2_SetDirectAction(int control_index, int is_down)
 				HU_EndChat();
 			} else {
 				HU_StartChat(false);
+			}
+		}
+		// Release: do nothing (mobile can tap other buttons without closing chat)
+		return;
+	}
+
+	// In-game: handle team talk key (toggle on press only, release ignored for mobile)
+	if (control_index == GC_TEAMKEY)
+	{
+		if (is_down) {
+			if (chat_on) {
+				HU_EndChat();
+			} else {
+				HU_StartChat(true);
 			}
 		}
 		// Release: do nothing (mobile can tap other buttons without closing chat)

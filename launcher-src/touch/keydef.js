@@ -64,12 +64,12 @@ var KeyName = {
 	//Source: m_menu.c
 
     //GC_NULL: "Nothing",
-    GC_FORWARD: "Move Forward",
-	GC_BACKWARD: "Move Backward",
-	GC_STRAFELEFT: "Move Left",
-	GC_STRAFERIGHT: "Move Right",
-	GC_JUMP: "Jump",
-	GC_SPIN: "Spin",
+    GC_FORWARD: "Move Forward (Up)",
+	GC_BACKWARD: "Move Backward (Down)",
+	GC_STRAFELEFT: "Move Left (Left)",
+	GC_STRAFERIGHT: "Move Right (Right)",
+	GC_JUMP: "Jump (Select)",
+	GC_SPIN: "Spin (Back)",
 
 	GC_LOOKUP: "Look Up",
 	GC_LOOKDOWN: "Look Down",
@@ -78,7 +78,35 @@ var KeyName = {
 	GC_CENTERVIEW: "Center View",
 	GC_MOUSEAIMING: "Toggle Mouselook",
 	GC_CAMTOGGLE: "Toggle Third-Person",
-	GC_CAMRESET: "Reset Camera"
+	GC_CAMRESET: "Reset Camera",
+
+	GC_PAUSE: "Pause / Run Retry",
+	GC_SCREENSHOT: "Screenshot",
+	GC_RECORDGIF: "Toggle GIF Recording",
+	GC_SYSTEMMENU: "Open/Close Menu (ESC)",
+	GC_VIEWPOINTNEXT: "Next Viewpoint",
+	GC_VIEWPOINTPREV: "Prev Viewpoint",
+	GC_CONSOLE: "Console",
+
+	GC_TALKKEY: "Talk",
+	GC_TEAMKEY: "Talk (Team only)",
+
+	GC_FIRE: "Fire",
+	GC_FIRENORMAL: "Fire Normal",
+	GC_TOSSFLAG: "Toss Flag",
+	GC_WEAPONNEXT: "Next Weapon",
+	GC_WEAPONPREV: "Prev Weapon",
+	GC_WEPSLOT1: "Normal / Infinity",
+	GC_WEPSLOT2: "Automatic",
+	GC_WEPSLOT3: "Bounce",
+	GC_WEPSLOT4: "Scatter",
+	GC_WEPSLOT5: "Grenade",
+	GC_WEPSLOT6: "Explosion",
+	GC_WEPSLOT7: "Rail",
+
+	GC_CUSTOM1: "Custom Action 1",
+	GC_CUSTOM2: "Custom Action 2",
+	GC_CUSTOM3: "Custom Action 3",
 };
 
 //////////////////////////////////////////////////////////////

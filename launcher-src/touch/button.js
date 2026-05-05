@@ -25,7 +25,9 @@ class TouchControlButton {
     static createEmptyButtonData(id) {
         var button = new TouchControlButton(
             id,
-            "left"
+            "left",
+            0,
+            0
         );
         var data = button.save();
         button.destroy();
@@ -33,6 +35,7 @@ class TouchControlButton {
     }
 
     constructor(id, side, xPos, yPos, width, height) {
+        this.destroyed = false;
         this.side = side || "left";
         this.xPos = +xPos || 0;
         this.yPos = +yPos || 0;
@@ -172,6 +175,7 @@ class TouchControlButton {
         this.editBoxElm.remove();
         this.editBoxElm2.remove();
         this.container = null;
+        this.destroyed = true;
     }
 
     save () {
@@ -269,6 +273,7 @@ class TouchControlButton {
     }
 
     process (touchPositions, processState) {
+        var elm = this.elm;
         if (this.editMode) {
             this.editModeProcess(touchPositions, processState);
             return;
@@ -279,11 +284,13 @@ class TouchControlButton {
         if (this.isTouchingOneOf(touchPositions)) {
             if (!this._justPressed) {
                 sendInput(this.id, true);
+                elm.setAttribute("data-touching", "");
                 this._justPressed = true;
             }
         } else {
             if (this._justPressed) {
                 sendInput(this.id, false);
+                elm.removeAttribute("data-touching");
                 this._justPressed = false;
             }
         }
