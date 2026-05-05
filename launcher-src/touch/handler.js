@@ -18,6 +18,9 @@ function sendInput(nameid, down) {
 
     var downNumber = down ? 1 : 0;
 
+    if (!Module.ccall) {
+        return;
+    }
     Module.ccall(
         'SRB2_SetDirectAction',
         'void',
@@ -27,13 +30,19 @@ function sendInput(nameid, down) {
     //window.alert("sent direct action: "+nameid+","+down);
 }
 
-function getInputNames() {
-    return [
-
-    ];
+function sendJoystick(x,y) {
+    if (!Module.ccall) {
+        return;
+    }
+    Module.ccall(
+        'SRB2_SetAnalogStick',
+        'void',
+        ['number','number'],
+        [Math.round(x*127), Math.round(y*127)]
+    );
 }
 
 module.exports = {
     sendInput,
-    getInputNames
+    sendJoystick
 }

@@ -726,12 +726,34 @@ a:hover {
   text-align: center;
 }
 
+.touchControlsJoystickContainer {
+  width: var(--button-width);
+  height: var(--button-height);
+  overflow: visible;
+}
+
 .touchControlsJoystick {
   width: var(--joystick-size);
   height: var(--joystick-size);
-  background: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.3);
   border-radius: 50%;
   position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   touch-action: none;
   pointer-events: none;
+  overflow: visible;
+}
+
+.touchControlsJoystickCircle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  height: 50%;
+  background: rgba(0,0,255,0.5);
+  border-radius: 50%;
+  overflow: visible;
 }

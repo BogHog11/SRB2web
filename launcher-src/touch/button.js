@@ -1,5 +1,5 @@
 var { KeyNum, KeyName } = require("./keydef.js");
-var { sendInput, getInputNames } = require("./handler.js");
+var { sendInput, sendJoystick } = require("./handler.js");
 
 var elements = require("../gp2/elements.js");
 
@@ -44,6 +44,10 @@ class TouchControlButton {
         this.id = id;
         this.randomId = Date.now()+"_"+(Math.random()*100000); //Random ID to identify this button in edit mode, since the id can be duplicated.
         this.editMode = false;
+        this.isJoystick = (KeyNum[this.id] == KeyNum.UI_JOYSTICK);
+        this.joystickX = 0;
+        this.joystickY = 0;
+        this.touch = null;
 
         this.setInfo(this.id);
         this._justPressed = false;
@@ -76,6 +80,108 @@ class TouchControlButton {
         return this.isCollide(touchPositions[0], elm);
     }
 
+    generateJoystickContent() {
+        var elm = this.elm;
+        var joystickMain = null;
+        var joystickCircle = null;
+        elements.setInnerJSON(elm, [
+            {
+                element: "div",
+                className: "touchControlsJoystick",
+                GPWhenCreated: (e) => {joystickMain = e;},
+                children: [
+                    {
+                        element: "div",
+                        className: "touchControlsJoystickCircle",
+                        GPWhenCreated: (e) => {joystickCircle = e;},
+                    }
+                ]
+            },
+        ]);
+
+        this.joystickMain = joystickMain;
+        this.joystickCircle = joystickCircle;
+    }
+
+    resizeJoystick() {
+        if (!this.isJoystick) return;
+
+        var elm = this.elm;
+        var joystickMain = this.joystickMain;
+        var joystickCircle = this.joystickCircle;
+        var bounding = elm.getBoundingClientRect();
+        var scale = Math.min(bounding.width, bounding.height) / 100;
+        joystickMain.style.width = (100*scale) + "px";
+        joystickMain.style.height = (100*scale) + "px";
+    }
+
+    handleJoystick(touchPositions, processState) {
+        var elm = this.elm;
+        var joystickMain = this.joystickMain;
+        var joystickCircle = this.joystickCircle;
+
+        if (!joystickMain || !joystickCircle) {
+            return;
+        }
+
+        var touch = null;
+        for (var position of touchPositions) {
+            if (this.isCollide(position, elm)) {
+                touch = position;
+                break;
+            }
+        }
+
+        if (touch || this.touch) {
+            if (processState.touchingJoystick !== this.randomId) {
+                processState.touchingJoystick = this.randomId;
+            }
+            var bounding = joystickMain.getBoundingClientRect();
+            var centerX = bounding.left + bounding.width/2;
+            var centerY = bounding.top + bounding.height/2;
+
+            if (touch) {
+                this.touch = touch;
+            }
+
+            var deltaX = this.touch.left - centerX;
+            var deltaY = this.touch.top - centerY;
+            var percent = TouchControlButton.calculatePercentSize(deltaX, deltaY, bounding.width, bounding.height);
+            
+            this.joystickX = Math.max(-1, Math.min(1, percent.percentX/50));
+            this.joystickY = Math.max(-1, Math.min(1, percent.percentY/50));
+
+            var distance = Math.sqrt(this.joystickX*this.joystickX + this.joystickY*this.joystickY);
+            if (distance > 1) {
+                this.joystickX /= distance;
+                this.joystickY /= distance;
+            }
+
+            sendJoystick(this.joystickX, this.joystickY);
+        } else {
+            if (processState.touchingJoystick == this.randomId) {
+                processState.touchingJoystick = null;
+                this.joystickX = 0;
+                this.joystickY = 0;
+                sendJoystick(this.joystickX, this.joystickY);
+            }
+        }
+
+        if (this.touch) {
+            if (this.touch.touching) {
+                sendJoystick(this.joystickX, this.joystickY);
+            } else {
+                this.touch = null;
+                this.joystickX = 0;
+                this.joystickY = 0;
+                processState.touchingJoystick = null;
+            }
+        }
+
+        joystickCircle.style.top = (50 + this.joystickY*50) + "%";
+        joystickCircle.style.left = (50 + this.joystickX*50) + "%";
+    }
+
     generateElement() {
         var editBoxElm = null;
         if (this.elm) {
@@ -92,7 +198,7 @@ class TouchControlButton {
         this.elm = elements.createElementsFromJSON([
             {
                 element: "div",
-                className: "touchActionButton touchControlPosition",
+                className: (this.isJoystick ? "touchControlsJoystickContainer" : "touchActionButton")+" touchControlPosition",
                 "data-position": this.side,
                 styleProperties: {
                     "--button-x": this.xPos+"%",
@@ -103,12 +209,13 @@ class TouchControlButton {
                 children: [
                     {
                         element: "span",
-                        textContent: this.name,
+                        textContent: (this.isJoystick? "": this.name),
                     },
                 ]
             }
         ])[0];
 
+        //White box, for resizing. Only shows in customization mode.
         this.editBoxElm = elements.createElementsFromJSON([
             {
                 element: "div",
@@ -123,6 +230,7 @@ class TouchControlButton {
             }
         ])[0];
 
+        //Red box, for deleting the button. Only shows in customization mode.
         this.editBoxElm2 = elements.createElementsFromJSON([
             {
                 element: "div",
@@ -136,6 +244,10 @@ class TouchControlButton {
                 },
             }
         ])[0];
+
+        if (this.isJoystick) {
+            this.generateJoystickContent();
+        }
 
         if (this.container) {
             this.append(this.container);
@@ -273,13 +385,25 @@ class TouchControlButton {
     }
 
     process (touchPositions, processState) {
+        this.resizeJoystick();
         var elm = this.elm;
+
+        //Disabled for testing.
         if (this.editMode) {
             this.editModeProcess(touchPositions, processState);
             return;
         }
 
         processState.disableDefault = true;
+
+        if (this.isJoystick && (processState.touchingJoystick == this.randomId || !processState.touchingJoystick)) {
+            this.handleJoystick(touchPositions, processState);
+            return;
+        }
+
+        if (this.isJoystick) {
+            return;
+        }
 
         if (this.isTouchingOneOf(touchPositions)) {
             if (!this._justPressed) {
