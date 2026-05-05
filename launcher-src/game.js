@@ -17,7 +17,9 @@ var gameResolutionHeight = 0;
 
 var connectAddr = null;
 
-var {startupTouchControls} = require("./touch");
+var Touch = require("./touch");
+var touchState = Touch.state;
+var {startupTouchControls} = Touch;
 
 async function keepAlive() {
   if (navigator.requestWakeLock) {
@@ -295,7 +297,7 @@ window.StartedMainLoopCallback = function () {
   // Add click listener after canvas is shown
   gameCanvas.addEventListener("click", () => {
     //console.log("Canvas clicked, locking mouse");
-    window.LockMouse();
+    LockMouse();
   });
 
   // Add mousemove listener for manual mouse delta handling
@@ -408,6 +410,9 @@ window.SRB2RequestServerList = function () {
 };
 
 var LockMouse = () => {
+  if (touchState.ingameTouch) {
+    return;
+  }
   if (didStart) {
     Module.ccall("lock_mouse", null, [], []);
     gameCanvas.focus();
@@ -420,9 +425,11 @@ var LockMouse = () => {
     }
   }
 };
-window.LockMouse = LockMouse;
 
 var UnlockMouse = (force = false) => {
+  if (touchState.ingameTouch) {
+    return;
+  }
   if (didStart) {
     if (force && document.pointerLockElement)
       document.exitPointerLock(); // this method should fire again, so don't unlock_mouse right now
@@ -430,7 +437,8 @@ var UnlockMouse = (force = false) => {
       Module.ccall("unlock_mouse", null, [], []);
   }
 };
-window.UnlockMouse = UnlockMouse;
+
+touchState.UnlockMouse = UnlockMouse;
 
 var CaptureFullscreenKey = (e) => {
   // Let F11 do fullscreen

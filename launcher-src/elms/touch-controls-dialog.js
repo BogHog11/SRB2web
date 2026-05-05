@@ -18,7 +18,7 @@ var content = [
     {
         element: "span",
         className: "touchControlsDialogTip2",
-        textContent: "To move a control, just drag and drop it anywhere on the screen. To edit or delete a control, just click on it.",
+        textContent: "To move a control, just drag and drop it anywhere on the screen. To edit or delete a control, just tap on it.",
     },
 
     ///////////////////////////////////////
@@ -68,6 +68,14 @@ var content = [
                 className: "touchControlsDialogButton touchControlsDialogRedButton",
                 textContent: "Reset",
                 gid: "touchControlsReset"
+            },editSpacing,
+            ////////////////////
+            //Save button.
+            {
+                element: "div",
+                className: "touchControlsDialogButton touchControlsDialogRedButton",
+                textContent: "Save",
+                gid: "touchControlsSave"
             },editSpacing,
             ////////////////////
         ]

@@ -947,7 +947,7 @@ boolean CON_Responder(event_t *ev)
 		if (modeattacking || metalrecording || marathonmode)
 			return false;
 
-		if ((key == gamecontrol[GC_CONSOLE][0] || key == gamecontrol[GC_CONSOLE][1]) && !shiftdown)
+		if ((key == gamecontrol[GC_CONSOLE][0] || key == gamecontrol[GC_CONSOLE][1] || directcontrol[GC_CONSOLE]) && !shiftdown)
 		{
 			I_SetTextInputMode(con_destlines == 0); // inverse, since this is changed next tic.
 			consoletoggle = true;

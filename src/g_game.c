@@ -2183,7 +2183,8 @@ boolean G_Responder(event_t *ev)
 		case ev_keydown:
 			if (ev->key == gamecontrol[GC_PAUSE][0]
 				|| ev->key == gamecontrol[GC_PAUSE][1]
-				|| ev->key == KEY_PAUSE)
+				|| ev->key == KEY_PAUSE
+			)
 			{
 				if (modeattacking && !demoplayback && (gamestate == GS_LEVEL))
 				{

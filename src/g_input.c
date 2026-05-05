@@ -1158,6 +1158,8 @@ static INT32 G_DirectActionToMenuKey(INT32 control_index)
 		case GC_SPIN:
 			return KEY_ESCAPE;
 		case GC_PAUSE:
+			return KEY_PAUSE;
+		case GC_SYSTEMMENU:
 			return KEY_ESCAPE;
 		default:
 			return KEY_NULL;
@@ -1179,7 +1181,7 @@ void EMSCRIPTEN_KEEPALIVE SRB2_SetDirectAction(int control_index, int is_down)
 
 	menukey = G_DirectActionToMenuKey(control_index);
 
-	if (menuactive || !(gamestate == GS_LEVEL || gamestate == GS_INTERMISSION)) 
+	if (menuactive || !(gamestate == GS_LEVEL || gamestate == GS_INTERMISSION) || control_index == GC_SYSTEMMENU || control_index == GC_PAUSE) 
 	{
 		if (is_down && menukey == KEY_NULL)
 			menukey = KEY_SPACE;
