@@ -73,7 +73,7 @@ var content = [
             //Save button.
             {
                 element: "div",
-                className: "touchControlsDialogButton touchControlsDialogRedButton",
+                className: "touchControlsDialogButton",
                 textContent: "Save",
                 gid: "touchControlsSave"
             },editSpacing,

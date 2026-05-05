@@ -23,7 +23,7 @@
 #include "lua_libs.h"
 #include "d_event.h"
 
-#ifdef EMSCRIPTEN
+#ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
 
@@ -1130,7 +1130,7 @@ boolean G_PlayerInputDown(UINT8 ssplayer, INT32 gc)
 }
 
 
-#ifdef EMSCRIPTEN
+#ifdef __EMSCRIPTEN__
 static INT32 G_DirectActionToMenuKey(INT32 control_index)
 {
 	switch (control_index)
@@ -1173,16 +1173,51 @@ void EMSCRIPTEN_KEEPALIVE SRB2_SetDirectAction(int control_index, int is_down)
 	event_t ev;
 	INT32 menukey;
 
+	// Bounds check first before any array access
 	if (control_index < 0 || control_index >= NUM_GAMECONTROLS)
 		return;
 
-	if (CON_Ready() || chat_on)
-		return;
+	if (!is_down) {
+		directcontrol[control_index] = 0; //stops accidentally holding the keys for in game player when releasing them.
+	}
+
+	// allow console/talk to bypass the CON_Ready/chat_on guard so mobile buttons
+	// can always open/close console or chat regardless of remapped keys
+	if (control_index != GC_CONSOLE && control_index != GC_TALKKEY)
+	{
+		if (CON_Ready() || chat_on)
+			return;
+	}
 
 	menukey = G_DirectActionToMenuKey(control_index);
 
 	if (menuactive || !(gamestate == GS_LEVEL || gamestate == GS_INTERMISSION) || control_index == GC_SYSTEMMENU || control_index == GC_PAUSE) 
 	{
+		// Handle console toggle via function call (works regardless of keybinds)
+		if (control_index == GC_CONSOLE)
+		{
+			if (is_down) {
+				CON_Toggle();
+			}
+			// Release: do nothing (console is toggled, not held)
+			return;
+		}
+
+		// Handle talk key: toggle on press only (mobile-friendly)
+		// Press toggles open/closed; release ignored so users can tap other buttons to type
+		if (control_index == GC_TALKKEY)
+		{
+			if (is_down) {
+				if (chat_on) {
+					HU_EndChat();
+				} else {
+					HU_StartChat(false);
+				}
+			}
+			return;
+		}
+
+		// Map other controls to menu keys (movement, selection, etc.)
 		if (is_down && menukey == KEY_NULL)
 			menukey = KEY_SPACE;
 
@@ -1199,11 +1234,39 @@ void EMSCRIPTEN_KEEPALIVE SRB2_SetDirectAction(int control_index, int is_down)
 		return;
 	}
 
+	// In-game: handle console toggle via function call (works regardless of keybinds)
+	if (control_index == GC_CONSOLE)
+	{
+		if (is_down) {
+			CON_Toggle();
+		}
+		// Release: do nothing
+		return;
+	}
+
+	// In-game: handle talk key (toggle on press only, release ignored for mobile)
+	if (control_index == GC_TALKKEY)
+	{
+		if (is_down) {
+			if (chat_on) {
+				HU_EndChat();
+			} else {
+				HU_StartChat(false);
+			}
+		}
+		// Release: do nothing (mobile can tap other buttons without closing chat)
+		return;
+	}
+
+	// All other controls: set directcontrol for in-game handling
 	directcontrol[control_index] = is_down ? 1 : 0;
 }
 
 void EMSCRIPTEN_KEEPALIVE SRB2_SetDirectAction2(int control_index, int is_down)
 {
+	(void)control_index;
+	(void)is_down;
+
 	/*if (control_index < 0 || control_index >= NUM_GAMECONTROLS)
 		return;
 

@@ -8,7 +8,7 @@ var KeyNum = {
 	///////////////////////////////////////////
 	//Source: g_input.h
 
-    GC_NUL: 0, // a key/button mapped to GC_NULL has no effect
+    GC_NULL: 0, // a key/button mapped to GC_NULL has no effect
 	GC_FORWARD: 1,
 	GC_BACKWARD: 2,
 	GC_STRAFELEFT: 3,
@@ -65,16 +65,20 @@ var KeyName = {
 
     //GC_NULL: "Nothing",
     GC_FORWARD: "Move Forward",
-    GC_BACKWARD: "Move Backward",
-    GC_STRAFELEFT: "Move Left",
-    GC_STRAFERIGHT: "Move Right",
-    GC_JUMP: "Jump",
-	GC_PAUSE: "Pause",
-	GC_SYSTEMMENU: "Open/Close Menu (ESC)",
-	GC_CONSOLE: "Console",
-	GC_TALKKEY: "Talk",
-	GC_TEAMKEY: "Team (Team only)",
-	GC_SCORES: "Game Status",
+	GC_BACKWARD: "Move Backward",
+	GC_STRAFELEFT: "Move Left",
+	GC_STRAFERIGHT: "Move Right",
+	GC_JUMP: "Jump",
+	GC_SPIN: "Spin",
+
+	GC_LOOKUP: "Look Up",
+	GC_LOOKDOWN: "Look Down",
+	GC_TURNLEFT: "Look Left",
+	GC_TURNRIGHT: "Look Right",
+	GC_CENTERVIEW: "Center View",
+	GC_MOUSEAIMING: "Toggle Mouselook",
+	GC_CAMTOGGLE: "Toggle Third-Person",
+	GC_CAMRESET: "Reset Camera"
 };
 
 //////////////////////////////////////////////////////////////

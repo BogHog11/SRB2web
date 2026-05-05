@@ -755,6 +755,37 @@ boolean CON_Ready(void)
 	return ready;
 }
 
+// Console control functions for programmatic access (mobile/emscripten)
+void CON_Toggle(void)
+{
+	Lock_state();
+	I_SetTextInputMode(con_destlines == 0); // inverse, since toggle will change it next tic
+	consoletoggle = true;
+	Unlock_state();
+}
+
+void CON_Open(void)
+{
+	Lock_state();
+	if (con_destlines == 0)
+	{
+		I_SetTextInputMode(true);
+		consoletoggle = true;
+	}
+	Unlock_state();
+}
+
+void CON_Close(void)
+{
+	Lock_state();
+	if (con_destlines > 0)
+	{
+		I_SetTextInputMode(false);
+		consoletoggle = true;
+	}
+	Unlock_state();
+}
+
 // Console ticker: handles console move in/out, cursor blinking
 //
 void CON_Ticker(void)

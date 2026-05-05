@@ -1020,6 +1020,34 @@ void HU_clearChatChars(void)
 	I_UpdateMouseGrab();
 }
 
+// Start chat programmatically (for mobile/emscripten input)
+void HU_StartChat(boolean team)
+{
+	if (!netgame || OLD_MUTE)
+		return;
+
+	if (chat_on)
+		return;
+
+	I_SetTextInputMode(true);
+	chat_on = true;
+	chat_on_first_event = false;
+	w_chat[0] = '\0';
+	teamtalk = team ? G_GametypeHasTeams() : false;
+	chat_scrollmedown = true;
+	typelines = 1;
+	I_UpdateMouseGrab();
+}
+
+// End chat programmatically
+void HU_EndChat(void)
+{
+	I_SetTextInputMode(false);
+	chat_on = false;
+	c_input = 0;
+	I_UpdateMouseGrab();
+}
+
 //
 // Returns true if key eaten
 //
@@ -1027,8 +1055,9 @@ boolean HU_Responder(event_t *ev)
 {
 	INT32 c=0;
 
-	if (ev->type != ev_keydown && ev->type != ev_text)
+	if (ev->type != ev_keydown && ev->type != ev_text) {
 		return false;
+	}
 
 	// only KeyDown events now...
 

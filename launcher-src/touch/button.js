@@ -120,6 +120,20 @@ class TouchControlButton {
             }
         ])[0];
 
+        this.editBoxElm2 = elements.createElementsFromJSON([
+            {
+                element: "div",
+                className: "touchControlDeleteBox",
+                "data-position": this.side,
+                styleProperties: {
+                    "--button-x": this.xPos+"%",
+                    "--button-y": this.yPos+"%",
+                    "--button-width": this.width+"%",
+                    "--button-height": this.height+"%",
+                },
+            }
+        ])[0];
+
         if (this.container) {
             this.append(this.container);
         }
@@ -128,6 +142,7 @@ class TouchControlButton {
     setcssvar (property,value) {
         this.elm.style.setProperty(property,value);
         this.editBoxElm.style.setProperty(property,value);
+        this.editBoxElm2.style.setProperty(property,value);
     }
 
     setInfo (id) {
@@ -143,16 +158,19 @@ class TouchControlButton {
     append (container) {
         this.elm.remove();
         this.editBoxElm.remove();
+        this.editBoxElm2.remove();
         this.container = container;
         container.appendChild(this.elm);
         if (this.editMode) {
             container.appendChild(this.editBoxElm);
+            container.appendChild(this.editBoxElm2);
         }
     }
 
     destroy () {
         this.elm.remove();
         this.editBoxElm.remove();
+        this.editBoxElm2.remove();
         this.container = null;
     }
 
@@ -170,6 +188,7 @@ class TouchControlButton {
     editModeProcess (touchPositions, processState) {
         var elm = this.elm;
         var editBox = this.editBoxElm;
+        var editBox2 = this.editBoxElm2;
 
         processState.disableDefault = !!processState.editing;
 
@@ -183,6 +202,11 @@ class TouchControlButton {
                 processState.startHeight = this.height;
                 processState.startX = touchPositions[0].left;
                 processState.startY = touchPositions[0].top;
+            }
+            if (this.isTouchingFirst(touchPositions, editBox2) && !processState.editing) {
+                this.destroy();
+                this.remove = true;
+                return;
             }
             if (this.isTouchingFirst(touchPositions, elm) && !processState.editing) {
                 processState.resizing = false;

@@ -545,8 +545,24 @@ a:hover {
 }
 .touchControlBox[data-position="left"]  {
   position: fixed;
-  bottom: calc(var(--button-y));
+  bottom: var(--button-y);
   left: calc(calc(var(--button-x) + var(--button-width)));
+}
+
+.touchControlDeleteBox {
+  background: rgb(255, 0, 0);
+  border-radius: 0px;
+  border-width: 0.5vmin;
+  border-color: rgba(0,0,0,1);
+  border-style: solid;
+  width: 2vmin;
+  height: 2vmin;
+  transform: translate(-50%, 50%);
+}
+.touchControlDeleteBox[data-position="left"]  {
+  position: fixed;
+  bottom: calc(var(--button-y));
+  left: var(--button-x);
 }
 
 .touchActionButton {

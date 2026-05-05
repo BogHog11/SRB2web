@@ -126,8 +126,11 @@ function startInputProcessor(editMode) {
 
     processInterval = setInterval(() => {
         updateTouchPositions();
-        buttons.forEach(button => {
+        Array.from(buttons).forEach(button => {
             button.process(touchPositions, processState);
+            if (button.remove) {
+                buttons = buttons.filter(b => b != button.randomId);
+            }
         });
     },processRate);
 
@@ -197,7 +200,7 @@ document.addEventListener("click", function () { //Allow the user to tap off.
     closeAddDropdown();
 });
 
-var touchControlsReset = elements.getGPId("touchControlsSave");
+var touchControlsReset = elements.getGPId("touchControlsReset");
 touchControlsReset.addEventListener("click", function () {
     if (!active) {
         return;

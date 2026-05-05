@@ -56,6 +56,11 @@ void CONS_Error(const char *msg); // print out error msg, and wait a key
 // force console to move out
 void CON_ToggleOff(void);
 
+// Console control for programmatic access (mobile/emscripten)
+void CON_Toggle(void);  // Toggle console open/closed
+void CON_Open(void);    // Open console
+void CON_Close(void);   // Close console
+
 // Is console down?
 boolean CON_Ready(void);
 
