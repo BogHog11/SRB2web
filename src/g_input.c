@@ -1179,7 +1179,7 @@ void EMSCRIPTEN_KEEPALIVE SRB2_SetDirectAction(int control_index, int is_down)
 
 	menukey = G_DirectActionToMenuKey(control_index);
 
-	if (menuactive || gamestate == GS_TITLESCREEN) 
+	if (menuactive || !(gamestate == GS_LEVEL || gamestate == GS_INTERMISSION)) 
 	{
 		if (is_down && menukey == KEY_NULL)
 			menukey = KEY_SPACE;
@@ -1202,14 +1202,14 @@ void EMSCRIPTEN_KEEPALIVE SRB2_SetDirectAction(int control_index, int is_down)
 
 void EMSCRIPTEN_KEEPALIVE SRB2_SetDirectAction2(int control_index, int is_down)
 {
-	if (control_index < 0 || control_index >= NUM_GAMECONTROLS)
+	/*if (control_index < 0 || control_index >= NUM_GAMECONTROLS)
 		return;
 
 	if (CON_Ready() || chat_on)
 		return;
 
 	if (menuactive || gamestate == GS_TITLESCREEN || gamestate == GS_CREDITS || gamestate == GS_DEMOSCREEN)
-		return;
+		return;*/
 
 	//directcontrolbis[control_index] = is_down ? 1 : 0;
 }

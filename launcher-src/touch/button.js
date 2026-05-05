@@ -2,6 +2,12 @@ var { KeyNum, KeyName } = require("./keydef.js");
 var elements = require("../gp2/elements.js");
 
 class TouchControlButton {
+    static calculatePercentSize(x,y, cx = window.innerWidth, cy = window.innerHeight) {
+        var percentX = (x/cx)*100;
+        var percentY = (y/cy)*100;
+        return {percentX, percentY};
+    }
+
     static fromSavedData(data) {
         var button = new TouchControlButton(
             data.id,
@@ -57,6 +63,11 @@ class TouchControlButton {
             }
         }
         return false;
+    }
+
+    isTouchingFirst(touchPositions, elm = this.elm) {
+        if (touchPositions.length == 0) return false;
+        return this.isCollide(touchPositions[0], elm);
     }
 
     generateElement() {
@@ -120,7 +131,13 @@ class TouchControlButton {
     editModeProcess (touchPositions, processState) {
         var elm = this.elm;
 
-        if (processState.editing == )
+        if (processState.editing == null) {
+            if (this.isTouchingFirst(touchPositions, elm)) {
+                processState.editing = this.randomId;
+                processState.offsetX = touchPositions[0].left - elm.getBoundingClientRect().left;
+                processState.offsetY = touchPositions[0].top - elm.getBoundingClientRect().top;
+            }
+        }
 
         if (this.isTouchingOneOf(touchPositions, elm)) {
             elm.setAttribute("data-touching", "");
