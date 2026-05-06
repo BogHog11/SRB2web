@@ -1,4 +1,6 @@
 var { KeyNum, KeyName } = require("./keydef.js");
+var { showKeyboard, hideKeyboard, toggleKeyboard, keyboardIsActive } = require("./keyboard.js");
+var keyState = {};
 
 if (window["Module"]) {
   var Module = window["Module"];
@@ -8,7 +10,9 @@ function sendInput(nameid, down) {
     var number = KeyNum[nameid];
 
     if (number == KeyNum.UI_SHOW_KEYBOARD) {
-        //Does nothing for now.
+        if (down) {
+            toggleKeyboard();
+        }
         return;
     }
     if (number == KeyNum.UI_JOYSTICK) {
@@ -17,8 +21,12 @@ function sendInput(nameid, down) {
     }
 
     var downNumber = down ? 1 : 0;
+    var downBool = !!down;
 
     if (!Module.ccall) {
+        return;
+    }
+    if (!!keyState[number] == !!downBool) {
         return;
     }
     Module.ccall(
@@ -27,6 +35,12 @@ function sendInput(nameid, down) {
         ['number','number'],
         [number, downNumber]
     );
+
+    if (downBool) {
+        keyState[number] = downBool; 
+    } else {
+        delete keyState[number];
+    }
     //window.alert("sent direct action: "+nameid+","+down);
 }
 
@@ -34,15 +48,15 @@ function sendJoystick(x,y) {
     if (!Module.ccall) {
         return;
     }
-    Module.ccall(
-        'SRB2_SetAnalogStick',
-        'void',
-        ['number','number'],
-        [Math.round(x*127), Math.round(y*127)]
-    );
+    var range = 0.2;
+    sendInput("GC_FORWARD", y > range);
+    sendInput("GC_BACKWARD", y < -range);
+    sendInput("GC_STRAFELEFT", x < -range);
+    sendInput("GC_STRAFERIGHT", x > range);
 }
 
 module.exports = {
     sendInput,
-    sendJoystick
+    sendJoystick,
+    keyboardIsActive
 }

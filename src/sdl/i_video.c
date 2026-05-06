@@ -2082,6 +2082,10 @@ void EMSCRIPTEN_KEEPALIVE inject_text(const char *text)
 {
 	event_t event;
 	size_t len = 0;
+
+	if (text == NULL || text[0] == '\0')
+		return;
+
 	event.type = ev_text;
 	{
 		event.key = text[len];

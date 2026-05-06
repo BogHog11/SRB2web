@@ -107,14 +107,13 @@ a:hover {
 
 .gameCanvas {
   background: black;
-  width: 100%;
-  height: 100%;
+  width: 100dvw;
+  height: 100dvh;
   position: fixed;
   top: 0;
   left: 0;
   image-rendering: pixelated;
   object-fit: fill;
-  z-index: 9999;
 }
 
 .sectionHeader {
@@ -275,6 +274,7 @@ a:hover {
 
 .windowDialogContainer {
   font-family: var(--popup-dialog-font);
+  z-index: 99999999;
 }
 
 .windowDialogBackground {
@@ -519,7 +519,6 @@ a:hover {
   contain: layout paint; 
   user-select: none;
   -webkit-user-select: none;
-  touch-action: none;
 }
 
 .touchControlPosition[data-position="right"] {
@@ -530,7 +529,6 @@ a:hover {
   contain: layout paint; 
   user-select: none;
   -webkit-user-select: none;
-  touch-action: none;
 }
 
 .touchControlBox {
@@ -578,11 +576,11 @@ a:hover {
   box-sizing: border-box;
   padding: 3vmin 3vmin;
   /* The actual touch events are handled by the JavaScript collision tests */
-  touch-action: none;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  user-select: none;
 }
 .touchActionButton[data-touching] {
   background: rgba(255,255,255,0.8);
@@ -669,10 +667,10 @@ a:hover {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100dvh;
-  z-index: 99999;
-  pointer-events: none;
+  /*width: 100%;
+  height: 100dvh;*/
+  overflow: visible;
+  user-select: none;
 }
 
 .touchControlsAddDropdownContainer {
@@ -727,33 +725,54 @@ a:hover {
 }
 
 .touchControlsJoystickContainer {
+  display: block;
   width: var(--button-width);
   height: var(--button-height);
   overflow: visible;
+  user-select: none;
 }
 
 .touchControlsJoystick {
+  display: block;
   width: var(--joystick-size);
   height: var(--joystick-size);
   background: rgba(255,255,255,0.3);
   border-radius: 50%;
-  position: relative;
+  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  touch-action: none;
-  pointer-events: none;
   overflow: visible;
+  user-select: none;
 }
 
 .touchControlsJoystickCircle {
+  display: block;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 50%;
   height: 50%;
-  background: rgba(0,0,255,0.5);
+  background: rgba(0,0,255,0.4);
   border-radius: 50%;
   overflow: visible;
+  user-select: none;
+}
+
+.touchControlsJoystickCircle[data-touching] {
+  background: rgba(0,0,255,0.7);
+}
+
+.touchControlsInput {
+  all: unset;
+  position: fixed;
+  top: -100px;
+  left: -100px;
+  background: rgba(0,0,0,0);
+  color: rgba(0,0,0,0);
+  width: 1px;
+  height: 10px;
+  opacity: 0;
+  user-select: none;
 }

@@ -910,7 +910,11 @@ INT32 JoyAxis(joyaxis_e axissel)
 	if (axisval > JOYAXISSET*2 || axisval == 0) //not there in array or None
 		return 0;
 
-	if (axisval%2)
+	if (touchjoyactive)
+	{
+		retaxis = (axisval%2) ? touchjoyxmove : touchjoyymove;
+	}
+	else if (axisval%2)
 	{
 		axisval /= 2;
 		retaxis = joyxmove[axisval];
@@ -985,7 +989,11 @@ INT32 Joy2Axis(joyaxis_e axissel)
 	if (axisval > JOYAXISSET*2 || axisval == 0) //not there in array or None
 		return 0;
 
-	if (axisval%2)
+	if (touchjoyactive)
+	{
+		retaxis = (axisval%2) ? touchjoyxmove : touchjoyymove;
+	}
+	else if (axisval%2)
 	{
 		axisval /= 2;
 		retaxis = joy2xmove[axisval];

@@ -57,7 +57,7 @@ var KeyNum = {
 
 var KeyName = {
 	//Purely custom key names, not used by C logic, but are added to keep the UI for them consistent with the rest of the controls:
-	UI_SHOW_KEYBOARD: "Show touch keyboard",
+	UI_SHOW_KEYBOARD: "Toggle touch keyboard",
 	UI_JOYSTICK: "Virtual joystick",
 
 	///////////////////////////////////////////

@@ -22,6 +22,7 @@
 #include "lua_script.h"
 #include "lua_libs.h"
 #include "d_event.h"
+#include "i_system.h"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -44,6 +45,8 @@ mouse_t mouse2;
 
 // joystick values are repeated
 INT32 joyxmove[JOYAXISSET], joyymove[JOYAXISSET], joy2xmove[JOYAXISSET], joy2ymove[JOYAXISSET];
+INT32 touchjoyxmove, touchjoyymove;
+boolean touchjoyactive;
 
 // current state of the keys: true if pushed
 UINT8 gamekeydown[NUMINPUTS];
@@ -1309,9 +1312,51 @@ void EMSCRIPTEN_KEEPALIVE SRB2_SetDirectAction2(int control_index, int is_down)
 
 void EMSCRIPTEN_KEEPALIVE SRB2_SetAnalogStick(int x, int y)
 {
-    // joyxmove and joyymove are arrays (usually size 4).
-    // We target index 0 which is the primary axis set.
-    joyxmove[0] = (INT32)x;
-    joyymove[0] = (INT32)y;
+	INT32 i;
+
+	// Store the touch stick separately, then mirror it into the gamepad axis path.
+	touchjoyactive = true;
+	touchjoyxmove = (INT32)x;
+	touchjoyymove = (INT32)y;
+
+	// Mirror the virtual stick into every primary joystick axis slot so the
+	// game's axis selection cvars can read it regardless of which slot they use.
+	for (i = 0; i < JOYAXISSET; i++)
+	{
+		joyxmove[i] = touchjoyxmove;
+		joyymove[i] = touchjoyymove;
+	}
+
+}
+
+void EMSCRIPTEN_KEEPALIVE SRB2_ClearAnalogStick(void)
+{
+	INT32 i;
+
+	touchjoyactive = false;
+	touchjoyxmove = 0;
+	touchjoyymove = 0;
+
+	for (i = 0; i < JOYAXISSET; i++)
+	{
+		joyxmove[i] = 0;
+		joyymove[i] = 0;
+	}
+}
+
+boolean EMSCRIPTEN_KEEPALIVE SRB2_KeyboardNeeded(void)
+{
+	if (chat_on)
+		return true;
+
+	if (con_destlines > 0)
+		return true;
+
+	// Menu navigation alone should not open the virtual keyboard.
+	// Only enable it for menu entries that explicitly activate text input mode.
+	if (menuactive && I_GetTextInputMode())
+		return true;
+
+	return false;
 }
 #endif

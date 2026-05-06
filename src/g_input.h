@@ -142,6 +142,8 @@ extern mouse_t mouse;
 extern mouse_t mouse2;
 
 extern INT32 joyxmove[JOYAXISSET], joyymove[JOYAXISSET], joy2xmove[JOYAXISSET], joy2ymove[JOYAXISSET];
+extern INT32 touchjoyxmove, touchjoyymove;
+extern boolean touchjoyactive;
 
 // current state of the keys: true if pushed
 extern UINT8 gamekeydown[NUMINPUTS];

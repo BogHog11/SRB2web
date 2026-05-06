@@ -1,5 +1,5 @@
 var { KeyNum, KeyName } = require("./keydef.js");
-var { sendInput, sendJoystick } = require("./handler.js");
+var { sendInput, sendJoystick, keyboardIsActive } = require("./handler.js");
 
 var elements = require("../gp2/elements.js");
 
@@ -126,7 +126,7 @@ class TouchControlButton {
 
         var touch = null;
         for (var position of touchPositions) {
-            if (this.isCollide(position, elm)) {
+            if (this.isCollide(position, joystickMain)) {
                 touch = position;
                 break;
             }
@@ -149,15 +149,13 @@ class TouchControlButton {
             var percent = TouchControlButton.calculatePercentSize(deltaX, deltaY, bounding.width, bounding.height);
             
             this.joystickX = Math.max(-1, Math.min(1, percent.percentX/50));
-            this.joystickY = Math.max(-1, Math.min(1, percent.percentY/50));
+            this.joystickY = -Math.max(-1, Math.min(1, percent.percentY/50));
 
-            var distance = Math.sqrt(this.joystickX*this.joystickX + this.joystickY*this.joystickY);
+            var distance = Math.sqrt(this.joystickX*this.joystickX + (-this.joystickY)*(-this.joystickY));
             if (distance > 1) {
                 this.joystickX /= distance;
                 this.joystickY /= distance;
             }
-
-            sendJoystick(this.joystickX, this.joystickY);
         } else {
             if (processState.touchingJoystick == this.randomId) {
                 processState.touchingJoystick = null;
@@ -170,15 +168,18 @@ class TouchControlButton {
         if (this.touch) {
             if (this.touch.touching) {
                 sendJoystick(this.joystickX, this.joystickY);
+                joystickCircle.setAttribute("data-touching", "");
             } else {
                 this.touch = null;
                 this.joystickX = 0;
                 this.joystickY = 0;
+                sendJoystick(this.joystickX, this.joystickY);
                 processState.touchingJoystick = null;
+                joystickCircle.removeAttribute("data-touching");
             }
         }
 
-        joystickCircle.style.top = (50 + this.joystickY*50) + "%";
+        joystickCircle.style.top = (50 + this.joystickY*-50) + "%";
         joystickCircle.style.left = (50 + this.joystickX*50) + "%";
     }
 
@@ -188,11 +189,11 @@ class TouchControlButton {
             this.elm.remove();
         }
 
-        if (this.width < 10) {
-            this.width = 10;
+        if (this.width < 0) {
+            this.width = 0;
         }
-        if (this.height < 10) {
-            this.height = 10;
+        if (this.height < 0) {
+            this.height = 0;
         }
 
         this.elm = elements.createElementsFromJSON([
@@ -206,6 +207,7 @@ class TouchControlButton {
                     "--button-width": this.width+"%",
                     "--button-height": this.height+"%",
                 },
+                style: (this.isJoystick) ? ({"overflow": "visible !important"}) : ({}),
                 children: [
                     {
                         element: "span",
@@ -388,7 +390,9 @@ class TouchControlButton {
         this.resizeJoystick();
         var elm = this.elm;
 
-        //Disabled for testing.
+        if (KeyNum[this.id] == KeyNum.UI_SHOW_KEYBOARD) {
+            this.elm.textContent = keyboardIsActive() ? "Hide touch keyboard" : "Show touch keyboard";
+        }
         if (this.editMode) {
             this.editModeProcess(touchPositions, processState);
             return;

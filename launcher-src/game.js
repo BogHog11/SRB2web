@@ -522,6 +522,69 @@ window.addEventListener(
   { once: true },
 );
 
+var touches = [];
+
+gameCanvas.addEventListener("touchstart", function (e) {
+    if (!didStart) {
+        return;
+    }
+    for (var touch of e.changedTouches) {
+        if (!touches.find(t => t.id == touch.identifier)) {
+            touches.push({
+                id: touch.identifier,
+                rid: Math.random() + "_" + Date.now(),
+                clientX: touch.clientX,
+                clientY: touch.clientY,
+                radiusX: touch.radiusX,
+                radiusY: touch.radiusY,
+                top: touch.clientY,
+                left: touch.clientX,
+                width: touch.radiusX < 2 ? 2 : touch.radiusX,
+                height: touch.radiusY < 2 ? 2 : touch.radiusY,
+                touching: true
+            });
+        }
+    }
+    e.preventDefault();
+}, { passive: false });
+gameCanvas.addEventListener("touchmove", function (e) {
+    if (!didStart) {
+        return;
+    }
+    for (var touch of e.changedTouches) {
+        var t = touches.find(t => t.id == touch.identifier);
+        if (t) {
+            var movementX = touch.clientX - t.clientX;
+            var movementY = touch.clientY - t.clientY;
+            t.clientX = touch.clientX;
+            t.clientY = touch.clientY;
+            t.radiusX = touch.radiusX;
+            t.radiusY = touch.radiusY;
+            t.left = touch.clientX;
+            t.top = touch.clientY;
+            t.width = touch.radiusX < 2 ? 2 : touch.radiusX;
+            t.height = touch.radiusY < 2 ? 2 : touch.radiusY;
+
+            mouseMoveX += movementX*10;
+            mouseMoveY += movementY*10;
+        }
+    }
+    e.preventDefault();
+}, { passive: false });
+gameCanvas.addEventListener("touchend", function (e) {
+    if (!didStart) {
+        return;
+    }
+    for (var touch of e.changedTouches) {
+        var t = touches.find(t => t.id == touch.identifier);
+        if (t) {
+            t.touching = false;
+            touches = touches.filter(t => t.id !== touch.identifier);
+        }
+    }
+    e.preventDefault();
+}, { passive: false });
+
 //Intentional debug logic, keep the if so it can be turned on and off.
 if (false) {
   window.addEventListener("keydown", (e) => {

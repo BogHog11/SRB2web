@@ -2106,7 +2106,7 @@ menu_t OP_PlaystyleDef = {
 
 static void M_UpdateItemOn(void)
 {
-	I_SetTextInputMode((currentMenu->menuitems[itemOn].status & IT_CVARTYPE) == IT_CV_STRING ||
+	I_SetTextInputMode(//(currentMenu->menuitems[itemOn].status & IT_CVARTYPE) == IT_CV_STRING ||
 		(currentMenu->menuitems[itemOn].status & IT_TYPE) == IT_KEYHANDLER);
 }
 
