@@ -104,6 +104,11 @@ class ConnectState {
     this.peer = new peer({
       initiator: false,
       config: rtcConfig,
+      channelConfig: {
+        ordered: false,          // Do NOT wait for missing packets
+        maxRetransmits: 0,       // Do NOT try to resend lost packets
+        priority: 'high'         // Hints to the browser to prioritize this traffic
+      }
     });
     var _this = this;
 
