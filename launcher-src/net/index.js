@@ -1,5 +1,6 @@
 var { ConnectState, ListenState } = require("./state");
 var attachSRB2 = require("./attach.js");
+var dialog = require("../dialog.js");
 
 var enabled = false;
 var publicEnabled = false;
@@ -106,6 +107,33 @@ async function listPublicGames() {
 
   return publicNetgames;
 }
+
+var isAlerting = false;
+document.addEventListener("visibilitychange", (e) => {
+  if (document.visibilityState == "hidden") {
+    if (!curState) {
+      return;
+    }
+
+    if (isAlerting) { //Don't stack multiple alerts if the user keeps switching back and forth.
+      return;
+    }
+    if (curState.listen) {
+      var promise = dialog.alert("Warning: Switching off this page can cause connection problems on other players, to avoid this, please move the tab onto a portion of your desktop thats always visible.");
+      isAlerting = true;
+      promise.then(() => {
+        isAlerting = false;
+      });
+    }
+    if (curState.connect) {
+      var promise = dialog.alert("Warning: Switching off this page can cause connection problems, to avoid this, please move the tab onto a portion of your desktop thats always visible.");
+      isAlerting = true;
+      promise.then(() => {
+        isAlerting = false;
+      });
+    }
+  }
+});
 
 module.exports = {
   enable,

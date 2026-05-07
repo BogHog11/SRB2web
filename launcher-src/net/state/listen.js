@@ -9,6 +9,7 @@ class ListenState {
   }
 
   constructor(wsHost, isPublic = true, useRTC = false) {
+    this.listen = true;
     this.wsHost = wsHost;
     this.isOpen = false;
     this.connections = {};

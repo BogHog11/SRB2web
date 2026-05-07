@@ -17,6 +17,7 @@ class ConnectState {
   }
 
   constructor(wsHost, { address, port }) {
+    this.connect = true;
     this.address = address;
     this.port = port;
 
