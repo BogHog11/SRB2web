@@ -15,6 +15,7 @@ class ListenState {
     this.connections = {};
     this.address = PLACEHOLDER_IP + ":5029";
     this.isPublic = isPublic;
+    this.disposed = false;
     this.useRTC = !!useRTC;
     this.openSocket();
     this.setUpdateInterval();
@@ -66,7 +67,13 @@ class ListenState {
       console.warn(
         `[Relay Connection]: Lost connection, connection might become unstable temporarily. Reconnecting...`,
       );
-      _this.openSocket();
+      attachSRB2.logInSRB2("[RELAY CONNECTION]: Lost connection to relay server, attempting to reconnect...");
+      setTimeout(() => {
+        if (_this.disposed) {
+          return;
+        }
+        _this.openSocket();
+      }, 500);
     };
     this.socket.onmessage = function (event) {
       var json = JSON.parse(event.data);
@@ -142,6 +149,7 @@ class ListenState {
       this.socket.close();
     }
     this.socket = null;
+    this.disposed = true;
     this.disconnectAll();
     clearInterval(this.updateInterval);
     attachSRB2.onpacket = null;

@@ -65,6 +65,9 @@ attach.emitClose = function (id) {
 
 attach.logInSRB2 = function (msg) {
   try {
+    if (!Module.ccall) {
+      return;
+    }
     Module.ccall("SRB2_LOG", "void", ["string"], [msg + "\n"]);
   } catch (e) {}
 };

@@ -50,7 +50,12 @@ class ConnectState {
           `[Relay Connection]: Disconnected unexpectedly, reconnecting...`,
         );
         socket.onmessage = () => {};
-        _this.initWebsocket();
+        setTimeout(() => {
+          if (_this.disposed) {
+            return;
+          }
+          _this.initWebsocket();
+        },500);
       }
     };
     socket.binaryType = "arraybuffer";
