@@ -164,7 +164,7 @@ INT32 GetRoomsList(boolean hosting, int id)
     // Room 0: All
     room_list[i].id = 1; 
     strncpy(room_list[i].name, "THIS DOESN'T WORK", 63);
-    strncpy(room_list[i].motd, "The master server list in game doesn't work.\nTo make your netgames public, go to the home page (launcher screen), and click \"Join/Host a public netgame\".", 255);
+    strncpy(room_list[i].motd, "Please use the relay server option in the launcher (home page) for hosting and joining public netgames.", 255);
     
     I_lock_mutex(&m_menu_mutex);
     MP_RoomMenu[i+1].text = room_list[i].name;
