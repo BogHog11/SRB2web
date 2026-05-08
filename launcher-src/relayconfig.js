@@ -352,7 +352,7 @@ var { getDisplayOptions } = require("./display-settings.js");
 var { startGame } = require("./game.js");
 
 async function launchToNetgame(game) {
-  var confirmed = await dialog.confirm(`Launch game to join ${game.name}?`);
+  var confirmed = await dialog.confirm(`Launch game to join "${game.name}"?`);
   if (!confirmed) return;
 
   closePublicList();
