@@ -11474,7 +11474,7 @@ static void M_ConnectMenuModChecks(INT32 choice)
 	// okay never mind we want to COMMUNICATE to the player pre-emptively instead of letting them try and then get confused when it doesn't work
 
 	#ifdef EMSCRIPTEN
-		M_StartMessage(M_GetText("Public netgames are available in the SRB2 web launcher.\n\nTo access them, please refresh this page or select 'Quit Game' from the main menu,\nthen use the 'Join/host a public netgame' button."),NULL,MM_NOTHING);
+		M_StartMessage(M_GetText("The master server list in game doesn't work.\nTo make your netgames public, go to the home page (launcher screen), and click \"Join/Host a public netgame\"."),NULL,MM_NOTHING);
 		return;
 	#endif
 
@@ -11637,12 +11637,14 @@ static void M_DrawServerMenu(void)
 	if (currentMenu == &MP_ServerDef)
 	{
 		M_DrawLevelPlatterHeader(currentMenu->y - lsheadingheight/2, "Server settings", true, false);
+		#ifndef EMSCRIPTEN
 		if (cv_masterserver_room_id.value < 0)
 			V_DrawRightAlignedString(BASEVIDWIDTH - currentMenu->x, currentMenu->y + MP_ServerMenu[mp_server_room].alphaKey,
 			                         V_YELLOWMAP, (itemOn == mp_server_room) ? "<Select to change>" : "<Unlisted Mode>");
 		else
 			V_DrawRightAlignedString(BASEVIDWIDTH - currentMenu->x, currentMenu->y + MP_ServerMenu[mp_server_room].alphaKey,
 			                         V_YELLOWMAP, room_list[menuRoomIndex].name);
+		#endif
 	}
 
 	if (cv_nextmap.value)
